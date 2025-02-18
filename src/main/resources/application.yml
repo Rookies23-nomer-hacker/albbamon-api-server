@@ -1,0 +1,37 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.0.10:3306/nomer_db?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Seoul
+    username: nomer_admin1
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+
+  devtools:
+    restart:
+      enabled: false
+
+  thymeleaf:
+    cache: false
+  view:
+    prefix: /WEB-INF/jsp/
+    suffix: .jsp
+
+#  http:
+#    encoding:
+#      charset: UTF-8
+#      enabled: true
+#      force: true
