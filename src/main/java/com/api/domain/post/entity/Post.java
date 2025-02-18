@@ -1,5 +1,7 @@
 package com.api.domain.post.entity;
 
+import java.time.LocalDateTime;
+
 import com.api.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +14,22 @@ import lombok.*;
 @Entity
 public class Post extends BaseTimeEntity {
     @Id
-    @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "CM_NUM")
+    private Long cmNum;
+
+    @Column(name = "USER_ID", nullable = false)
+    private Long userId;
+
+    @Column(name = "TITLE", nullable = false)
+    private String title;
+
+    @Column(name = "CONTENTS", nullable = false)
+    private String contents;
+
+    @Column(name = "FILE")
+    private String file;
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    private LocalDateTime createDate;
 }
