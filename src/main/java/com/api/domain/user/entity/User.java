@@ -40,7 +40,7 @@ public class User extends BaseTimeEntity {
     private LocalDateTime bday;
 
     @Builder.Default
-    private Integer pwCheckNum = 0;
+    private Integer pwChkNum = 0;
 
     @Builder.Default
     private Boolean pwCheck = false;
