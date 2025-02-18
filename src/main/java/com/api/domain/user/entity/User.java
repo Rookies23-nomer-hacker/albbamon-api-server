@@ -2,8 +2,10 @@ package com.api.domain.user.entity;
 
 import com.api.domain.post.entity.Post;
 import com.api.domain.qna.entity.Qna;
+import com.api.domain.user.dto.request.CreateUserRequestDto;
 import com.api.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -22,10 +24,13 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String email;
 
+    @NotNull
     private String password;
 
+    @NotNull
     private String name;
 
     private String phone;
@@ -34,9 +39,11 @@ public class User extends BaseTimeEntity {
 
     private LocalDateTime bday;
 
-    private Integer pwCheckNum;
+    @Builder.Default
+    private Integer pwChkNum = 0;
 
-    private Boolean pwCheck;
+    @Builder.Default
+    private Boolean pwCheck = false;
 
     private String ceoNum;
 
@@ -51,4 +58,17 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Qna> qnaList = new ArrayList<>();
+
+    public static User createUser(CreateUserRequestDto requestDto, String encodedPassword) {
+        return User.builder()
+                .email(requestDto.email())
+                .password(encodedPassword)
+                .name(requestDto.name())
+                .phone(requestDto.phone())
+                .addr(requestDto.addr())
+                .bday(requestDto.bday())
+                .ceoNum(requestDto.ceoNum())
+                .company(requestDto.company())
+                .build();
+    }
 }
