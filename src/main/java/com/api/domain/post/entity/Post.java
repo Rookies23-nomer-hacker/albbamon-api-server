@@ -2,6 +2,7 @@ package com.api.domain.post.entity;
 
 import java.time.LocalDateTime;
 
+import com.api.domain.user.entity.User;
 import com.api.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,11 +16,8 @@ import lombok.*;
 public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CM_NUM")
-    private Long cmNum;
-
-    @Column(name = "USER_ID", nullable = false)
-    private Long userId;
+    @Column(name = "POST_ID")
+    private Long postId;
 
     @Column(name = "TITLE", nullable = false)
     private String title;
@@ -32,4 +30,8 @@ public class Post extends BaseTimeEntity {
 
     @Column(name = "CREATE_DATE", nullable = false)
     private LocalDateTime createDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
+    private User user;
 }

@@ -19,9 +19,6 @@ public class Qna extends BaseTimeEntity {
     @Column(name = "QNA_ID")
     private Long qnaId;
 
-    @Column(name = "USER_ID", nullable = false)
-    private Long userId;
-
     @Column(name = "TITLE", nullable = false)
     private String title;
 
