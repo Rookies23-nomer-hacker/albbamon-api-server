@@ -1,6 +1,7 @@
 package com.api.domain.recruitment.controller;
 
 import com.api.domain.recruitment.dto.request.CreateRecruitmentRequestDto;
+import com.api.domain.recruitment.dto.response.GetRecruitmentResponseDto;
 import com.api.domain.recruitment.service.RecruitmentService;
 import com.api.global.common.entity.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,15 @@ import static com.api.domain.user.controller.UserController.SESSION_NAME;
 @RequestMapping("/api/recruitment")
 public class RecruitmentController {
     private final RecruitmentService recruitmentService;
+
+    @Operation(summary = "채용 공고 목록 보기", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/list")
+    public ResponseEntity<SuccessResponse<?>> getRecruitmentList() {
+        GetRecruitmentResponseDto responseDto = recruitmentService.getRecruitmentList();
+        return SuccessResponse.ok(responseDto);
+    }
 
     @Operation(summary = "채용 공고 작성", responses = {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
