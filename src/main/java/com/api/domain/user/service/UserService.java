@@ -14,12 +14,14 @@ import com.api.global.error.exception.InvalidValueException;
 import com.api.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
 import static com.api.domain.user.error.UserErrorCode.*;
 
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class UserService {
     private final UserRepository userRepository;

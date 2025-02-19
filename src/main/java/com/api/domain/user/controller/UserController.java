@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
-    private static final String SESSION_NAME = "SESSIONID";
+    public static final String SESSION_NAME = "SESSIONID";
 
     @Operation(summary = "회원가입", responses = {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
