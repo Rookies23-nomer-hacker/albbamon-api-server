@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.api.domain.recruitment.error.RecruitmentErrorCode.RECRUITMENT_NOT_FOUND;
 import static com.api.domain.user.error.UserErrorCode.SIGN_IN_REQUIRED;
 import static com.api.domain.user.error.UserErrorCode.USER_NOT_FOUND;
 
@@ -26,5 +27,11 @@ public class RecruitmentService {
         User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         Recruitment recruitment = Recruitment.createRecruitment(user, requestDto);
         recruitmentRepository.save(recruitment);
+    }
+
+    public void updateRecruitment(Long userId, Long recruitmentId, CreateRecruitmentRequestDto requestDto) {
+        if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
+        Recruitment recruitment = recruitmentRepository.findRecruitmentById(recruitmentId).orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
+        recruitment.updateRecruitment(requestDto);
     }
 }

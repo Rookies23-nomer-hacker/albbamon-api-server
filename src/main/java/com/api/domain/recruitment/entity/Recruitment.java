@@ -45,4 +45,10 @@ public class Recruitment extends BaseTimeEntity {
                 .user(user)
                 .build();
     }
+
+    public void updateRecruitment(CreateRecruitmentRequestDto requestDto) {
+        this.title = requestDto.title();
+        this.contents = requestDto.contents();
+        this.dueDate = requestDto.dueDate();
+    }
 }

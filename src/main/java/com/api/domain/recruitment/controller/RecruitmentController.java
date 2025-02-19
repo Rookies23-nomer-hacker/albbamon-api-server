@@ -30,4 +30,15 @@ public class RecruitmentController {
         return SuccessResponse.ok(null);
     }
 
+    @Operation(summary = "채용 공고 수정", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @PostMapping("/{recruitmentId}")
+    public ResponseEntity<SuccessResponse<?>> updateRecruitment(@SessionAttribute(name=SESSION_NAME) Long userId,
+                                                                @PathVariable final Long recruitmentId,
+                                                                @RequestBody @Valid final CreateRecruitmentRequestDto requestDto) {
+        recruitmentService.updateRecruitment(userId, recruitmentId, requestDto);
+        return SuccessResponse.ok(null);
+    }
+
 }
