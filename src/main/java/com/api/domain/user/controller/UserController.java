@@ -2,6 +2,7 @@ package com.api.domain.user.controller;
 
 import com.api.domain.user.dto.request.CreateUserRequestDto;
 import com.api.domain.user.service.UserService;
+import com.api.global.common.entity.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,8 +25,8 @@ public class UserController {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
     })
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody @Valid final CreateUserRequestDto requestDto) {
+    public ResponseEntity<SuccessResponse<?>> createUser(@RequestBody @Valid final CreateUserRequestDto requestDto) {
         userService.createUser(requestDto);
-        return ResponseEntity.ok(null);
+        return SuccessResponse.ok(null);
     }
 }
