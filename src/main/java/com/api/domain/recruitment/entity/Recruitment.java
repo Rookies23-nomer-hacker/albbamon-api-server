@@ -1,6 +1,7 @@
 package com.api.domain.recruitment.entity;
 
 import com.api.domain.apply.entity.Apply;
+import com.api.domain.recruitment.dto.request.CreateRecruitmentRequestDto;
 import com.api.domain.user.entity.User;
 import com.api.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -36,4 +37,18 @@ public class Recruitment extends BaseTimeEntity {
     @Builder.Default
     private List<Apply> applyList = new ArrayList<>();
 
+    public static Recruitment createRecruitment(User user, CreateRecruitmentRequestDto requestDto) {
+        return Recruitment.builder()
+                .title(requestDto.title())
+                .contents(requestDto.contents())
+                .dueDate(requestDto.dueDate())
+                .user(user)
+                .build();
+    }
+
+    public void updateRecruitment(CreateRecruitmentRequestDto requestDto) {
+        this.title = requestDto.title();
+        this.contents = requestDto.contents();
+        this.dueDate = requestDto.dueDate();
+    }
 }
