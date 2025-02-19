@@ -24,8 +24,8 @@ public class PostController {
         return postService.getAllPosts();
     }
     
-    @GetMapping("/{cmNum}")
-    public Post getPost(@PathVariable Long cmNum) {
-        return postService.getPostById(cmNum);
+    @GetMapping("/{postId}")
+    public Post getPost(@PathVariable Long postId) {
+        return postService.getPostById(postId);
     }
 }
