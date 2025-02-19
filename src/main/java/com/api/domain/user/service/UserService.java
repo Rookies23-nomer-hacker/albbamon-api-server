@@ -4,10 +4,13 @@ import com.api.domain.user.dto.request.CreateUserRequestDto;
 import com.api.domain.user.entity.User;
 import com.api.domain.user.repository.UserRepository;
 import com.api.global.common.util.EncoderUtil;
+import com.api.global.error.exception.ConflictException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+
+import static com.api.domain.user.error.UserErrorCode.USER_CONFLICT;
 
 @RequiredArgsConstructor
 @Service
@@ -25,7 +28,7 @@ public class UserService {
     private void checkAlreadyExistingUser(String email) {
         User user = userRepository.findByEmail(email);
         if(!Objects.isNull(user)) {
-            // Duplicate User Exception
+            throw new ConflictException(USER_CONFLICT);
         }
     }
 }
