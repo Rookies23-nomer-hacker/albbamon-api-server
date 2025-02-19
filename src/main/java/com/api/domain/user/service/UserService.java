@@ -46,6 +46,12 @@ public class UserService {
         return user.getId();
     }
 
+    public void deleteUser(Long userId) {
+        if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
+        User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        userRepository.delete(user);
+    }
+
     private void validatePassword(String encodedPassword, String rawPassword) {
         if(!encodedPassword.equals(encoderUtil.encrypt(rawPassword))) {
             throw new InvalidValueException(PASSWORD_INCORRECT);
