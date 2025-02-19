@@ -2,9 +2,12 @@ package com.api.domain.user.controller;
 
 import com.api.domain.user.dto.request.CreateUserRequestDto;
 import com.api.domain.user.dto.request.SignInRequestDto;
+import com.api.domain.user.dto.response.GetUserInfoResponseDto;
 import com.api.domain.user.service.UserService;
 import com.api.global.common.entity.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,9 +46,12 @@ public class UserController {
         return SuccessResponse.ok(null);
     }
 
+    @Operation(summary = "회원 정보", responses = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetUserInfoResponseDto.class)))
+    })
     @GetMapping
     public ResponseEntity<SuccessResponse<?>> getUserInfo(@SessionAttribute(name=SESSION_NAME) Long userId) {
-        // todo
-        return SuccessResponse.ok(userId);
+        GetUserInfoResponseDto responseDto = userService.getUserInfo(userId);
+        return SuccessResponse.ok(responseDto);
     }
 }
