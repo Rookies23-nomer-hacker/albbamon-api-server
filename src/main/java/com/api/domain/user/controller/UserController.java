@@ -46,12 +46,22 @@ public class UserController {
         return SuccessResponse.ok(null);
     }
 
+    @Operation(summary = "로그아웃", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/sign-out")
+    public ResponseEntity<SuccessResponse<?>> signOut(HttpServletRequest httpServletRequest) {
+        HttpSession session = httpServletRequest.getSession();
+        session.invalidate();
+        return SuccessResponse.ok(null);
+    }
+
     @Operation(summary = "회원 탈퇴", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/withdraw")
     public ResponseEntity<SuccessResponse<?>> deleteUser(@SessionAttribute(name=SESSION_NAME) Long userId,
-                                                      HttpServletRequest httpServletRequest) {
+                                                         HttpServletRequest httpServletRequest) {
         userService.deleteUser(userId);
         HttpSession session = httpServletRequest.getSession();
         session.invalidate();
