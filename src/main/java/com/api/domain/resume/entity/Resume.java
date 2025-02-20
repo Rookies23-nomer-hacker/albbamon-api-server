@@ -8,9 +8,9 @@ import com.api.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -25,6 +25,7 @@ public class Resume extends BaseTimeEntity {
     private Long id;
     private String school;
     private String status;
+    private String personal;
     private String work_place_region;
     private String work_place_city;
     private String industry_occupation;
@@ -32,9 +33,9 @@ public class Resume extends BaseTimeEntity {
     private String working_period;
     private String working_day;
     private String introduction;
-    private String portfolioData;
-    private String portfolioName;
-
+    private String portfoliourl;
+    private String portfolioname;
+    
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
@@ -45,9 +46,11 @@ public class Resume extends BaseTimeEntity {
     
     
     public static Resume createResume(ResumeRequestDto resumerequestDto) {
+    	System.out.println("createResume : "+resumerequestDto);
         return Resume.builder()
                 .school(resumerequestDto.school())
                 .status(resumerequestDto.status())
+                .personal(resumerequestDto.personal())
                 .work_place_region(resumerequestDto.work_place_region())
                 .work_place_city(resumerequestDto.work_place_city())
                 .industry_occupation(resumerequestDto.industry_occupation())
@@ -55,8 +58,8 @@ public class Resume extends BaseTimeEntity {
                 .working_period(resumerequestDto.working_period())
                 .working_day(resumerequestDto.working_day())
                 .introduction(resumerequestDto.introduction())
-                .portfolioData(resumerequestDto.portfolioData())
-                .portfolioName(resumerequestDto.portfolioName())
+                .portfoliourl(resumerequestDto.portfoliourl())
+                .portfolioname(resumerequestDto.portfolioName())
                 .build();
     }
     
