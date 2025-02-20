@@ -1,5 +1,7 @@
 package com.api.domain.user.controller;
 
+import java.util.List;//list 사용
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,8 +28,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -71,14 +71,19 @@ public class UserController {
     		@ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/find-id")
-    public ResponseEntity<UserFindResponseDto> findUserId(
+    public ResponseEntity<List<UserFindResponseDto>> findUserId(
             @RequestParam("name") String name,
             @RequestParam("phone") String phone) {
 
         System.out.println("📌 API 서버에서 받은 데이터: name=" + name + ", phone=" + phone);
 
-        UserFindResponseDto responseDto = userService.findUserByNameAndPhone(name, phone);
-        return ResponseEntity.ok(responseDto);
+        List<UserFindResponseDto> responseDtos = userService.findUserByNameAndPhone(name, phone);
+        System.out.println("📌 검색된 사용자 목록: " + responseDtos);
+
+        for (UserFindResponseDto user : responseDtos) {
+            System.out.println("📌 사용자 이메일: " + user.getEmail());
+        }
+        return ResponseEntity.ok(responseDtos);
     }
 
     @Operation(summary = "회원 탈퇴", responses = {

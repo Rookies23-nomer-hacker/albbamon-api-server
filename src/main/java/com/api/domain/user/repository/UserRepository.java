@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findUserById(Long userId);
     Optional<User> findUserByEmail(String email);
     Optional<UserVo> findUserVoById(Long id);
-    
+    //아이디찾기
     //이름과 전화번호로 사용자 찾기
     List<User> findByNameAndPhone(String name, String phone);
 }
