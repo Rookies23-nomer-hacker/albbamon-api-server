@@ -22,6 +22,6 @@ public record ResumeRequestDto(
         
         @NotNull LocalDateTime create_date,
         
-        LocalDateTime last_modified_date) {
+        LocalDateTime last_modified_date) {//
 
 }

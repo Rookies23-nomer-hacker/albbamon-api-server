@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface Resume_userRepository extends JpaRepository<User, Long> {
 	User findByEmail(String email);
 	Optional<User> findUserByEmail(String email);
+	//
 }
