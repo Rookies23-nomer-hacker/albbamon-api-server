@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public record CreateRecruitmentRequestDto(
         @NotNull String title,
         @NotNull String contents,
-        @NotNull LocalDateTime dueDate
+        @NotNull LocalDateTime dueDate,
+        @NotNull Integer wage
 ) {
 }
