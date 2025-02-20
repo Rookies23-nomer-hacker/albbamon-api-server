@@ -29,6 +29,10 @@ public class Recruitment extends BaseTimeEntity {
 
     private String contents;
 
+    private Integer wage;
+
+    private String file;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
@@ -42,13 +46,15 @@ public class Recruitment extends BaseTimeEntity {
                 .title(requestDto.title())
                 .contents(requestDto.contents())
                 .dueDate(requestDto.dueDate())
+                .wage(requestDto.wage())
                 .user(user)
                 .build();
     }
 
     public void updateRecruitment(CreateRecruitmentRequestDto requestDto) {
-        this.title = requestDto.title();
+        this.title =  requestDto.title();
         this.contents = requestDto.contents();
         this.dueDate = requestDto.dueDate();
+        this.wage = requestDto.wage();
     }
 }

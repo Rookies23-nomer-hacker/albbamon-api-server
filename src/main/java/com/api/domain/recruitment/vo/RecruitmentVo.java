@@ -10,6 +10,7 @@ public record RecruitmentVo(
         String title,
         LocalDateTime dueDate,
         String contents,
+        Integer wage,
         String userName
 ) {
 }
