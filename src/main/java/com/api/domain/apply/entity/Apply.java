@@ -1,3 +1,4 @@
+
 package com.api.domain.apply.entity;
 
 import java.time.LocalDateTime;

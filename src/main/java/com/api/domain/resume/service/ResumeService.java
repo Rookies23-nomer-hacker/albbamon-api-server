@@ -39,6 +39,6 @@ public class ResumeService {
         json.put("name", user.getName());
         json.put("phone", user.getPhone());
         return json;
-        //
+        ////
     }
 }
