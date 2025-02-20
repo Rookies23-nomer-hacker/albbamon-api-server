@@ -1,6 +1,7 @@
 package com.api.domain.recruitment.entity;
 
 import com.api.domain.apply.entity.Apply;
+import com.api.domain.recruitment.dto.request.CreateRecruitmentRequestDto;
 import com.api.domain.user.entity.User;
 import com.api.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -28,6 +29,10 @@ public class Recruitment extends BaseTimeEntity {
 
     private String contents;
 
+    private Integer wage;
+
+    private String file;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
@@ -36,4 +41,20 @@ public class Recruitment extends BaseTimeEntity {
     @Builder.Default
     private List<Apply> applyList = new ArrayList<>();
 
+    public static Recruitment createRecruitment(User user, CreateRecruitmentRequestDto requestDto) {
+        return Recruitment.builder()
+                .title(requestDto.title())
+                .contents(requestDto.contents())
+                .dueDate(requestDto.dueDate())
+                .wage(requestDto.wage())
+                .user(user)
+                .build();
+    }
+
+    public void updateRecruitment(CreateRecruitmentRequestDto requestDto) {
+        this.title =  requestDto.title();
+        this.contents = requestDto.contents();
+        this.dueDate = requestDto.dueDate();
+        this.wage = requestDto.wage();
+    }
 }

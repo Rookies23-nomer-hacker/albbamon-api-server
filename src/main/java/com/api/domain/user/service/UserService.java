@@ -14,12 +14,14 @@ import com.api.global.error.exception.InvalidValueException;
 import com.api.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
 import static com.api.domain.user.error.UserErrorCode.*;
 
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -44,6 +46,12 @@ public class UserService {
         User user = userRepository.findUserByEmail(requestDto.email()).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         validatePassword(user.getPassword(), requestDto.password());
         return user.getId();
+    }
+
+    public void deleteUser(Long userId) {
+        if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
+        User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        userRepository.delete(user);
     }
 
     private void validatePassword(String encodedPassword, String rawPassword) {

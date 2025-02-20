@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import com.api.domain.post.vo.PostListVo;
 import com.api.domain.post.entity.Post;
 import com.api.domain.post.repository.PostRepository;
 
@@ -16,13 +16,13 @@ public class PostService {
     private final PostRepository postRepository;
 
     // 모든 게시물 조회
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    public List<PostListVo> getAllPosts() {
+        return postRepository.findPostList();
     }
 
     // 게시물 ID로 조회
-    public Post getPostById(Long cmNum) {
-        Optional<Post> post = postRepository.findById(cmNum);
+    public Post getPostById(Long postId) {
+        Optional<Post> post = postRepository.findById(postId);
         return post.orElse(null);
     }
 }

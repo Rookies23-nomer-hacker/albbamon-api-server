@@ -1,19 +1,15 @@
 package com.api.domain.resume.service;
 
-import com.api.domain.post.entity.Post;
 import com.api.domain.resume.entity.Resume;
 import com.api.domain.resume.repository.ResumeRepository;
 import com.api.domain.resume.repository.Resume_userRepository;
 import com.api.domain.resume.request.ResumeRequestDto;
-import com.api.domain.resume.request.Resume_profileRequestDto;
 import com.api.domain.user.entity.User;
-import com.api.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 

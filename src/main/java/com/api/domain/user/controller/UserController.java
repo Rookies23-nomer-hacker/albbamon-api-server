@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
-    private static final String SESSION_NAME = "SESSIONID";
+    public static final String SESSION_NAME = "SESSIONID";
 
     @Operation(summary = "회원가입", responses = {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
@@ -43,6 +43,28 @@ public class UserController {
         Long userId = userService.signIn(requestDto);
         HttpSession session = httpServletRequest.getSession();
         session.setAttribute(SESSION_NAME, userId);
+        return SuccessResponse.ok(null);
+    }
+
+    @Operation(summary = "로그아웃", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/sign-out")
+    public ResponseEntity<SuccessResponse<?>> signOut(HttpServletRequest httpServletRequest) {
+        HttpSession session = httpServletRequest.getSession();
+        session.invalidate();
+        return SuccessResponse.ok(null);
+    }
+
+    @Operation(summary = "회원 탈퇴", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/withdraw")
+    public ResponseEntity<SuccessResponse<?>> deleteUser(@SessionAttribute(name=SESSION_NAME) Long userId,
+                                                         HttpServletRequest httpServletRequest) {
+        userService.deleteUser(userId);
+        HttpSession session = httpServletRequest.getSession();
+        session.invalidate();
         return SuccessResponse.ok(null);
     }
 
