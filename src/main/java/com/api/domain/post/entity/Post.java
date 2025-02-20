@@ -28,9 +28,6 @@ public class Post extends BaseTimeEntity {
     @Column(name = "FILE")
     private String file;
 
-    @Column(name = "CREATE_DATE", nullable = false)
-    private LocalDateTime createDate;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
     private User user;

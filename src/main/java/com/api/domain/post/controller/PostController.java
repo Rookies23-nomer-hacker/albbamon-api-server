@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.api.domain.post.entity.Post;
 import com.api.domain.post.service.PostService;
-
+import com.api.domain.post.vo.PostListVo;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -19,8 +19,8 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("/")
-    public List<Post> getAllPosts() {
+    @GetMapping("/list")
+    public List<PostListVo> getAllPosts() {
         return postService.getAllPosts();
     }
     

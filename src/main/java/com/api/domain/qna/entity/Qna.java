@@ -22,17 +22,11 @@ public class Qna extends BaseTimeEntity {
     @Column(name = "TITLE", nullable = false)
     private String title;
 
-    @Column(name = "CREATE_DATE", nullable = false)
-    private LocalDateTime createDate;
-
     @Column(name = "CONTENTS", nullable = false)
     private String contents;
 
     @Column(name = "FILE")
     private String file;
-
-    @Column(name = "LAST_MODIFIED_DATE")
-    private LocalDateTime lastModifiedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")

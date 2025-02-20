@@ -1,3 +1,4 @@
+
 package com.api.domain.apply.entity;
 
 import java.time.LocalDateTime;
@@ -30,7 +31,4 @@ public class Apply extends BaseTimeEntity {
     
     @Column(name = "status")
     private Integer status;
-    
-    @Column(name = "create_date")
-    private LocalDateTime createDate;
 }

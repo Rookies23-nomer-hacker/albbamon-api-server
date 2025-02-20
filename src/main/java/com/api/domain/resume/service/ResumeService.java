@@ -1,31 +1,40 @@
 package com.api.domain.resume.service;
 
-import java.util.List;
-import java.util.Optional;
+import com.api.domain.resume.entity.Resume;
+import com.api.domain.resume.repository.ResumeRepository;
+import com.api.domain.resume.repository.Resume_userRepository;
+import com.api.domain.resume.request.ResumeRequestDto;
+import com.api.domain.user.entity.User;
+
+import lombok.RequiredArgsConstructor;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.api.domain.post.entity.Post;
-import com.api.domain.post.repository.PostRepository;
-import com.api.domain.resume.entity.Resume;
-import com.api.domain.resume.repository.ResumeRepository;
-
-import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
 public class ResumeService {
-
-    private final ResumeRepository resumeRepository;
-
-    // 모든 게시물 조회
-    public List<Resume> getAllResumes() {
-        return resumeRepository.findAll();
+	
+	private final ResumeRepository resumeRepository;
+	private final Resume_userRepository resumeUserRepository;
+	
+    public void createResume(ResumeRequestDto resumerequestDto) {
+    	
+    	Resume resume = Resume.createResume(resumerequestDto);
+    	System.out.println("ddddddddd="+resumerequestDto);
+    	resumeRepository.save(resume);
     }
-
-    // 게시물 ID로 조회
-    public Resume getResumeById(Long resumeId) {
-        Optional<Resume> resume = resumeRepository.findById(resumeId);
-        return resume.orElse(null);
+    
+    public Map<String, Object> getEmailById(String email) {
+        User user = resumeUserRepository.findByEmail(email);
+        Map<String,Object> json = new HashMap<>();
+        json.put("email", user.getEmail());
+        json.put("name", user.getName());
+        json.put("phone", user.getPhone());
+        return json;
+        ////
     }
 }
