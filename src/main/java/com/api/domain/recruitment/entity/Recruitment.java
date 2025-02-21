@@ -36,6 +36,10 @@ public class Recruitment extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
+    
+    // 결제한 사용자 조회
+    @Column(name = "user_id", insertable = false, updatable = false)
+    private Long userId;
 
     @OneToMany(mappedBy = "recruitment", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
