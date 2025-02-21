@@ -11,22 +11,17 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Optional<Post> findPostById(Long id);
+        Optional<Post> findPostById(Long id);
 
-    @Query(value = "SELECT new com.api.domain.post.vo.PostVo(p.id, p.title, p.contents, p.file, p.createDate, u.name) " +
+        @Query(value = "SELECT new com.api.domain.post.vo.PostVo(p.id, p.title, p.contents, p.file, p.createDate, u.name) " +
             "FROM Post p " +
             "LEFT JOIN User u ON p.user = u " +
             "WHERE p.id = :postId")
-    Optional<PostVo> findPostVoById(Long postId);
+        Optional<PostVo> findPostVoById(Long postId);
 
-    @Query(value = "SELECT new com.api.domain.post.vo.PostVo(p.id, p.title, p.contents, p.file, p.createDate, u.name) " +
-            "FROM Post p " +
-            "LEFT JOIN User u ON p.user = u " +
-            "ORDER BY p.createDate DESC")
-    List<PostVo> findAllPostVos();
     
-	@Query("SELECT new com.api.domain.post.vo.PostListVo(p.id, p.title, p.contents, p.createDate, u.name) " +
+        @Query("SELECT new com.api.domain.post.vo.PostListVo(p.id, p.title, p.contents, p.createDate, u.name) " +
        "FROM Post p LEFT JOIN p.user u ORDER BY p.createDate DESC")
-    List<PostListVo> findPostList();
+        List<PostListVo> findPostList();
 
 }
