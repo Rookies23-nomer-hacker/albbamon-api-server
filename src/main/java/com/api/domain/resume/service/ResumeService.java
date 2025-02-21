@@ -35,6 +35,15 @@ public class ResumeService {
         json.put("name", user.getName());
         json.put("phone", user.getPhone());
         return json;
-        ////
+    }
+    
+    public Map<String, Object> getresumeUser_id(Long user_id) {
+    	Resume resume = resumeRepository.findByuser_id(user_id);
+        Map<String,Object> json = new HashMap<>();
+        json.put("personal", resume.getPersonal());
+        json.put("work_place_region", resume.getWork_place_region());
+        json.put("industry_occupation", resume.getIndustry_occupation());
+        json.put("last_modified_date", resume.getLastModifiedDate());
+        return json;
     }
 }

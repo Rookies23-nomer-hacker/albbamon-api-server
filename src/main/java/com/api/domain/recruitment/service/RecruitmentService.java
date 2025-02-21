@@ -7,6 +7,7 @@ import com.api.domain.recruitment.dto.response.GetRecruitmentResponseDto;
 import com.api.domain.recruitment.entity.Recruitment;
 import com.api.domain.recruitment.mapper.RecruitmentMapper;
 import com.api.domain.recruitment.repository.RecruitmentRepository;
+import com.api.domain.recruitment.vo.RecruitmentDetailVo;
 import com.api.domain.recruitment.vo.RecruitmentVo;
 import com.api.domain.resume.entity.Resume;
 import com.api.domain.resume.repository.ResumeRepository;
@@ -47,6 +48,10 @@ public class RecruitmentService {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         List<RecruitmentVo> recruitmentList = recruitmentRepository.findAllRecruitmentVosByUserId(userId);
         return recruitmentMapper.toGetRecruitmentResponseDto(recruitmentList);
+    }
+
+    public RecruitmentDetailVo getRecruitment(Long recruitmentId) {
+        return recruitmentRepository.findRecruitmentDetailVoById(recruitmentId).orElseThrow();
     }
 
     public void createRecruitment(Long userId, CreateRecruitmentRequestDto requestDto) {

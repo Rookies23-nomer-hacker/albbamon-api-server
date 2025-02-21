@@ -3,6 +3,8 @@ package com.api.domain.recruitment.controller;
 import com.api.domain.recruitment.dto.request.CreateRecruitmentRequestDto;
 import com.api.domain.recruitment.dto.response.GetRecruitmentResponseDto;
 import com.api.domain.recruitment.service.RecruitmentService;
+import com.api.domain.recruitment.vo.RecruitmentDetailVo;
+import com.api.domain.recruitment.vo.RecruitmentVo;
 import com.api.global.common.entity.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,6 +38,15 @@ public class RecruitmentController {
     @GetMapping("/list/my")
     public ResponseEntity<SuccessResponse<?>> getMyRecruitmentList(@SessionAttribute(name=SESSION_NAME) Long userId) {
         GetRecruitmentResponseDto responseDto = recruitmentService.getMyRecruitmentList(userId);
+        return SuccessResponse.ok(responseDto);
+    }
+
+    @Operation(summary = "채용 공고 1개 상세 보기", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/{recruitmentId}")
+    public ResponseEntity<SuccessResponse<?>> getRecruitment(@PathVariable final Long recruitmentId) {
+        RecruitmentDetailVo responseDto = recruitmentService.getRecruitment(recruitmentId);
         return SuccessResponse.ok(responseDto);
     }
 

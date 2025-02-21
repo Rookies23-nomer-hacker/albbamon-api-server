@@ -31,9 +31,9 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostMapper postMapper;
 
-    public GetPostResponseDto getPostList() {
-        List<PostVo> postList = postRepository.findAllPostVos();
-        return postMapper.toGetPostResponseDto(postList);
+    // 모든 게시물 조회
+    public List<PostListVo> getAllPosts() {
+        return postRepository.findPostList();
     }
 
     public void createPost(Long userId, CreatePostRequestDto requestDto) {
@@ -43,10 +43,7 @@ public class PostService {
         postRepository.save(post);
     }
     
-    // 모든 게시물 조회
-    public List<PostListVo> getAllPosts() {
-        return postRepository.findPostList();
-    }
+
 
     public void updatePost(Long userId, Long postId, CreatePostRequestDto requestDto) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
