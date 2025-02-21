@@ -54,8 +54,7 @@ public class PostService {
         post.updatePost(requestDto);
     }
 
-    public Post findById(Long id) {
-      // TODO Auto-generated method stub
-      return null;	
+    public PostVo findById(Long postId) {
+        return postRepository.findPostVoById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
     }
 }

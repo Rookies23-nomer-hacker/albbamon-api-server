@@ -2,6 +2,8 @@ package com.api.domain.post.controller;
 
 import static com.api.domain.user.controller.UserController.SESSION_NAME;
 
+import com.api.domain.post.vo.PostListVo;
+import com.api.domain.post.vo.PostVo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @Tag(name = "Post")
@@ -33,26 +37,14 @@ public class PostController {
 
     private final PostService postService;
 
-    /**
-     * 게시글 목록 보기
-     */
     @Operation(summary = "게시글 목록 보기", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
-    @GetMapping("/")
-    public ResponseEntity<SuccessResponse<?>> getPostList() {
-        GetPostResponseDto responseDto = postService.getPostList();
-        return SuccessResponse.ok(responseDto);
-    }
-
     @GetMapping("/list")
     public List<PostListVo> getAllPosts() {
         return postService.getAllPosts();
     }
 
-    /**
-     * 게시글 작성
-     */
     @Operation(summary = "게시글 작성", responses = {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
     })
@@ -63,25 +55,15 @@ public class PostController {
         return SuccessResponse.ok(null);
     }
 
-    /**
-     * 게시글 조회 (id로 조회)
-     */
-    @Operation(summary = "게시글 조회", responses = {
-            @ApiResponse(responseCode = "200", useReturnTypeSchema = true),
-            @ApiResponse(responseCode = "404", description = "Post Not Found")
+    @Operation(summary = "게시글 1건 조회", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
-    @GetMapping("/{postid}")
-    public ResponseEntity<Post> getPostById(@PathVariable("postid") Long id) {
-        Post post = postService.findById(id);
-        if (post == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        return ResponseEntity.ok(post);
+    @GetMapping("/{postId}")
+    public ResponseEntity<SuccessResponse<?>> getPostById(@PathVariable("postId") Long postId) {
+        PostVo postVo = postService.findById(postId);
+        return SuccessResponse.ok(postVo);
     }
 
-    /**
-     * 게시글 수정
-     */
     @Operation(summary = "게시글 수정", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
