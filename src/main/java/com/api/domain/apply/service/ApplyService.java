@@ -3,6 +3,8 @@ package com.api.domain.apply.service;
 import com.api.domain.apply.dto.response.GetApplyListResponseDto;
 import com.api.domain.apply.repository.ApplyRepository;
 import com.api.domain.apply.vo.ApplyVo;
+import com.api.domain.apply.vo.RecruitmentApplyVo;
+import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListResponseDto;
 import com.api.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,5 +22,10 @@ public class ApplyService {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         List<ApplyVo> applyVoList = applyRepository.findApplyVoByUserId(userId);
         return GetApplyListResponseDto.of(applyVoList);
+    }
+
+    public GetRecruitmentApplyListResponseDto getRecruitmentApplyList(Long recruitmentId) {
+        List<RecruitmentApplyVo> recruitmentApplyVoList = applyRepository.findRecruitmentApplyVoByRecruitmentId(recruitmentId);
+        return GetRecruitmentApplyListResponseDto.of(recruitmentApplyVoList);
     }
 }
