@@ -30,6 +30,15 @@ public class RecruitmentController {
         return SuccessResponse.ok(responseDto);
     }
 
+    @Operation(summary = "내가 작성한 채용 공고 목록 보기", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/list/my")
+    public ResponseEntity<SuccessResponse<?>> getMyRecruitmentList(@SessionAttribute(name=SESSION_NAME) Long userId) {
+        GetRecruitmentResponseDto responseDto = recruitmentService.getMyRecruitmentList(userId);
+        return SuccessResponse.ok(responseDto);
+    }
+
     @Operation(summary = "채용 공고 작성", responses = {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
     })

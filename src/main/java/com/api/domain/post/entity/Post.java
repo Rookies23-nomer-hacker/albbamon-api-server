@@ -63,4 +63,5 @@ public class Post extends BaseTimeEntity {
         this.contents = requestDto.contents();
         this.file = requestDto.file();
     }
+
 }

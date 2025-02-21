@@ -9,4 +9,3 @@ import com.api.domain.resume.entity.Resume;
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
 
 }
-

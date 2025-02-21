@@ -3,6 +3,7 @@ package com.api.domain.user.controller;
 import com.api.domain.user.dto.request.CreateUserRequestDto;
 import com.api.domain.user.dto.request.SignInRequestDto;
 import com.api.domain.user.dto.response.GetUserInfoResponseDto;
+import com.api.domain.user.dto.response.UserFindResponseDto;
 import com.api.domain.user.service.UserService;
 import com.api.global.common.entity.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +17,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -54,6 +57,16 @@ public class UserController {
         HttpSession session = httpServletRequest.getSession();
         session.invalidate();
         return SuccessResponse.ok(null);
+    }
+
+    @Operation(summary = "아이디 찾기", responses = {
+    		@ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/find-id")
+    public ResponseEntity<List<UserFindResponseDto>> findUserId(@RequestParam("name") String name,
+                                                                @RequestParam("phone") String phone) {
+        List<UserFindResponseDto> responseDto = userService.findUserByNameAndPhone(name, phone);
+        return ResponseEntity.ok(responseDto);
     }
 
     @Operation(summary = "회원 탈퇴", responses = {

@@ -45,6 +45,11 @@ public class PostController {
         return SuccessResponse.ok(responseDto);
     }
 
+    @GetMapping("/list")
+    public List<PostListVo> getAllPosts() {
+        return postService.getAllPosts();
+    }
+
     /**
      * 게시글 작성
      */

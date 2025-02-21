@@ -1,11 +1,14 @@
 package com.api.domain.resume.entity;
 
 import com.api.domain.career.entity.Career;
+import com.api.domain.resume.request.ResumeRequestDto;
+import com.api.domain.user.dto.request.CreateUserRequestDto;
 import com.api.domain.user.entity.User;
 import com.api.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,18 +23,45 @@ public class Resume extends BaseTimeEntity {
     @Column(name = "resume_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String school;
-
+    private String status;
+    private String personal;
+    private String work_place_region;
+    private String work_place_city;
+    private String industry_occupation;
+    private String employmentType;
+    private String working_period;
+    private String working_day;
     private String introduction;
-
-    private String portfolio_file;
-
+    private String portfoliourl;
+    private String portfolioname;
+    
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
-
+//
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Career> careerList = new ArrayList<>();
+    
+    
+    public static Resume createResume(ResumeRequestDto resumerequestDto) {
+    	System.out.println("createResume : "+resumerequestDto);
+        return Resume.builder()
+                .school(resumerequestDto.school())
+                .status(resumerequestDto.status())
+                .personal(resumerequestDto.personal())
+                .work_place_region(resumerequestDto.work_place_region())
+                .work_place_city(resumerequestDto.work_place_city())
+                .industry_occupation(resumerequestDto.industry_occupation())
+                .employmentType(resumerequestDto.employmentType())
+                .working_period(resumerequestDto.working_period())
+                .working_day(resumerequestDto.working_day())
+                .introduction(resumerequestDto.introduction())
+                .portfoliourl(resumerequestDto.portfoliourl())
+                .portfolioname(resumerequestDto.portfolioName())
+                .build();
+    }
+    
+    
 }
