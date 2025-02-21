@@ -60,4 +60,14 @@ public class RecruitmentController {
         return SuccessResponse.ok(null);
     }
 
+    @Operation(summary = "채용 공고 지원하기", responses = {
+            @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
+    })
+    @PostMapping("/{recruitmentId}/apply")
+    public ResponseEntity<SuccessResponse<?>> applyRecruitment(@SessionAttribute(name=SESSION_NAME) Long userId,
+                                                               @PathVariable final Long recruitmentId) {
+        recruitmentService.applyRecruitment(userId, recruitmentId);
+        return SuccessResponse.ok(null);
+    }
+
 }
