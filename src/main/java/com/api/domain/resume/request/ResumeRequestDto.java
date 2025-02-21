@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.validation.constraints.NotNull;
 public record ResumeRequestDto(
+		Long user_id,
         @NotNull String school,
         @NotNull String status,
         @NotNull String personal,

@@ -47,9 +47,10 @@ public class Resume extends BaseTimeEntity {
     private List<Career> careerList = new ArrayList<>();
     
     
-    public static Resume createResume(ResumeRequestDto resumerequestDto) {
+    public static Resume createResume(User user2, ResumeRequestDto resumerequestDto) {
     	System.out.println("createResume : "+resumerequestDto);
         return Resume.builder()
+        		.user(user2)
                 .school(resumerequestDto.school())
                 .status(resumerequestDto.status())
                 .personal(resumerequestDto.personal())
@@ -67,5 +68,25 @@ public class Resume extends BaseTimeEntity {
                 .build();
     }
     
-    
+    public static Resume duplicated(User user2, ResumeRequestDto resumerequestDto) {
+    	System.out.println("createResume : "+resumerequestDto);
+        return Resume.builder()
+        		.user(user2)
+                .school(resumerequestDto.school())
+                .status(resumerequestDto.status())
+                .personal(resumerequestDto.personal())
+                .work_place_region(resumerequestDto.work_place_region())
+                .work_place_city(resumerequestDto.work_place_city())
+                .industry_occupation(resumerequestDto.industry_occupation())
+                .employmentType(resumerequestDto.employmentType())
+                .working_period(resumerequestDto.working_period())
+                .working_day(resumerequestDto.working_day())
+                .introduction(resumerequestDto.introduction())
+                .portfoliourl(resumerequestDto.portfoliourl())
+                .portfolioname(resumerequestDto.portfolioName())
+                .createDate(resumerequestDto.create_date())
+                .lastModifiedDate(resumerequestDto.last_modified_date())
+                .build();
+    }
+ 
 }

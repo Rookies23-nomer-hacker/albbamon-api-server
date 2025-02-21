@@ -40,8 +40,9 @@ public class ResumeController {
 	public ResponseEntity<Map<String, Object>> selectProfile(@RequestBody final Resume_profileRequestDto resume_profilerequestDto){
 		Map<String,Object> response = new HashMap<>();
 		response.put("name", resume_profilerequestDto.name());
-		String email = resume_profilerequestDto.email();
-		response = resumeService.getEmailById(email);
+		Long userId = resume_profilerequestDto.user_id();
+		System.out.println("========="+userId);
+		response = resumeService.getUserById(userId);
 		return ResponseEntity.ok(response);
 	}	
     @PostMapping("/api/resume/write")
@@ -52,6 +53,7 @@ public class ResumeController {
     	String portfolioData=resumerequestDto.portfolioData();
     	String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
     	String file_url= serverUrl+"/uploads/";
+    	System.out.println("sssssssssssssssssssssss"+resumerequestDto.user_id());
         try {
         	
         	
@@ -61,6 +63,7 @@ public class ResumeController {
                 
                 
                 ResumeRequestDto updatedDto = new ResumeRequestDto(
+                		resumerequestDto.user_id(),
                 		resumerequestDto.school(),
                 		resumerequestDto.status(),
                 		resumerequestDto.personal(),
@@ -79,11 +82,20 @@ public class ResumeController {
                 );
                 
           
-                
+               String duplicated = resumeService.duplicated(updatedDto);
+               
+               if(duplicated=="중복아님") {
                 resumeService.createResume(updatedDto);
+               }else {
+            	   return ResponseEntity.ok("이미 이력서가 있습니다.");
+               }
             } else {
-            	resumeService.createResume(resumerequestDto);
-            	return ResponseEntity.ok("파일 없음!");
+            	String duplicated = resumeService.duplicated(resumerequestDto);
+            	if(duplicated=="중복아님") {
+            		resumeService.createResume(resumerequestDto);
+            	}else {
+            		return ResponseEntity.ok("이미 이력서가 있습니다.");
+            	}
             }
 
             return ResponseEntity.ok("파일 업로드 완료!");
