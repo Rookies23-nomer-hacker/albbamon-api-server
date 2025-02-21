@@ -13,7 +13,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
         Optional<Post> findPostById(Long id);
 
-        @Query(value = "SELECT new com.api.domain.post.vo.PostVo(p.id, p.title, p.contents, p.file, p.createDate, u.name) " +
+        @Query(value = "SELECT new com.api.domain.post.vo.PostVo(p.id, u.id, p.title, p.contents, p.file, p.createDate, u.name) " +
             "FROM Post p " +
             "LEFT JOIN User u ON p.user = u " +
             "WHERE p.id = :postId")

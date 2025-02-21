@@ -7,6 +7,7 @@ import lombok.Builder;
 @Builder
 public record PostVo(
         Long postId,
+        Long userId,
         String title,
         String contents,
         String file,
