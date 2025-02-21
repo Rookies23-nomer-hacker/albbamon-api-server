@@ -3,6 +3,7 @@ package com.api.domain.resume.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.api.domain.resume.repository.ResumeRepository;
 import com.api.domain.resume.request.ResumeRequestDto;
 import com.api.domain.resume.request.Resume_profileRequestDto;
 import com.api.domain.resume.service.ResumeService;
@@ -24,7 +25,17 @@ import java.util.Map;
 public class ResumeController {
 	
 	private final ResumeService resumeService;
-	//
+	private final ResumeService resumeRepository;
+	
+	
+	@PostMapping("/api/resume")
+	public ResponseEntity<Map<String, Object>> selectResume(@RequestBody final Resume_profileRequestDto resume_profilerequestDto){
+		System.out.println("API수신");
+		Map<String,Object> response = new HashMap<>();
+		Long user_id = resume_profilerequestDto.user_id();
+		response = resumeRepository.getresumeUser_id(user_id);
+		return ResponseEntity.ok(response);
+	}
 	@PostMapping("/api/resume/profile")
 	public ResponseEntity<Map<String, Object>> selectProfile(@RequestBody final Resume_profileRequestDto resume_profilerequestDto){
 		Map<String,Object> response = new HashMap<>();
