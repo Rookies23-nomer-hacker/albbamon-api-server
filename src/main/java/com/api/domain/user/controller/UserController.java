@@ -45,9 +45,7 @@ public class UserController {
     @PostMapping("/sign-in")
     public ResponseEntity<String> signIn(@RequestBody @Valid final SignInRequestDto requestDto) {
 
-        Map<String,Object> response = new HashMap<>();
 		Long userId = userService.signIn(requestDto);
-		//response.put("userId", userId);
 		
         return ResponseEntity.ok(String.valueOf(userId));
     }
@@ -91,5 +89,5 @@ public class UserController {
     public ResponseEntity<SuccessResponse<?>> getUserInfo(@SessionAttribute(name=SESSION_NAME) Long userId) {
         GetUserInfoResponseDto responseDto = userService.getUserInfo(userId);
         return SuccessResponse.ok(responseDto);
-    }
+    }//
 }
