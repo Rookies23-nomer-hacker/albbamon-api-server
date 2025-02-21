@@ -123,5 +123,5 @@ public class UserController {
     public ResponseEntity<SuccessResponse<?>> getUserInfo(@SessionAttribute(name=SESSION_NAME) Long userId) {
         GetUserInfoResponseDto responseDto = userService.getUserInfo(userId);
         return SuccessResponse.ok(responseDto);
-    }//
+    }
 }

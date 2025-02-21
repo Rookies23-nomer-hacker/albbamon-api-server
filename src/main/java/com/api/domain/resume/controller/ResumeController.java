@@ -28,7 +28,7 @@ public class ResumeController {
 	private final ResumeService resumeRepository;
 	
 	
-	@PostMapping("/api/resume")//
+	@PostMapping("/api/resume")
 	public ResponseEntity<Map<String, Object>> selectResume(@RequestBody final Resume_profileRequestDto resume_profilerequestDto){
 		System.out.println("API수신");
 		Map<String,Object> response = new HashMap<>();
