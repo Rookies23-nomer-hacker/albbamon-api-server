@@ -8,8 +8,11 @@ import org.springframework.stereotype.Repository;
 import com.api.domain.resume.entity.Resume;
 import com.api.domain.user.entity.User;
 
+import java.util.Optional;
+
 @Repository
 public interface ResumeRepository extends JpaRepository<Resume, Long> {
-	Resume findByuser_id(Long user_id);
-	Optional<Resume> findUserByUser_id(Long user_id);
+    Optional<Resume> findResumeByUserId(Long userId);
+	  Resume findByuser_id(Long user_id);
+	  Optional<Resume> findUserByUser_id(Long user_id);
 }
