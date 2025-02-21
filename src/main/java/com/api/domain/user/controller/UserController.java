@@ -18,7 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -41,12 +43,13 @@ public class UserController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @PostMapping("/sign-in")
-    public ResponseEntity<SuccessResponse<?>> signIn(@RequestBody @Valid final SignInRequestDto requestDto,
-                                                     HttpServletRequest httpServletRequest) {
-        Long userId = userService.signIn(requestDto);
-        HttpSession session = httpServletRequest.getSession();
-        session.setAttribute(SESSION_NAME, userId);
-        return SuccessResponse.ok(null);
+    public ResponseEntity<String> signIn(@RequestBody @Valid final SignInRequestDto requestDto) {
+
+        Map<String,Object> response = new HashMap<>();
+		Long userId = userService.signIn(requestDto);
+		//response.put("userId", userId);
+		
+        return ResponseEntity.ok(String.valueOf(userId));
     }
 
     @Operation(summary = "로그아웃", responses = {
