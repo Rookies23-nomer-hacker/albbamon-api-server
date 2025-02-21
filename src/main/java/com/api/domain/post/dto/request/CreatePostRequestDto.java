@@ -10,7 +10,7 @@ public record CreatePostRequestDto(
         @NotNull String title,
         @NotNull String contents,
         @NotNull String file,
-        @NotNull LocalDateTime bday
+        @NotNull LocalDateTime createDate
         
 ) {
 }

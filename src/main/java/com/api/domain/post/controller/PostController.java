@@ -67,7 +67,7 @@ public class PostController {
     @Operation(summary = "게시글 수정", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
-    @PutMapping("/{postId}")
+    @PutMapping("/update/{postId}")
     public ResponseEntity<SuccessResponse<?>> updatePost(@SessionAttribute(name = SESSION_NAME) Long userId,
                                                          @PathVariable final Long postId,
                                                          @RequestBody @Valid final CreatePostRequestDto requestDto) {
