@@ -33,6 +33,12 @@ public class RecruitmentService {
         return recruitmentMapper.toGetRecruitmentResponseDto(recruitmentList);
     }
 
+    public GetRecruitmentResponseDto getMyRecruitmentList(Long userId) {
+        if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
+        List<RecruitmentVo> recruitmentList = recruitmentRepository.findAllRecruitmentVosByUserId(userId);
+        return recruitmentMapper.toGetRecruitmentResponseDto(recruitmentList);
+    }
+
     public void createRecruitment(Long userId, CreateRecruitmentRequestDto requestDto) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
