@@ -1,11 +1,16 @@
 package com.api.domain.user.controller;
 
+import com.api.domain.user.dto.request.ChangePwRequestDto;
 import com.api.domain.user.dto.request.CreateUserRequestDto;
 import com.api.domain.user.dto.request.SignInRequestDto;
 import com.api.domain.user.dto.response.GetUserInfoResponseDto;
+import com.api.domain.user.dto.response.UserChangePwResponseDto;
 import com.api.domain.user.dto.response.UserFindResponseDto;
 import com.api.domain.user.service.UserService;
 import com.api.global.common.entity.SuccessResponse;
+import com.api.global.error.exception.EntityNotFoundException;
+import com.api.global.error.exception.InvalidValueException;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,6 +20,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,10 +73,37 @@ public class UserController {
     @GetMapping("/find-id")
     public ResponseEntity<List<UserFindResponseDto>> findUserId(@RequestParam("name") String name,
                                                                 @RequestParam("phone") String phone) {
+    	
         List<UserFindResponseDto> responseDto = userService.findUserByNameAndPhone(name, phone);
         return ResponseEntity.ok(responseDto);
     }
+    
+    @Operation(summary = "비밀번호 변경", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @PostMapping("/change-pw")
+    public ResponseEntity<UserChangePwResponseDto> changePassword(@RequestBody ChangePwRequestDto requestDto) {
+        try {
+            System.out.println("📌 API 서버에서 받은 요청: " + requestDto);
 
+            userService.changePassword(
+                    requestDto.getUserId(),
+                    requestDto.getPasswd(),
+                    requestDto.getNewpasswd()
+            );
+            return ResponseEntity.ok(new UserChangePwResponseDto("비밀번호 변경 성공"));
+
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new UserChangePwResponseDto("비밀번호 변경 실패: 사용자를 찾을 수 없습니다."));
+        } catch (InvalidValueException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new UserChangePwResponseDto("비밀번호 변경 실패: 현재 비밀번호가 일치하지 않습니다."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new UserChangePwResponseDto("서버 오류: " + e.getMessage()));
+        }
+    }
     @Operation(summary = "회원 탈퇴", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })

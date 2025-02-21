@@ -64,4 +64,9 @@ public class User extends BaseTimeEntity {
                 .company(requestDto.company())
                 .build();
     }
+
+	public void updatePassword(String newEncryptedPassword) {
+		this.password = newEncryptedPassword;
+		
+	}
 }

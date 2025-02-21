@@ -1,6 +1,8 @@
 package com.api.domain.recruitment.controller;
 
+import com.api.domain.apply.service.ApplyService;
 import com.api.domain.recruitment.dto.request.CreateRecruitmentRequestDto;
+import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListResponseDto;
 import com.api.domain.recruitment.dto.response.GetRecruitmentResponseDto;
 import com.api.domain.recruitment.service.RecruitmentService;
 import com.api.domain.recruitment.vo.RecruitmentDetailVo;
@@ -22,6 +24,7 @@ import static com.api.domain.user.controller.UserController.SESSION_NAME;
 @RequestMapping("/api/recruitment")
 public class RecruitmentController {
     private final RecruitmentService recruitmentService;
+    private final ApplyService applyService;
 
     @Operation(summary = "채용 공고 목록 보기", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
@@ -71,4 +74,22 @@ public class RecruitmentController {
         return SuccessResponse.ok(null);
     }
 
+    @Operation(summary = "채용 공고 지원하기", responses = {
+            @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
+    })
+    @PostMapping("/{recruitmentId}/apply")
+    public ResponseEntity<SuccessResponse<?>> applyRecruitment(@SessionAttribute(name=SESSION_NAME) Long userId,
+                                                               @PathVariable final Long recruitmentId) {
+        recruitmentService.applyRecruitment(userId, recruitmentId);
+        return SuccessResponse.ok(null);
+    }
+
+    @Operation(summary = "채용 공고 1건의 지원서 목록 조회", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/{recruitmentId}/apply")
+    public ResponseEntity<SuccessResponse<?>> getRecruitmentApplyList(@PathVariable final Long recruitmentId) {
+        GetRecruitmentApplyListResponseDto responseDto = applyService.getRecruitmentApplyList(recruitmentId);
+        return SuccessResponse.ok(responseDto);
+    }
 }

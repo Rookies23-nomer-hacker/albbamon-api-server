@@ -100,4 +100,22 @@ public class UserService {
         // 📨 찾은 사용자 정보를 Response DTO로 변환하여 반환
         return responseDtos;
     }
+    @Transactional
+    public boolean changePassword(Long userId, String currentPassword, String newPassword) {
+        // ✅ 1. userId로 사용자 조회 (Long 타입 사용)
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        // ✅ 2. 현재 비밀번호 검증 (EncoderUtil 사용)
+        if (!user.getPassword().equals(encoderUtil.encrypt(currentPassword))) {
+            throw new InvalidValueException(PASSWORD_INCORRECT); // 현재 비밀번호 불일치 예외 발생
+        }
+
+        // ✅ 3. 새 비밀번호 설정 및 저장 (EncoderUtil로 암호화)
+        user.updatePassword(encoderUtil.encrypt(newPassword));
+        userRepository.save(user);
+
+        return true; // 비밀번호 변경 성공
+    }
+    
 }
