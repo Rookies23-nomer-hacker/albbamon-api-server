@@ -8,7 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface Resume_userRepository extends JpaRepository<User, Long> {
-	Optional<User> findById(Long id);
+	Optional<User> findUserById(Long userId);
+	
 	
 }
 

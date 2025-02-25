@@ -79,21 +79,34 @@ public class UserService {
         return userMapper.toGetUserInfoResponseDto(userVo);
     }
     
-    //아이디 찾기
+  //아이디 찾기
     public List<UserFindResponseDto> findUserByNameAndPhone(String name, String phone) {
-    	System.out.println("📌 API에서 검색할 name: " + name + ", phone: " + phone);  // 🔍 확인
-
+    	//System.out.println("📌 API에서 검색할 name: " + name + ", phone: " + phone);  // 🔍 확인
     	List<User> users = userRepository.findByNameAndPhone(name, phone);
 		if (users.isEmpty()) {
-	        System.out.println("❌ DB에 해당 사용자가 존재하지 않음: " + name + ", " + phone);
+	        //System.out.println("❌ DB에 해당 사용자가 존재하지 않음: " + name + ", " + phone);
 	        throw new EntityNotFoundException(USER_NOT_FOUND);
 	    }
-        System.out.println("📌 DB에서 찾은 사용자: " + users);  // 🔍 확인
-        // 🔍 데이터베이스에서 이름(name)과 전화번호(phone)로 사용자 찾기
- 
+       // System.out.println("📌 DB에서 찾은 사용자: " + users);  // 🔍 확인
         List<UserFindResponseDto> responseDtos = users.stream()
                 .map(user -> UserFindResponseDto.builder()
                         .email(user.getEmail())  // 이메일 설정
+                        .type("per")
+                        .success(true)           // 성공 여부
+                        .build())
+                .toList(); 
+        // 📨 찾은 사용자 정보를 Response DTO로 변환하여 반환
+        return responseDtos;
+    }
+    public List<UserFindResponseDto> findUserByNameAndCeoNum(String name, String ceoNum) {
+        List<User> users = userRepository.findByNameAndCeoNum(name, ceoNum);
+        if (users.isEmpty()) {
+            throw new EntityNotFoundException(USER_NOT_FOUND);
+        }
+        List<UserFindResponseDto> responseDtos = users.stream()
+                .map(user -> UserFindResponseDto.builder()
+                        .email(user.getEmail())  // 이메일 설정
+                        .type("cor")
                         .success(true)           // 성공 여부
                         .build())
                 .toList(); 
