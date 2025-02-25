@@ -46,7 +46,7 @@ public class RecruitmentController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/{recruitmentId}")
-    public ResponseEntity<SuccessResponse<?>> getRecruitment(@PathVariable final Long recruitmentId) {
+    public ResponseEntity<SuccessResponse<?>> getRecruitment(@PathVariable("recruitmentId") final Long recruitmentId) {
         RecruitmentDetailVo responseDto = recruitmentService.getRecruitment(recruitmentId);
         return SuccessResponse.ok(responseDto);
     }
@@ -84,7 +84,7 @@ public class RecruitmentController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/{recruitmentId}/apply")
-    public ResponseEntity<SuccessResponse<?>> getRecruitmentApplyList(@PathVariable final Long recruitmentId) {
+    public ResponseEntity<SuccessResponse<?>> getRecruitmentApplyList(@PathVariable("recruitmentId") final Long recruitmentId) {
         GetRecruitmentApplyListResponseDto responseDto = applyService.getRecruitmentApplyList(recruitmentId);
         return SuccessResponse.ok(responseDto);
     }

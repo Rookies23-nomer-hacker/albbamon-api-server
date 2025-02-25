@@ -5,6 +5,7 @@ import com.api.domain.apply.vo.ApplyVo;
 import com.api.domain.apply.vo.RecruitmentApplyVo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -26,5 +27,5 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
             "LEFT JOIN Recruitment rec ON a.recruitment = rec " +
             "WHERE rec.id = :recruitmentId " +
             "ORDER BY a.createDate desc")
-    List<RecruitmentApplyVo> findRecruitmentApplyVoByRecruitmentId(Long recruitmentId);
+    List<RecruitmentApplyVo> findRecruitmentApplyVoByRecruitmentId(@Param("recruitmentId") Long recruitmentId);
 }
