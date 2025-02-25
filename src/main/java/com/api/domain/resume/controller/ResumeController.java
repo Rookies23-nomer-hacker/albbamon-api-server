@@ -9,11 +9,15 @@ import com.api.domain.resume.request.Resume_profileRequestDto;
 import com.api.domain.resume.service.ResumeService;
 import com.api.domain.user.dto.request.CreateUserRequestDto;
 
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Console;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
@@ -33,7 +37,7 @@ public class ResumeController {
 		System.out.println("API수신");
 		Map<String,Object> response = new HashMap<>();
 		Long user_id = resume_profilerequestDto.user_id();
-		response = resumeRepository.getresumeUser_id(user_id);
+		response = resumeRepository.getResumeUser_id(user_id);
 		return ResponseEntity.ok(response);
 	}
 	@PostMapping("/api/resume/profile")
@@ -51,6 +55,54 @@ public class ResumeController {
 		return ResponseEntity.ok(response);
 	}	
 	
+	@GetMapping("/api/resume/view")
+	public ResponseEntity<Map<String, Object>> viewResume(@RequestParam("resume_id") Long resumeId){
+		Map<String,Object> response = new HashMap<>();
+		response = resumeRepository.getResume_id(resumeId);
+		Long userId = (Long) response.get("user_id");
+		return ResponseEntity.ok(response);
+	}
+	
+	
+	@GetMapping("/api/resume/download")
+    public void download(@RequestParam("fileName") String filename, HttpServletRequest request, HttpServletResponse response) {
+        // 실제 파일 경로 지정
+        String filePath = request.getServletContext().getRealPath("/uploads/resume/") + filename;
+        File downloadFile = new File(filePath);
+
+        // 파일 존재 여부 확인
+        if (!downloadFile.exists()) {
+            System.out.println("파일이 존재하지 않습니다: " + filePath);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        // 파일 스트림을 열어서 응답으로 전송
+        try (FileInputStream fis = new FileInputStream(downloadFile);
+             ServletOutputStream os = response.getOutputStream()) {
+
+            // 응답 헤더 설정
+            response.setContentType("application/octet-stream");
+            response.setContentLength((int) downloadFile.length());
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFile.getName() + "\"");
+
+            // 파일 데이터를 클라이언트로 전송
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            os.flush(); // 버퍼 비우기
+
+            System.out.println("파일 다운로드 성공: " + filename);
+        } catch (IOException e) {
+            System.err.println("파일 다운로드 중 오류 발생: " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+  
+
+	
     @PostMapping("/api/resume/write")
     public ResponseEntity<String> createResume(@RequestBody @Valid final ResumeRequestDto resumerequestDto,
     		HttpServletRequest request) {
@@ -64,7 +116,7 @@ public class ResumeController {
         	
             // 파일 저장 로직 실행
             if (portfolioData != null && portfolioName != null) {
-                saveBase64ToFile(portfolioData, portfolioName);
+                saveBase64ToFile(portfolioData, portfolioName,request);
                 
                 
                 ResumeRequestDto updatedDto = new ResumeRequestDto(
@@ -112,10 +164,10 @@ public class ResumeController {
         
     
     }
-    private void saveBase64ToFile(String base64Data, String fileName) throws IOException {
+    private void saveBase64ToFile(String base64Data, String fileName, HttpServletRequest request) throws IOException {
         // Base64 데이터 디코딩
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
-        String upload_dir = "src/main/resources/static/uploads/resume/";
+        String upload_dir = request.getServletContext().getRealPath("/uploads/resume/");
         // 파일 저장
         File file = new File(upload_dir + fileName);
         try (FileOutputStream fos = new FileOutputStream(file)) {

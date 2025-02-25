@@ -37,6 +37,9 @@ dependencies {
 	// swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.1.0'
+	
+	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+    compileOnly 'javax.servlet:javax.servlet-api'
 }
 
 tasks.named('test') {

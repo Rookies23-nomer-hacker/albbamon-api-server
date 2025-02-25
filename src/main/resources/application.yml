@@ -1,5 +1,5 @@
 server:
-  port: 60085
+  port: 8083
 
 spring:
   datasource:
@@ -17,7 +17,7 @@ spring:
 
   mvc:
     view:
-      prefix: /WEB-INF/views/
+      prefix: /uploads/resume/
       suffix: .jsp
 
   devtools:
@@ -27,7 +27,7 @@ spring:
   thymeleaf:
     cache: false
   view:
-    prefix: /WEB-INF/jsp/
+    prefix: /uploads/resume/
     suffix: .jsp
 
 #  http:
