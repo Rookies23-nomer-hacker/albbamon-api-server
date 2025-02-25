@@ -44,6 +44,13 @@ public class ResumeController {
 		response = resumeService.getUserById(userId);
 		return ResponseEntity.ok(response);
 	}	
+	
+	@GetMapping("/api/resume/delete")
+	public ResponseEntity<String> deleteResume(@RequestParam("resume_id") Long resumeId){
+		String response = resumeService.delete(resumeId);
+		return ResponseEntity.ok(response);
+	}	
+	
     @PostMapping("/api/resume/write")
     public ResponseEntity<String> createResume(@RequestBody @Valid final ResumeRequestDto resumerequestDto,
     		HttpServletRequest request) {

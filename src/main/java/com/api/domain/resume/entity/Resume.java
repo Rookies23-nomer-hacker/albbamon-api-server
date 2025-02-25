@@ -38,10 +38,10 @@ public class Resume extends BaseTimeEntity {
     private LocalDateTime createDate;
     private LocalDateTime lastModifiedDate;
     
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-    //
+
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Career> careerList = new ArrayList<>();

@@ -52,10 +52,16 @@ public class ResumeService {
         return json;
     }
     
+    public String delete(Long resumeId) {
+    	resumeRepository.deleteById(resumeId);
+    	return "삭제완료";
+    }
+    
     public Map<String, Object> getresumeUser_id(Long user_id) {
     	Resume resume = resumeRepository.findByuser_id(user_id);
         Map<String,Object> json = new HashMap<>();
         if(resume!=null) {
+        	json.put("resume_id", resume.getId());
         	json.put("personal", resume.getPersonal());
         	json.put("work_place_region", resume.getWork_place_region());
         	json.put("industry_occupation", resume.getIndustry_occupation());
