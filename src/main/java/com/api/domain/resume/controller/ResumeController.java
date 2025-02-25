@@ -41,7 +41,6 @@ public class ResumeController {
 		Map<String,Object> response = new HashMap<>();
 		response.put("name", resume_profilerequestDto.name());
 		Long userId = resume_profilerequestDto.user_id();
-		System.out.println("========="+userId);
 		response = resumeService.getUserById(userId);
 		return ResponseEntity.ok(response);
 	}	
@@ -52,8 +51,7 @@ public class ResumeController {
     	String portfolioName=resumerequestDto.portfolioName();
     	String portfolioData=resumerequestDto.portfolioData();
     	String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
-    	String file_url= serverUrl+"/uploads/";
-    	System.out.println("sssssssssssssssssssssss"+resumerequestDto.user_id());
+    	String file_url= serverUrl+"/uploads/resume/";
         try {
         	
         	
@@ -80,8 +78,7 @@ public class ResumeController {
                         resumerequestDto.create_date(),
                         resumerequestDto.last_modified_date()
                 );
-                
-          
+               
                String duplicated = resumeService.duplicated(updatedDto);
                
                if(duplicated=="중복아님") {
@@ -97,8 +94,8 @@ public class ResumeController {
             		return ResponseEntity.ok("이미 이력서가 있습니다.");
             	}
             }
-
-            return ResponseEntity.ok("파일 업로드 완료!");
+			
+            return ResponseEntity.ok("이력서 작성 완료!");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("Error while processing resume data."+e.getMessage());
@@ -111,7 +108,7 @@ public class ResumeController {
     private void saveBase64ToFile(String base64Data, String fileName) throws IOException {
         // Base64 데이터 디코딩
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
-        String upload_dir = "src/main/resources/static/uploads/";
+        String upload_dir = "src/main/resources/static/uploads/resume/";
         // 파일 저장
         File file = new File(upload_dir + fileName);
         try (FileOutputStream fos = new FileOutputStream(file)) {

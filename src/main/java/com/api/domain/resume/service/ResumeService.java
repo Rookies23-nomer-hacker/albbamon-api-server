@@ -1,6 +1,5 @@
 package com.api.domain.resume.service;
 
-import com.api.domain.recruitment.entity.Recruitment;
 import com.api.domain.resume.entity.Resume;
 import com.api.domain.resume.repository.ResumeRepository;
 import com.api.domain.resume.repository.Resume_userRepository;
@@ -17,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @RequiredArgsConstructor
@@ -36,13 +34,10 @@ public class ResumeService {
     }
     
     public String duplicated(ResumeRequestDto resumerequestDto) {
-    	User user = userRepository.findUserById(resumerequestDto.user_id()).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-    	Resume resume = Resume.duplicated(user, resumerequestDto);
-    	if(resume.getId()!=null) {
-    		System.out.println("중복아님");
+    	Resume resume = resumeRepository.findResumeByUserId(resumerequestDto.user_id()).orElse(null);
+    	if(resume==null) {
     		return "중복아님";
     	}else {
-    		System.out.println("중복");
     		return "중복";
     	}
     	

@@ -69,7 +69,7 @@ public class Resume extends BaseTimeEntity {
     }
     
     public static Resume duplicated(User user2, ResumeRequestDto resumerequestDto) {
-    	System.out.println("createResume : "+resumerequestDto);
+    	System.out.println("resumerequestDto : "+resumerequestDto);
         return Resume.builder()
         		.user(user2)
                 .school(resumerequestDto.school())
