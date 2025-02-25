@@ -3,6 +3,7 @@ package com.api.domain.user.controller;
 import com.api.domain.user.dto.request.ChangePwRequestDto;
 import com.api.domain.user.dto.request.CreateUserRequestDto;
 import com.api.domain.user.dto.request.SignInRequestDto;
+import com.api.domain.user.dto.request.UserFindRequestDto;
 import com.api.domain.user.dto.response.GetUserInfoResponseDto;
 import com.api.domain.user.dto.response.UserChangePwResponseDto;
 import com.api.domain.user.dto.response.UserFindResponseDto;
@@ -71,10 +72,19 @@ public class UserController {
     		@ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/find-id")
-    public ResponseEntity<List<UserFindResponseDto>> findUserId(@RequestParam("name") String name,
-                                                                @RequestParam("phone") String phone) {
-    	
-        List<UserFindResponseDto> responseDto = userService.findUserByNameAndPhone(name, phone);
+    public ResponseEntity<List<UserFindResponseDto>> findUserId(@ModelAttribute UserFindRequestDto requestDto) {
+    	List<UserFindResponseDto> responseDto;
+        if (requestDto.getPhone() != "") {
+            // ✅ 개인 회원 검색 (phone이 존재하는 경우)
+            responseDto = userService.findUserByNameAndPhone(requestDto.getName(), requestDto.getPhone());
+            
+        } else if (requestDto.getCeoNum() != "") {
+            // ✅ 기업 회원 검색 (ceoNum이 존재하는 경우)
+            responseDto = userService.findUserByNameAndCeoNum(requestDto.getName(), requestDto.getCeoNum());
+        } else {
+            return ResponseEntity.badRequest().body(null); // phone과 ceoNum 둘 다 없으면 잘못된 요청
+        }
+
         return ResponseEntity.ok(responseDto);
     }
     

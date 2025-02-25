@@ -10,6 +10,6 @@ import lombok.Setter;
 public class UserFindResponseDto {
     private String email;
     private String phone;
-    
+    private String type;
     private boolean success;
 }
