@@ -1,9 +1,6 @@
 package com.api.domain.user.controller;
 
-import com.api.domain.user.dto.request.ChangePwRequestDto;
-import com.api.domain.user.dto.request.CreateUserRequestDto;
-import com.api.domain.user.dto.request.SignInRequestDto;
-import com.api.domain.user.dto.request.UserFindRequestDto;
+import com.api.domain.user.dto.request.*;
 import com.api.domain.user.dto.response.GetUserInfoResponseDto;
 import com.api.domain.user.dto.response.UserChangePwResponseDto;
 import com.api.domain.user.dto.response.UserFindResponseDto;
@@ -26,9 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -118,11 +113,8 @@ public class UserController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/withdraw")
-    public ResponseEntity<SuccessResponse<?>> deleteUser(@SessionAttribute(name=SESSION_NAME) Long userId,
-                                                         HttpServletRequest httpServletRequest) {
-        userService.deleteUser(userId);
-        HttpSession session = httpServletRequest.getSession();
-        session.invalidate();
+    public ResponseEntity<SuccessResponse<?>> deleteUser(@RequestBody final UserRequestDto userRequestDto) {
+        userService.deleteUser(userRequestDto.userId());
         return SuccessResponse.ok(null);
     }
 
@@ -130,8 +122,8 @@ public class UserController {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetUserInfoResponseDto.class)))
     })
     @GetMapping
-    public ResponseEntity<SuccessResponse<?>> getUserInfo(@SessionAttribute(name=SESSION_NAME) Long userId) {
-        GetUserInfoResponseDto responseDto = userService.getUserInfo(userId);
+    public ResponseEntity<SuccessResponse<?>> getUserInfo(@RequestBody final UserRequestDto userRequestDto) {
+        GetUserInfoResponseDto responseDto = userService.getUserInfo(userRequestDto.userId());
         return SuccessResponse.ok(responseDto);
     }
 }
