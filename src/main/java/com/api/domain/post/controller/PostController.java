@@ -49,9 +49,8 @@ public class PostController {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
     })
     @PostMapping("/write")
-    public ResponseEntity<SuccessResponse<?>> createPost(@SessionAttribute(name = SESSION_NAME) Long userId,
-                                                         @RequestBody @Valid final CreatePostRequestDto requestDto) {
-        postService.createPost(userId, requestDto);
+    public ResponseEntity<SuccessResponse<?>> createPost(@RequestBody @Valid final CreatePostRequestDto requestDto) {
+        postService.createPost(requestDto.userid(), requestDto);
         return SuccessResponse.ok(null);
     }
 

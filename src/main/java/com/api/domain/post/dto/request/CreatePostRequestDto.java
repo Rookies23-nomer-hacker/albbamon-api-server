@@ -5,12 +5,10 @@ import java.time.LocalDateTime;
 import jakarta.validation.constraints.NotNull;
 
 public record CreatePostRequestDto(
-        @NotNull long postid,
-        @NotNull String userid,
-        @NotNull String title,
-        @NotNull String contents,
-        @NotNull String file,
-        @NotNull LocalDateTime createDate
+        Long userid,
+        String title,
+        String contents,
+        String file
         
 ) {
 }
