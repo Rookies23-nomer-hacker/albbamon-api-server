@@ -73,4 +73,9 @@ public class PostController {
         postService.updatePost(userId, postId, requestDto);
         return SuccessResponse.ok(null);
     }
+
+    @GetMapping("/search/{keyword}")
+    public List<PostListVo> getSearchlist(@PathVariable("keyword") String keyword) {
+        return postService.getSearchlist(keyword);
+    }
 }

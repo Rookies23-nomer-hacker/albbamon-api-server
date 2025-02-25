@@ -3,11 +3,12 @@ package com.api.domain.post.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
 import com.api.domain.post.entity.Post;
 import com.api.domain.post.vo.PostListVo;
 import com.api.domain.post.vo.PostVo;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
@@ -24,4 +25,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
        "FROM Post p LEFT JOIN p.user u ORDER BY p.createDate DESC")
         List<PostListVo> findPostList();
 
+        @Query(value = "SELECT new com.api.domain.post.vo.PostVo(p.id, u.id, p.title, p.contents, p.file, p.createDate, u.name) " +
+        "FROM Post p " +
+        "WHERE p.title LIKE CONCAT('%', ?1, '%') " +
+        "OR p.contents LIKE CONCAT('%', ?1, '%') " +
+        "LLEFT JOIN p.user u " +
+        "ORDER BY p.create_date DESC",
+        nativeQuery = true)
+        List<PostListVo> findSearchPostList(String keyword);
 }
