@@ -6,7 +6,7 @@ import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListResponseDt
 import com.api.domain.recruitment.dto.response.GetRecruitmentResponseDto;
 import com.api.domain.recruitment.service.RecruitmentService;
 import com.api.domain.recruitment.vo.RecruitmentDetailVo;
-import com.api.domain.recruitment.vo.RecruitmentVo;
+import com.api.domain.user.dto.request.UserRequestDto;
 import com.api.global.common.entity.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,8 +15,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import static com.api.domain.user.controller.UserController.SESSION_NAME;
 
 @RequiredArgsConstructor
 @RestController
@@ -39,8 +37,8 @@ public class RecruitmentController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/list/my")
-    public ResponseEntity<SuccessResponse<?>> getMyRecruitmentList(@SessionAttribute(name=SESSION_NAME) Long userId) {
-        GetRecruitmentResponseDto responseDto = recruitmentService.getMyRecruitmentList(userId);
+    public ResponseEntity<SuccessResponse<?>> getMyRecruitmentList(@RequestBody @Valid final UserRequestDto userRequestDto) {
+        GetRecruitmentResponseDto responseDto = recruitmentService.getMyRecruitmentList(userRequestDto.userId());
         return SuccessResponse.ok(responseDto);
     }
 
@@ -57,9 +55,8 @@ public class RecruitmentController {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
     })
     @PostMapping
-    public ResponseEntity<SuccessResponse<?>> createRecruitment(@SessionAttribute(name=SESSION_NAME) Long userId,
-                                                                @RequestBody @Valid final CreateRecruitmentRequestDto requestDto) {
-        recruitmentService.createRecruitment(userId, requestDto);
+    public ResponseEntity<SuccessResponse<?>> createRecruitment(@RequestBody @Valid final CreateRecruitmentRequestDto requestDto) {
+        recruitmentService.createRecruitment(requestDto.userId(), requestDto);
         return SuccessResponse.ok(null);
     }
 
@@ -67,10 +64,9 @@ public class RecruitmentController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @PostMapping("/{recruitmentId}")
-    public ResponseEntity<SuccessResponse<?>> updateRecruitment(@SessionAttribute(name=SESSION_NAME) Long userId,
-                                                                @PathVariable final Long recruitmentId,
+    public ResponseEntity<SuccessResponse<?>> updateRecruitment(@PathVariable final Long recruitmentId,
                                                                 @RequestBody @Valid final CreateRecruitmentRequestDto requestDto) {
-        recruitmentService.updateRecruitment(userId, recruitmentId, requestDto);
+        recruitmentService.updateRecruitment(requestDto.userId(), recruitmentId, requestDto);
         return SuccessResponse.ok(null);
     }
 
@@ -78,9 +74,9 @@ public class RecruitmentController {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
     })
     @PostMapping("/{recruitmentId}/apply")
-    public ResponseEntity<SuccessResponse<?>> applyRecruitment(@SessionAttribute(name=SESSION_NAME) Long userId,
-                                                               @PathVariable final Long recruitmentId) {
-        recruitmentService.applyRecruitment(userId, recruitmentId);
+    public ResponseEntity<SuccessResponse<?>> applyRecruitment(@PathVariable final Long recruitmentId,
+                                                               @RequestBody @Valid final UserRequestDto userRequestDto) {
+        recruitmentService.applyRecruitment(userRequestDto.userId(), recruitmentId);
         return SuccessResponse.ok(null);
     }
 
