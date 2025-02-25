@@ -2,7 +2,9 @@ package com.api.domain.recruitment.service;
 
 import com.api.domain.apply.entity.Apply;
 import com.api.domain.apply.repository.ApplyRepository;
+import com.api.domain.apply.type.ApplyStatus;
 import com.api.domain.recruitment.dto.request.CreateRecruitmentRequestDto;
+import com.api.domain.recruitment.dto.request.UpdateApplyStatusRequestDto;
 import com.api.domain.recruitment.dto.response.GetRecruitmentResponseDto;
 import com.api.domain.recruitment.entity.Recruitment;
 import com.api.domain.recruitment.mapper.RecruitmentMapper;
@@ -80,4 +82,16 @@ public class RecruitmentService {
         Apply apply = applyRepository.findApplyByRecruitmentIdAndResumeId(recruitmentId, resumeId);
         if(!Objects.isNull(apply)) throw new ConflictException(APPLY_ALREADY_EXISTS);
     }
+    
+    //updateApplyStatus
+    // 상태 업데이트 처리
+    public void updateApplyStatus(Long recruitmentId, Long applyId, ApplyStatus status) {
+        Apply apply = applyRepository.findById(applyId)
+                .orElseThrow(() -> new IllegalArgumentException("지원서를 찾을 수 없습니다."));
+
+        apply.setStatus(status);  // ApplyStatus로 상태를 설정
+
+        applyRepository.save(apply); // 상태 저장
+    }
+    
 }
