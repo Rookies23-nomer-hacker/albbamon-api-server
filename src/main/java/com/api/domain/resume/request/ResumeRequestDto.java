@@ -20,6 +20,9 @@ public record ResumeRequestDto(
         String portfolioData,
         String portfoliourl,
         String portfolioName,
+        String resume_imgurl,
+        String resume_img_name,
+        String resume_img_data,
         
         @NotNull LocalDateTime create_date,
         

@@ -55,10 +55,10 @@ public class UserService {
         }
     }
 
-    public Long signIn(SignInRequestDto requestDto) {
+    public User signIn(SignInRequestDto requestDto) {
         User user = userRepository.findUserByEmail(requestDto.email()).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         validatePassword(user.getPassword(), requestDto.password());
-        return user.getId();
+        return user;
     }
 
     public void deleteUser(Long userId) {

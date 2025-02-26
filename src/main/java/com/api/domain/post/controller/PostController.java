@@ -37,6 +37,15 @@ public class PostController {
     }
 
     // 📌 게시글 작성
+    @Operation(summary = "게시글 검색", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/search")
+    public List<PostListVo> getSearchPostList(@RequestParam("keyword") String keyword) {
+        System.out.println("keyword : "+keyword);
+        return postService.getSearchPostList(keyword);
+    }
+
     @Operation(summary = "게시글 작성", responses = {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
     })
@@ -50,7 +59,7 @@ public class PostController {
     @Operation(summary = "게시글 1건 조회", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
-    @GetMapping("/{postId}")
+    @GetMapping("/{postId:\\d}")
     public ResponseEntity<SuccessResponse<?>> getPostById(@PathVariable("postId") Long postId) {
         PostVo postVo = postService.findById(postId);
         return SuccessResponse.ok(postVo);
@@ -60,6 +69,7 @@ public class PostController {
     @Operation(summary = "게시글 수정", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
+
     @PostMapping("/update/{postId}")
     public ResponseEntity<SuccessResponse<?>> updatePost(
         @PathVariable final Long postId, 
@@ -91,9 +101,5 @@ public class PostController {
         System.out.println("✅ 게시글 삭제 완료 - Post ID: " + postId);
         return SuccessResponse.ok(null);
     } 
-    
-
-
-
 
 }
