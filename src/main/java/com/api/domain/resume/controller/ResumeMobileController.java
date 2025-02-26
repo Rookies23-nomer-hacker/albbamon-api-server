@@ -1,23 +1,18 @@
 package com.api.domain.resume.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import com.api.domain.resume.repository.ResumeRepository;
 import com.api.domain.resume.request.ResumeRequestDto;
 import com.api.domain.resume.request.Resume_profileRequestDto;
 import com.api.domain.resume.service.ResumeService;
-import com.api.domain.user.dto.request.CreateUserRequestDto;
-
-import jakarta.servlet.ServletOutputStream;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.Console;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
@@ -26,22 +21,30 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-public class ResumeController {
+@Tag(name = "ResumeMobile")
+@RequestMapping("/api/mobile/resume")
+public class ResumeMobileController {
 
-    private final ResumeService resumeService;
-    private final ResumeService resumeRepository;
+	private final ResumeService resumeService;
+	private final ResumeService resumeRepository;
 
-
-    @PostMapping("/api/resume")
-    public ResponseEntity<Map<String, Object>> selectResume(@RequestBody final Resume_profileRequestDto resume_profilerequestDto){
+    @Operation(summary = "[모바일] 이력서 목록 조회", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> selectResumeMobile(@RequestBody final Resume_profileRequestDto resume_profilerequestDto){
         System.out.println("API수신");
         Map<String,Object> response = new HashMap<>();
         Long user_id = resume_profilerequestDto.user_id();
         response = resumeRepository.getResumeUser_id(user_id);
         return ResponseEntity.ok(response);
     }
-    @PostMapping("/api/resume/profile")
-    public ResponseEntity<Map<String, Object>> selectProfile(@RequestBody final Resume_profileRequestDto resume_profilerequestDto){
+
+    @Operation(summary = "[모바일] 프로필 조회", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @PostMapping("/profile")
+    public ResponseEntity<Map<String, Object>> selectProfileMobile(@RequestBody final Resume_profileRequestDto resume_profilerequestDto){
         Map<String,Object> response = new HashMap<>();
         response.put("name", resume_profilerequestDto.name());
         Long userId = resume_profilerequestDto.user_id();
@@ -49,75 +52,40 @@ public class ResumeController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/api/resume/delete")
-    public ResponseEntity<String> deleteResume(@RequestParam("resume_id") Long resumeId){
+    @Operation(summary = "[모바일] 이력서 삭제", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/delete")
+    public ResponseEntity<String> deleteResumeMobile(@RequestParam("resume_id") Long resumeId){
         String response = resumeService.delete(resumeId);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/api/resume/view")
-    public ResponseEntity<Map<String, Object>> viewResume(@RequestParam("resume_id") Long resumeId){
+    @Operation(summary = "[모바일] 이력서 상세 보기", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/view")
+    public ResponseEntity<Map<String, Object>> viewResumeMobile(@RequestParam("resume_id") Long resumeId){
         Map<String,Object> response = new HashMap<>();
         response = resumeRepository.getResume_id(resumeId);
         Long userId = (Long) response.get("user_id");
         return ResponseEntity.ok(response);
     }
 
-
-    @GetMapping("/api/resume/download")
-    public void download(@RequestParam("fileName") String filename, HttpServletRequest request, HttpServletResponse response) {
-        // 실제 파일 경로 지정
-        String filePath = request.getServletContext().getRealPath("/uploads/resume/") + filename;
-        File downloadFile = new File(filePath);
-
-        // 파일 존재 여부 확인
-        if (!downloadFile.exists()) {
-            System.out.println("파일이 존재하지 않습니다: " + filePath);
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
-
-        // 파일 스트림을 열어서 응답으로 전송
-        try (FileInputStream fis = new FileInputStream(downloadFile);
-             ServletOutputStream os = response.getOutputStream()) {
-
-            // 응답 헤더 설정
-            response.setContentType("application/octet-stream");
-            response.setContentLength((int) downloadFile.length());
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFile.getName() + "\"");
-
-            // 파일 데이터를 클라이언트로 전송
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
-            }
-            os.flush(); // 버퍼 비우기
-
-            System.out.println("파일 다운로드 성공: " + filename);
-        } catch (IOException e) {
-            System.err.println("파일 다운로드 중 오류 발생: " + e.getMessage());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
-
-    @PostMapping("/api/resume/write")
-    public ResponseEntity<String> createResume(@RequestBody @Valid final ResumeRequestDto resumerequestDto,
+    @Operation(summary = "[모바일] 이력서 생성", responses = {
+        @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @PostMapping("/write")
+    public ResponseEntity<String> createResumeMobile(@RequestBody @Valid final ResumeRequestDto resumerequestDto,
                                                HttpServletRequest request) {
-
         String portfolioName=resumerequestDto.portfolioName();
         String portfolioData=resumerequestDto.portfolioData();
         String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
         String file_url= serverUrl+"/uploads/resume/";
         try {
-
-
             // 파일 저장 로직 실행
             if (portfolioData != null && portfolioName != null) {
                 saveBase64ToFile(portfolioData, portfolioName,request);
-
 
                 ResumeRequestDto updatedDto = new ResumeRequestDto(
                         resumerequestDto.user_id(),
@@ -159,11 +127,8 @@ public class ResumeController {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("Error while processing resume data."+e.getMessage());
         }
-
-
-
-
     }
+
     private void saveBase64ToFile(String base64Data, String fileName, HttpServletRequest request) throws IOException {
         // Base64 데이터 디코딩
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
