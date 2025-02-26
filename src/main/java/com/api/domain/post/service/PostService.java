@@ -52,9 +52,11 @@ public class PostService {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         Post post = postRepository.findPostById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
         post.updatePost(requestDto);
+        postRepository.save(post);
     }
 
     public PostVo findById(Long postId) {
         return postRepository.findPostVoById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
     }
+    
 }
