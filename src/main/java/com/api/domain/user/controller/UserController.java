@@ -4,6 +4,8 @@ import com.api.domain.user.dto.request.*;
 import com.api.domain.user.dto.response.GetUserInfoResponseDto;
 import com.api.domain.user.dto.response.UserChangePwResponseDto;
 import com.api.domain.user.dto.response.UserFindResponseDto;
+import com.api.domain.user.dto.response.UserResponseDto;
+import com.api.domain.user.entity.User;
 import com.api.domain.user.service.UserService;
 import com.api.global.common.entity.SuccessResponse;
 import com.api.global.error.exception.EntityNotFoundException;
@@ -46,11 +48,9 @@ public class UserController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @PostMapping("/sign-in")
-    public ResponseEntity<String> signIn(@RequestBody @Valid final SignInRequestDto requestDto) {
-
-		Long userId = userService.signIn(requestDto);
-		
-        return ResponseEntity.ok(String.valueOf(userId));
+    public ResponseEntity<UserResponseDto> signIn(@RequestBody @Valid final SignInRequestDto requestDto) {	
+		User user = userService.signIn(requestDto);
+        return ResponseEntity.ok(new UserResponseDto(user));
     }
 
     @Operation(summary = "로그아웃", responses = {
