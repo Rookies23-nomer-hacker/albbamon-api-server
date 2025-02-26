@@ -51,6 +51,7 @@ public class PostController {
     })
     @GetMapping("/search")
     public List<PostListVo> getSearchPostList(@RequestParam("keyword") String keyword) {
+        System.out.println("keyword : "+keyword);
         return postService.getSearchPostList(keyword);
     }
 
