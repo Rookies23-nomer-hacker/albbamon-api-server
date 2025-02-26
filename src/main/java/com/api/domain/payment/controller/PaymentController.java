@@ -10,51 +10,48 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.domain.payment.request.PaymentRequest;
 import com.api.domain.payment.service.PaymentService;
 import com.api.domain.post.service.PostService;
+import com.api.domain.user.entity.User;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:60083", allowCredentials = "true")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final HttpSession session;
 
-
-    @CrossOrigin(origins = "http://localhost:60083")
-    @PostMapping("/save")
-    public ResponseEntity<Map<String, String>> savepaymentRequest(@RequestBody PaymentRequest paymentRequest) {
-    	Map<String, String> response = new HashMap<>();
+    @PostMapping("/updateUserPayStatus")
+    public ResponseEntity<Map<String, String>> savePayment(@RequestBody PaymentRequest paymentRequest) {
         try {
-            String buyerName = paymentRequest.getBuyerName();
-            String buyerEmail = paymentRequest.getBuyerEmail();
-            String buyerTel = paymentRequest.getBuyerTel();
-            String buyerAddr = paymentRequest.getBuyerAddr();
-            String buyerPostcode = paymentRequest.getBuyerPostcode();
             Long userId = paymentRequest.getUserId();
 
-            // 결제 정보 저장
-            paymentService.savePayment(buyerName, buyerEmail, buyerTel, buyerAddr, buyerPostcode, userId);
-            
+            if (userId == null) {
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "로그인이 필요합니다.");
+                return ResponseEntity.status(401).body(response);  // JSON 형식으로 응답 반환
+            }
+
+            // 결제 처리 후 user의 item 상태를 업데이트
+            paymentService.updateUserPayStatus(userId);
+
+            Map<String, String> response = new HashMap<>();
             response.put("message", "결제 정보가 성공적으로 저장되었습니다.");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(response);  // JSON 형식으로 응답 반환
         } catch (Exception e) {
-            response.put("message", "결제 정보 저장에 실패했습니다.");
-            return ResponseEntity.status(500).body(response);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "결제 처리 중 오류가 발생했습니다.");
+            return ResponseEntity.status(500).body(response);  // JSON 형식으로 응답 반환
         }
     }
-    
-    // Recruitment 공고 게시판 userId와 join
-    @GetMapping("/findUserId")
-    public ResponseEntity<List<Long>> getfindByUserId() {
-        List<Long> recruitmentIds = paymentService.findByUserId();
-        return ResponseEntity.ok(recruitmentIds);
-    }
-    
+
 }
