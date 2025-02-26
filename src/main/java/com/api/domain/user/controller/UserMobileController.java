@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@Tag(name = "User")
+@Tag(name = "UserMobile")
 @RequestMapping("/api/mobile/user")
 public class UserMobileController {
     private final UserService userService;
