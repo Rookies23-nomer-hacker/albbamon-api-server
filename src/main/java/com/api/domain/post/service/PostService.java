@@ -5,7 +5,7 @@ import static com.api.domain.user.error.UserErrorCode.SIGN_IN_REQUIRED;
 import static com.api.domain.user.error.UserErrorCode.USER_NOT_FOUND;
 
 import java.util.List;
-
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +20,7 @@ import com.api.domain.user.entity.User;
 import com.api.domain.user.repository.UserRepository;
 import com.api.global.error.exception.EntityNotFoundException;
 import com.api.global.error.exception.UnauthorizedException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import lombok.RequiredArgsConstructor;
 
@@ -54,6 +55,24 @@ public class PostService {
         post.updatePost(requestDto);
         postRepository.save(post);
     }
+
+    public void deletePost(Long userId, Long postId) {
+    // ✅ 로그인 확인
+    if (userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
+
+    // ✅ 게시글 찾기 (없으면 예외 발생)
+    Post post = postRepository.findPostById(postId)
+            .orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
+
+
+    // ✅ 게시글 삭제
+    postRepository.deleteById(postId);
+    System.out.println("✅ 게시글 삭제 성공 - Post ID: " + postId);
+}
+
+
+
+
 
     public PostVo findById(Long postId) {
         return postRepository.findPostVoById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
