@@ -13,6 +13,7 @@ public class UserResponseDto {
     private String name;
     private String ceoNum;
     private String company;
+    private String item;
     
     public UserResponseDto(UserVo userVo) {
         this.userId = userVo.id();
@@ -20,5 +21,6 @@ public class UserResponseDto {
         this.name = userVo.name();
         this.ceoNum = userVo.ceoNum();
         this.company = userVo.company();
+        this.item = userVo.item();
     }
 }
