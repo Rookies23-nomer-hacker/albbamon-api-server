@@ -12,7 +12,6 @@ import static com.api.domain.post.error.PostErrorCode.POST_NOT_FOUND;
 import com.api.domain.post.mapper.PostMapper;
 import com.api.domain.post.repository.PostRepo;
 import com.api.domain.post.repository.PostRepository;
-import com.api.domain.post.vo.PostListProjection;
 import com.api.domain.post.vo.PostListVo;
 import com.api.domain.post.vo.PostVo;
 import com.api.domain.user.entity.User;
@@ -40,33 +39,17 @@ public class PostService {
     }
 
     public List<PostListVo> getSearchPostList(String keyword) {
-    List<Object[]> results = postRepo.findSearchPostList(keyword);
+	    List<Object[]> results = postRepo.findSearchPostList(keyword);
+	
+	    return results.stream().map(obj -> new PostListVo(
+	        ((Number) obj[0]).longValue(),  // post_id
+	        (String) obj[1],                   // title
+	        (String) obj[2],                   // contents
+	        ((Timestamp) obj[3]).toLocalDateTime(),  // create_date
+	        (String) obj[4]                    // user_name
+	    )).collect(Collectors.toList());
+    }
 
-    return results.stream().map(obj -> new PostListVo(
-        ((Number) obj[0]).longValue(),  // post_id
-        (String) obj[1],                   // title
-        (String) obj[2],                   // contents
-        ((Timestamp) obj[3]).toLocalDateTime(),  // create_date
-        (String) obj[4]                    // user_name
-    )).collect(Collectors.toList());
-}
-
-    // public List<PostListVo> getSearchPostList(String keyword) {
-    //     String searchKeyword  = "%"+keyword+"%";
-    //     System.out.println("=========================================================");
-    //     System.out.println(searchKeyword);
-    //     List<PostListProjection> projections = postRepo.findSearchPostList(searchKeyword);
-        
-    //     return projections.stream()
-    //         .map(projection -> new PostListVo(
-    //             projection.getPostId(),
-    //             projection.getTitle(),
-    //             projection.getContents(),
-    //             projection.getCreateDate(),
-    //             projection.getUserName()
-    //         ))
-    //         .collect(Collectors.toList());
-    // }
 
 
     public void createPost(Long userId, CreatePostRequestDto requestDto) {
