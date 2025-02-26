@@ -14,13 +14,14 @@ import java.util.List;
 public interface ApplyRepository extends JpaRepository<Apply, Long> {
     Apply findApplyByRecruitmentIdAndResumeId(Long recruitmentId, Long resumeId);
 
-    @Query(value = "SELECT new com.api.domain.apply.vo.ApplyVo(a.id, rec.title, rec.wage, a.createDate, a.status) " +
+    @Query(value = "SELECT new com.api.domain.apply.vo.ApplyVo(a.id, rec.title, rec.wage, owner.company, a.createDate, a.status) " +
             "FROM Apply a " +
             "LEFT JOIN Resume res ON a.resume = res " +
             "LEFT JOIN Recruitment rec ON a.recruitment = rec " +
+            "LEFT JOIN User owner ON rec.user = owner " +
             "WHERE res.user.id = :userId " +
             "ORDER BY a.createDate desc")
-    List<ApplyVo> findApplyVoByUserId(Long userId);
+    List<ApplyVo> findApplyVoByUserId(@Param("userId") Long userId);
 
     @Query(value = "SELECT new com.api.domain.apply.vo.RecruitmentApplyVo(a.id, u.name, res.school, res.status, res.personal, res.work_place_region, res.work_place_city, res.industry_occupation, res.employmentType, res.working_period, res.working_day, res.introduction, res.portfoliourl, a.createDate, a.status) " +
             "FROM Apply a " +

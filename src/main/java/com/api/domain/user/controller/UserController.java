@@ -45,46 +45,44 @@ public class UserController {
 
     @Operation(summary = "로그인", responses = {
         @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
-})
-@PostMapping("/sign-in")
-public ResponseEntity<String> signIn(@RequestBody @Valid final SignInRequestDto requestDto, 
-                                    HttpServletRequest request, 
-                                    HttpServletResponse response) {
+    })
+    @PostMapping("/sign-in")
+    public ResponseEntity<String> signIn(@RequestBody @Valid final SignInRequestDto requestDto,
+                                        HttpServletRequest request,
+                                        HttpServletResponse response) {
 
-    // ✅ 1. email과 password를 사용해 DB에서 userId 조회
-    Long userId = userService.signIn(requestDto);
+        // ✅ 1. email과 password를 사용해 DB에서 userId 조회
+        Long userId = userService.signIn(requestDto);
 
-    if (userId == null) {
-        // ✅ 기존 세션이 있다면 삭제하여 불필요한 세션 유지 방지
-        HttpSession existingSession = request.getSession(false);
-        if (existingSession != null) {
-            existingSession.invalidate();
+        if (userId == null) {
+            // ✅ 기존 세션이 있다면 삭제하여 불필요한 세션 유지 방지
+            HttpSession existingSession = request.getSession(false);
+            if (existingSession != null) {
+                existingSession.invalidate();
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("이메일 또는 비밀번호가 잘못되었습니다.");
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("이메일 또는 비밀번호가 잘못되었습니다.");
+
+        // ✅ 2. 로그인 성공한 경우에만 세션 생성
+        HttpSession session = request.getSession(false); // 기존 세션 확인
+        if (session == null) {
+            session = request.getSession(true); // 로그인 성공 시에만 새 세션 생성
+        }
+
+        session.setAttribute("userid", userId); // ✅ 세션에 사용자 ID 저장
+
+        // ✅ 3. Set-Cookie 헤더 설정 (JSESSIONID 저장)
+        String sessionId = session.getId();
+        response.setHeader("Set-Cookie", "JSESSIONID=" + sessionId + "; Path=/; HttpOnly; Secure");
+
+        // ✅ 4. 디버깅 로그 출력
+        System.out.println("로그인 성공 - 세션 저장된 userid: " + session.getAttribute("userid"));
+        System.out.println("세션 ID: " + sessionId);
+
+        return ResponseEntity.ok(String.valueOf(userId));
     }
 
-    // ✅ 2. 로그인 성공한 경우에만 세션 생성
-    HttpSession session = request.getSession(false); // 기존 세션 확인
-    if (session == null) {
-        session = request.getSession(true); // 로그인 성공 시에만 새 세션 생성
-    }
-    
-    session.setAttribute("userid", userId); // ✅ 세션에 사용자 ID 저장
-
-    // ✅ 3. Set-Cookie 헤더 설정 (JSESSIONID 저장)
-    String sessionId = session.getId();
-    response.setHeader("Set-Cookie", "JSESSIONID=" + sessionId + "; Path=/; HttpOnly; Secure");
-
-    // ✅ 4. 디버깅 로그 출력
-    System.out.println("로그인 성공 - 세션 저장된 userid: " + session.getAttribute("userid"));
-    System.out.println("세션 ID: " + sessionId);
-
-    return ResponseEntity.ok(String.valueOf(userId));
-}
-
-
-
-    @Operation(summary = "로그아웃", responses = {
+    @Operation(summary = "[모바일] 로그아웃", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/sign-out")
@@ -140,6 +138,33 @@ public ResponseEntity<String> signIn(@RequestBody @Valid final SignInRequestDto 
                     .body(new UserChangePwResponseDto("서버 오류: " + e.getMessage()));
         }
     }
+
+    @Operation(summary = "[모바일] 비밀번호 변경", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @PostMapping("/change-pw")
+    public ResponseEntity<UserChangePwResponseDto> changePasswordMobile(@SessionAttribute("userid") Long userId,
+                                                                        @RequestBody ChangePwRequestDto requestDto) {
+        try {
+            userService.changePassword(
+                    userId,
+                    requestDto.getPasswd(),
+                    requestDto.getNewpasswd()
+            );
+            return ResponseEntity.ok(new UserChangePwResponseDto("비밀번호 변경 성공"));
+
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new UserChangePwResponseDto("비밀번호 변경 실패: 사용자를 찾을 수 없습니다."));
+        } catch (InvalidValueException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new UserChangePwResponseDto("비밀번호 변경 실패: 현재 비밀번호가 일치하지 않습니다."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new UserChangePwResponseDto("서버 오류: " + e.getMessage()));
+        }
+    }
+
     @Operation(summary = "회원 탈퇴", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
@@ -149,12 +174,30 @@ public ResponseEntity<String> signIn(@RequestBody @Valid final SignInRequestDto 
         return SuccessResponse.ok(null);
     }
 
+    @Operation(summary = "[모바일] 회원 탈퇴", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/withdraw")
+    public ResponseEntity<SuccessResponse<?>> deleteUserMobile(@SessionAttribute("userid") Long userId) {
+        userService.deleteUser(userId);
+        return SuccessResponse.ok(null);
+    }
+
     @Operation(summary = "회원 정보", responses = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetUserInfoResponseDto.class)))
     })
     @GetMapping
     public ResponseEntity<SuccessResponse<?>> getUserInfo(@RequestBody final UserRequestDto userRequestDto) {
         GetUserInfoResponseDto responseDto = userService.getUserInfo(userRequestDto.userId());
+        return SuccessResponse.ok(responseDto);
+    }
+
+    @Operation(summary = "[모바일] 회원 정보", responses = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetUserInfoResponseDto.class)))
+    })
+    @GetMapping("/mobile")
+    public ResponseEntity<SuccessResponse<?>> getUserInfoMobile(@SessionAttribute("userid") Long userId) {
+        GetUserInfoResponseDto responseDto = userService.getUserInfo(userId);
         return SuccessResponse.ok(responseDto);
     }
 }
