@@ -3,11 +3,9 @@ package com.api.domain.resume.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.api.domain.resume.repository.ResumeRepository;
 import com.api.domain.resume.request.ResumeRequestDto;
 import com.api.domain.resume.request.Resume_profileRequestDto;
 import com.api.domain.resume.service.ResumeService;
-import com.api.domain.user.dto.request.CreateUserRequestDto;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +13,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,13 +24,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
-@RestController 
+@RestController
 public class ResumeController {
 	
 	private final ResumeService resumeService;
 	private final ResumeService resumeRepository;
-	
-	
+
 	@PostMapping("/api/resume")
 	public ResponseEntity<Map<String, Object>> selectResume(@RequestBody final Resume_profileRequestDto resume_profilerequestDto){
 		System.out.println("API수신");
@@ -66,7 +62,6 @@ public class ResumeController {
 		System.out.println("img"+response.get("resume_img_name"));
 		return ResponseEntity.ok(response);
 	}
-	
 	
 	@GetMapping("/api/resume/download")
     public void download(@RequestParam("fileName") String filename, HttpServletRequest request, HttpServletResponse response) {
@@ -104,9 +99,9 @@ public class ResumeController {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
-  
 
-	
+
+
     @PostMapping("/api/resume/write")
     public ResponseEntity<String> createResume(@RequestBody @Valid final ResumeRequestDto resumerequestDto,
     		HttpServletRequest request) {
@@ -124,8 +119,7 @@ public class ResumeController {
     	else{portfolioName = portfolioName_org+"_"+timestamp;file_url=serverUrl+"/uploads/resume/";}
     	String img_url = serverUrl+"/uploads/resume/profile/";
         try {
-        	
-        	
+
             // 파일 저장 로직 실행
             if (portfolioData != null && portfolioName != null) {
                 saveBase64ToFile(portfolioData, portfolioName,request);
@@ -195,16 +189,13 @@ public class ResumeController {
             		return ResponseEntity.ok("이미 이력서가 있습니다.");
             	}
             }
-			
+
             return ResponseEntity.ok("이력서 작성 완료!");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("Error while processing resume data."+e.getMessage());
         }
-  
-        
-        
-    
+
     }
     private void saveBase64ToFile(String base64Data, String fileName, HttpServletRequest request) throws IOException {
         // Base64 데이터 디코딩

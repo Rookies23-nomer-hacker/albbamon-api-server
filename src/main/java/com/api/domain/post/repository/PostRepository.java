@@ -26,10 +26,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
        "FROM Post p LEFT JOIN p.user u ORDER BY p.createDate DESC")
         List<PostListVo> findPostList();
 
+
         @Query(value = "select p.post_id AS postId, p.title AS title, p.contents AS contents, p.create_date AS createDate,u.name AS userName from post p LEFT JOIN user u on p.user_id = u.user_id WHERE p.title LIKE :keyword ORDER BY p.create_date DESC;",
             nativeQuery = true)
         List<PostListProjection> findSearchPostList_nosqlInejction(String keyword);
-    
 }
 
 
