@@ -66,16 +66,14 @@ public class PostController {
     @Operation(summary = "게시글 수정", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
-    @PutMapping("/update/{postId}")
-    public ResponseEntity<SuccessResponse<?>> updatePost(@SessionAttribute(name = SESSION_NAME) Long userId,
-                                                         @PathVariable final Long postId,
-                                                         @RequestBody @Valid final CreatePostRequestDto requestDto) {
-        postService.updatePost(userId, postId, requestDto);
-        return SuccessResponse.ok(null);
-    }
+    @PostMapping("/update/{postId}")
+    public ResponseEntity<SuccessResponse<?>> updatePost(@PathVariable final Long postId, 
+                                                     @RequestBody @Valid final CreatePostRequestDto requestDto) {
+    System.out.println("수정 요청 - Post ID: " + postId);
+    System.out.println("수정 요청 - Title: " + requestDto.title());
+    System.out.println("수정 요청 - Contents: " + requestDto.contents());
 
-    @GetMapping("/search/{keyword}")
-    public List<PostListVo> getSearchlist(@PathVariable("keyword") String keyword) {
-        return postService.getSearchlist(keyword);
+    postService.updatePost(requestDto.userid(), postId, requestDto);
+    return SuccessResponse.ok(null);
     }
 }
