@@ -85,6 +85,7 @@ public class PostService {
 
 
     public PostVo findById(Long postId) {
+    	System.out.println("fsadasddasddasasdasdasdass");
         return postRepository.findPostVoById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
     }
     

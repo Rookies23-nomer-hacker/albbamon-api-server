@@ -62,7 +62,7 @@ public class PostController {
     })
     @PostMapping("/update/{postId}")
     public ResponseEntity<SuccessResponse<?>> updatePost(
-        @PathVariable final Long postId, 
+    	@PathVariable("postId") final Long postId,
         @RequestBody @Valid final CreatePostRequestDto requestDto) {  
 
         System.out.println("✅ 게시글 수정 요청 - Post ID: " + postId);
@@ -79,7 +79,7 @@ public class PostController {
     })
     @DeleteMapping("/delete/{postId}")
     public ResponseEntity<SuccessResponse<?>> deletePost(
-            @PathVariable final Long postId, 
+    		@PathVariable("postId") final Long postId,
             @RequestBody Map<String, Object> requestBody) {  
 
         // ✅ JSON에서 userId 추출
