@@ -83,7 +83,7 @@ public class ResumeController {
             // 응답 헤더 설정
             response.setContentType("application/octet-stream");
             response.setContentLength((int) downloadFile.length());
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFile.getName() + "\"");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + cleanFilename(downloadFile.getName()) + "\"");
 
             // 파일 데이터를 클라이언트로 전송
             byte[] buffer = new byte[4096];
@@ -221,5 +221,13 @@ public class ResumeController {
         }
 
         System.out.println("File saved successfully: " + file.getAbsolutePath());
+    }
+    
+    private String cleanFilename(String filename) {
+        int dotIndex = filename.lastIndexOf(".");
+        if (dotIndex != -1) {
+            return filename.substring(0, dotIndex) + filename.substring(dotIndex).split("_")[0];
+        }
+        return filename; // 확장자가 없으면 원본 유지
     }
 }
