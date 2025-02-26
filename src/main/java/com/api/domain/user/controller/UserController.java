@@ -4,6 +4,8 @@ import com.api.domain.user.dto.request.*;
 import com.api.domain.user.dto.response.GetUserInfoResponseDto;
 import com.api.domain.user.dto.response.UserChangePwResponseDto;
 import com.api.domain.user.dto.response.UserFindResponseDto;
+import com.api.domain.user.dto.response.UserResponseDto;
+import com.api.domain.user.entity.User;
 import com.api.domain.user.service.UserService;
 import com.api.global.common.entity.SuccessResponse;
 import com.api.global.error.exception.EntityNotFoundException;
@@ -52,7 +54,7 @@ public class UserController {
                                         HttpServletResponse response) {
 
         // ✅ 1. email과 password를 사용해 DB에서 userId 조회
-        Long userId = userService.signIn(requestDto);
+        User user = userService.signIn(requestDto);
 
         if (userId == null) {
             // ✅ 기존 세션이 있다면 삭제하여 불필요한 세션 유지 방지
@@ -69,7 +71,7 @@ public class UserController {
             session = request.getSession(true); // 로그인 성공 시에만 새 세션 생성
         }
 
-        session.setAttribute("userid", userId); // ✅ 세션에 사용자 ID 저장
+        session.setAttribute("userid", user.getId()); // ✅ 세션에 사용자 ID 저장
 
         // ✅ 3. Set-Cookie 헤더 설정 (JSESSIONID 저장)
         String sessionId = session.getId();
@@ -79,7 +81,7 @@ public class UserController {
         System.out.println("로그인 성공 - 세션 저장된 userid: " + session.getAttribute("userid"));
         System.out.println("세션 ID: " + sessionId);
 
-        return ResponseEntity.ok(String.valueOf(userId));
+        return ResponseEntity.ok(new UserResponseDto(user));
     }
 
     @Operation(summary = "아이디 찾기", responses = {
