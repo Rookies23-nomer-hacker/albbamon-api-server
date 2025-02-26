@@ -37,6 +37,8 @@ public class Resume extends BaseTimeEntity {
     private String portfolioname;
     private LocalDateTime createDate;
     private LocalDateTime lastModifiedDate;
+    private String resume_imgurl;
+    private String resume_imgname;
     
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -65,6 +67,8 @@ public class Resume extends BaseTimeEntity {
                 .portfolioname(resumerequestDto.portfolioName())
                 .createDate(resumerequestDto.create_date())
                 .lastModifiedDate(resumerequestDto.last_modified_date())
+                .resume_imgurl(resumerequestDto.resume_imgurl())
+                .resume_imgname(resumerequestDto.resume_img_name())
                 .build();
     }
     

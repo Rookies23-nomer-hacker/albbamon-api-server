@@ -91,6 +91,8 @@ public class ResumeService {
         	json.put("portfoliourl", resume.getPortfoliourl());
         	json.put("portfolioname", resume.getPortfolioname());
         	json.put("last_modified_date", resume.getLastModifiedDate());
+        	json.put("resume_imgurl", resume.getResume_imgurl());
+        	json.put("resume_img_name", resume.getResume_imgname());
         	return json;
         }else {
         	
