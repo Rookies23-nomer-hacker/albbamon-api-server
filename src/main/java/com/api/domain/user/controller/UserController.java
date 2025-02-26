@@ -3,6 +3,7 @@ package com.api.domain.user.controller;
 import com.api.domain.user.dto.request.ChangePwRequestDto;
 import com.api.domain.user.dto.request.CreateUserRequestDto;
 import com.api.domain.user.dto.request.SignInRequestDto;
+import com.api.domain.user.dto.request.UserFindRequestDto;
 import com.api.domain.user.dto.response.GetUserInfoResponseDto;
 import com.api.domain.user.dto.response.UserChangePwResponseDto;
 import com.api.domain.user.dto.response.UserFindResponseDto;
