@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.api.domain.post.entity.Post;
+
 import com.api.domain.post.vo.PostListVo;
 import com.api.domain.post.vo.PostVo;
 
@@ -24,6 +25,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         @Query("SELECT new com.api.domain.post.vo.PostListVo(p.id, p.title, p.contents, p.createDate, u.name) " +
        "FROM Post p LEFT JOIN p.user u ORDER BY p.createDate DESC")
         List<PostListVo> findPostList();
+
 
 }
 
