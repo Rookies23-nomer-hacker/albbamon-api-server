@@ -8,6 +8,7 @@ import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListResponseDt
 import com.api.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class ApplyService {
         return GetApplyListResponseDto.of(applyVoList);
     }
 
-    public GetRecruitmentApplyListResponseDto getRecruitmentApplyList(Long recruitmentId) {
+    public GetRecruitmentApplyListResponseDto getRecruitmentApplyList(@PathVariable("recruitmentId") Long recruitmentId) {
         List<RecruitmentApplyVo> recruitmentApplyVoList = applyRepository.findRecruitmentApplyVoByRecruitmentId(recruitmentId);
         return GetRecruitmentApplyListResponseDto.of(recruitmentApplyVoList);
     }

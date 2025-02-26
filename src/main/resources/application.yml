@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.0.10:63306/nomer_hacker_db?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://58.127.241.84:63306/nomer_hacker_db?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Seoul
     username: nomer_admin1
     password: 1234
 
@@ -17,7 +17,7 @@ spring:
 
   mvc:
     view:
-      prefix: /WEB-INF/views/
+      prefix: /WEB-INF/view/
       suffix: .jsp
 
   devtools:
@@ -27,7 +27,7 @@ spring:
   thymeleaf:
     cache: false
   view:
-    prefix: /WEB-INF/jsp/
+    prefix: /WEB-INF/view/
     suffix: .jsp
 #  http:
 #    encoding:

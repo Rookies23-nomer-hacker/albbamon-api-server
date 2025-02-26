@@ -12,6 +12,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
+@Setter
 @Table(name = "apply")
 @Entity
 public class Apply extends BaseTimeEntity {
@@ -29,6 +30,7 @@ public class Apply extends BaseTimeEntity {
     private Resume resume;
 
     @Builder.Default
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ApplyStatus status = ApplyStatus.WAITING;
 
@@ -38,4 +40,5 @@ public class Apply extends BaseTimeEntity {
                 .resume(resume)
                 .build();
     }
+    
 }

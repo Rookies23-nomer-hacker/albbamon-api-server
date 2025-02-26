@@ -35,6 +35,9 @@ public class PostService {
     public List<PostListVo> getAllPosts() {
         return postRepository.findPostList();
     }
+    public List<PostListVo> getSearchlist(String keyword) {
+        return postRepository.findSearchPostList(keyword);
+    }
 
     public void createPost(Long userId, CreatePostRequestDto requestDto) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
@@ -49,9 +52,11 @@ public class PostService {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         Post post = postRepository.findPostById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
         post.updatePost(requestDto);
+        postRepository.save(post);
     }
 
     public PostVo findById(Long postId) {
         return postRepository.findPostVoById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
     }
+    
 }

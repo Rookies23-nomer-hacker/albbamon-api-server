@@ -1,7 +1,9 @@
 package com.api.domain.recruitment.controller;
 
 import com.api.domain.apply.service.ApplyService;
+import com.api.domain.apply.type.ApplyStatus;
 import com.api.domain.recruitment.dto.request.CreateRecruitmentRequestDto;
+import com.api.domain.recruitment.dto.request.UpdateApplyStatusRequestDto;
 import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListResponseDto;
 import com.api.domain.recruitment.dto.response.GetRecruitmentResponseDto;
 import com.api.domain.recruitment.service.RecruitmentService;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin(origins = "http://localhost:60083")
 @Tag(name = "Recruitment")
 @RequestMapping("/api/recruitment")
 public class RecruitmentController {
@@ -46,7 +49,7 @@ public class RecruitmentController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/{recruitmentId}")
-    public ResponseEntity<SuccessResponse<?>> getRecruitment(@PathVariable final Long recruitmentId) {
+    public ResponseEntity<SuccessResponse<?>> getRecruitment(@PathVariable("recruitmentId") final Long recruitmentId) {
         RecruitmentDetailVo responseDto = recruitmentService.getRecruitment(recruitmentId);
         return SuccessResponse.ok(responseDto);
     }
@@ -84,8 +87,22 @@ public class RecruitmentController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/{recruitmentId}/apply")
-    public ResponseEntity<SuccessResponse<?>> getRecruitmentApplyList(@PathVariable final Long recruitmentId) {
+    public ResponseEntity<SuccessResponse<?>> getRecruitmentApplyList(@PathVariable("recruitmentId") final Long recruitmentId) {
         GetRecruitmentApplyListResponseDto responseDto = applyService.getRecruitmentApplyList(recruitmentId);
         return SuccessResponse.ok(responseDto);
+    }
+    // 지원서 심사
+    @PostMapping("/{recruitmentId}/apply/{applyId}/status")
+    public ResponseEntity<?> updateApplyStatus(
+            @PathVariable("recruitmentId") Long recruitmentId,
+            @PathVariable("applyId") Long applyId,
+            @RequestBody UpdateApplyStatusRequestDto requestDto) {
+        // status 값을 ApplyStatus enum으로 변환
+        ApplyStatus status = requestDto.getStatusAsEnum();
+
+        // 상태 업데이트 처리
+        recruitmentService.updateApplyStatus(recruitmentId, applyId, status);
+
+        return ResponseEntity.ok(new SuccessResponse<>("상태가 성공적으로 변경되었습니다."));
     }
 }
