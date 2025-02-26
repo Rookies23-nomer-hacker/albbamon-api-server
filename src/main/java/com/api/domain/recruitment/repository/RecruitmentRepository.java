@@ -26,7 +26,7 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> 
             "ORDER BY r.createDate desc")
     List<RecruitmentVo> findAllRecruitmentVosByUserId(@Param("userId") Long userId);
 
-    @Query(value = "SELECT new com.api.domain.recruitment.vo.RecruitmentDetailVo(r.id, r.title, r.dueDate, r.contents, r.wage, u.name) " +
+    @Query(value = "SELECT new com.api.domain.recruitment.vo.RecruitmentDetailVo(r.id, r.title, r.dueDate, r.createDate, r.contents, r.wage, u.name, u.company) " +
             "FROM Recruitment r " +
             "JOIN User u ON r.user = u " +
             "WHERE r.id = :recruitmentId")

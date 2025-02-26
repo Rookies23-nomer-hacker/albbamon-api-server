@@ -10,8 +10,9 @@ public record ApplyVo(
         Long applyId,
         String recruitmentTitle,
         Integer recruitmentWage,
+        String company,
         LocalDateTime createDate,
-        ApplyStatus applyStatus
+        ApplyStatus status
 ) {
 
 }

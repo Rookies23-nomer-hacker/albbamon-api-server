@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,22 +46,42 @@ public class UserController {
     }
 
     @Operation(summary = "로그인", responses = {
-            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+        @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @PostMapping("/sign-in")
-    public ResponseEntity<UserResponseDto> signIn(@RequestBody @Valid final SignInRequestDto requestDto) {	
-		User user = userService.signIn(requestDto);
-        return ResponseEntity.ok(new UserResponseDto(user));
-    }
+    public ResponseEntity<String> signIn(@RequestBody @Valid final SignInRequestDto requestDto,
+                                        HttpServletRequest request,
+                                        HttpServletResponse response) {
 
-    @Operation(summary = "로그아웃", responses = {
-            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
-    })
-    @GetMapping("/sign-out")
-    public ResponseEntity<SuccessResponse<?>> signOut(HttpServletRequest httpServletRequest) {
-        HttpSession session = httpServletRequest.getSession();
-        session.invalidate();
-        return SuccessResponse.ok(null);
+        // ✅ 1. email과 password를 사용해 DB에서 userId 조회
+        User user = userService.signIn(requestDto);
+
+        if (userId == null) {
+            // ✅ 기존 세션이 있다면 삭제하여 불필요한 세션 유지 방지
+            HttpSession existingSession = request.getSession(false);
+            if (existingSession != null) {
+                existingSession.invalidate();
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("이메일 또는 비밀번호가 잘못되었습니다.");
+        }
+
+        // ✅ 2. 로그인 성공한 경우에만 세션 생성
+        HttpSession session = request.getSession(false); // 기존 세션 확인
+        if (session == null) {
+            session = request.getSession(true); // 로그인 성공 시에만 새 세션 생성
+        }
+
+        session.setAttribute("userid", user.getId()); // ✅ 세션에 사용자 ID 저장
+
+        // ✅ 3. Set-Cookie 헤더 설정 (JSESSIONID 저장)
+        String sessionId = session.getId();
+        response.setHeader("Set-Cookie", "JSESSIONID=" + sessionId + "; Path=/; HttpOnly; Secure");
+
+        // ✅ 4. 디버깅 로그 출력
+        System.out.println("로그인 성공 - 세션 저장된 userid: " + session.getAttribute("userid"));
+        System.out.println("세션 ID: " + sessionId);
+
+        return ResponseEntity.ok(new UserResponseDto(user));
     }
 
     @Operation(summary = "아이디 찾기", responses = {
@@ -109,6 +130,7 @@ public class UserController {
                     .body(new UserChangePwResponseDto("서버 오류: " + e.getMessage()));
         }
     }
+
     @Operation(summary = "회원 탈퇴", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })

@@ -20,6 +20,7 @@ import com.api.domain.post.dto.response.GetPostResponseDto;
 import com.api.domain.post.entity.Post;
 import com.api.domain.post.service.PostService;
 import com.api.global.common.entity.SuccessResponse;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -45,6 +46,15 @@ public class PostController {
         return postService.getAllPosts();
     }
 
+    @Operation(summary = "게시글 검색", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/search")
+    public List<PostListVo> getSearchPostList(@RequestParam("keyword") String keyword) {
+        System.out.println("keyword : "+keyword);
+        return postService.getSearchPostList(keyword);
+    }
+
     @Operation(summary = "게시글 작성", responses = {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
     })
@@ -57,7 +67,7 @@ public class PostController {
     @Operation(summary = "게시글 1건 조회", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
-    @GetMapping("/{postId}")
+    @GetMapping("/{postId:\\d}")
     public ResponseEntity<SuccessResponse<?>> getPostById(@PathVariable("postId") Long postId) {
         PostVo postVo = postService.findById(postId);
         return SuccessResponse.ok(postVo);
@@ -66,16 +76,14 @@ public class PostController {
     @Operation(summary = "게시글 수정", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
-    @PutMapping("/update/{postId}")
-    public ResponseEntity<SuccessResponse<?>> updatePost(@SessionAttribute(name = SESSION_NAME) Long userId,
-                                                         @PathVariable final Long postId,
-                                                         @RequestBody @Valid final CreatePostRequestDto requestDto) {
-        postService.updatePost(userId, postId, requestDto);
-        return SuccessResponse.ok(null);
-    }
+    @PostMapping("/update/{postId:\\d}")
+    public ResponseEntity<SuccessResponse<?>> updatePost(@PathVariable final Long postId, 
+                                                     @RequestBody @Valid final CreatePostRequestDto requestDto) {
+    System.out.println("수정 요청 - Post ID: " + postId);
+    System.out.println("수정 요청 - Title: " + requestDto.title());
+    System.out.println("수정 요청 - Contents: " + requestDto.contents());
 
-    @GetMapping("/search/{keyword}")
-    public List<PostListVo> getSearchlist(@PathVariable("keyword") String keyword) {
-        return postService.getSearchlist(keyword);
+    postService.updatePost(requestDto.userid(), postId, requestDto);
+    return SuccessResponse.ok(null);
     }
 }
