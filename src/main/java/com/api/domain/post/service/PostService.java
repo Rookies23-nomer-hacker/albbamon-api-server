@@ -8,10 +8,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.stream.Collectors;
 import com.api.domain.post.dto.request.CreatePostRequestDto;
 import com.api.domain.post.dto.response.GetPostResponseDto;
 import com.api.domain.post.vo.PostListVo;
+import com.api.domain.post.vo.PostListProjection;
 import com.api.domain.post.entity.Post;
 import com.api.domain.post.mapper.PostMapper;
 import com.api.domain.post.repository.PostRepository;
@@ -35,9 +36,22 @@ public class PostService {
     public List<PostListVo> getAllPosts() {
         return postRepository.findPostList();
     }
-    public List<PostListVo> getSearchlist(String keyword) {
-        return postRepository.findSearchPostList(keyword);
+
+    public List<PostListVo> getSearchPostList(String keyword) {
+        String searchKeyword  = "%"+keyword+"%";
+        List<PostListProjection> projections = postRepository.findSearchPostList(searchKeyword);
+        
+        return projections.stream()
+            .map(projection -> new PostListVo(
+                projection.getPostId(),
+                projection.getTitle(),
+                projection.getContents(),
+                projection.getCreateDate(),
+                projection.getUserName()
+            ))
+            .collect(Collectors.toList());
     }
+
 
     public void createPost(Long userId, CreatePostRequestDto requestDto) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
