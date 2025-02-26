@@ -59,7 +59,7 @@ public class PostController {
     @Operation(summary = "게시글 1건 조회", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
-    @GetMapping("/{postId:\\d}")
+    @GetMapping("/{postId}")
     public ResponseEntity<SuccessResponse<?>> getPostById(@PathVariable("postId") Long postId) {
         PostVo postVo = postService.findById(postId);
         return SuccessResponse.ok(postVo);
