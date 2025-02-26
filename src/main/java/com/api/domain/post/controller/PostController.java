@@ -75,5 +75,5 @@ public class PostController {
 
     postService.updatePost(requestDto.userid(), postId, requestDto);
     return SuccessResponse.ok(null);
-}
+    }
 }

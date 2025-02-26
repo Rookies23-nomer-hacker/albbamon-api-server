@@ -34,4 +34,7 @@ public class SuccessResponse<T> {
                 .build();
     }
 
+    public SuccessResponse(String message) {
+        this.message = message;
+    }
 }

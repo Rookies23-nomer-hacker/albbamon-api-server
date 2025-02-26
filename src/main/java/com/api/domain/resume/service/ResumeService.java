@@ -57,7 +57,7 @@ public class ResumeService {
     	return "삭제완료";
     }
     
-    public Map<String, Object> getresumeUser_id(Long user_id) {
+    public Map<String, Object> getResumeUser_id(Long user_id) {
     	Resume resume = resumeRepository.findByuser_id(user_id);
         Map<String,Object> json = new HashMap<>();
         if(resume!=null) {
@@ -65,6 +65,31 @@ public class ResumeService {
         	json.put("personal", resume.getPersonal());
         	json.put("work_place_region", resume.getWork_place_region());
         	json.put("industry_occupation", resume.getIndustry_occupation());
+        	json.put("last_modified_date", resume.getLastModifiedDate());
+        	return json;
+        }else {
+        	
+        	return null;
+        }
+    }
+    public Map<String, Object> getResume_id(Long resumeId) {
+    	Resume resume = resumeRepository.findByid(resumeId);
+        Map<String,Object> json = new HashMap<>();
+        if(resume!=null) {
+        	json.put("user_id", resume.getUser().getId());
+        	json.put("resume_id", resume.getId());
+        	json.put("school",resume.getSchool());
+        	json.put("status",resume.getStatus());
+        	json.put("personal",resume.getPersonal());
+        	json.put("work_place_region", resume.getWork_place_region());
+        	json.put("work_place_city", resume.getWork_place_city());
+        	json.put("industry_occupation", resume.getIndustry_occupation());
+        	json.put("employmentType", resume.getEmploymentType());
+        	json.put("working_period", resume.getWorking_period());
+        	json.put("working_day", resume.getWorking_day());
+        	json.put("introduction", resume.getIntroduction());
+        	json.put("portfoliourl", resume.getPortfoliourl());
+        	json.put("portfolioname", resume.getPortfolioname());
         	json.put("last_modified_date", resume.getLastModifiedDate());
         	return json;
         }else {
