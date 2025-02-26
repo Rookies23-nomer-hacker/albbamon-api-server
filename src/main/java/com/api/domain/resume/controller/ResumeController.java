@@ -1,11 +1,13 @@
 package com.api.domain.resume.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.api.domain.resume.request.ResumeRequestDto;
 import com.api.domain.resume.request.Resume_profileRequestDto;
 import com.api.domain.resume.service.ResumeService;
+import com.api.global.common.util.XorEncryptUtil;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +31,9 @@ public class ResumeController {
 	
 	private final ResumeService resumeService;
 	private final ResumeService resumeRepository;
+	
+	@Value("${spring.datasource.encryption-key}")
+  	private String encryptionKey;
 
 	@PostMapping("/api/resume")
 	public ResponseEntity<Map<String, Object>> selectResume(@RequestBody final Resume_profileRequestDto resume_profilerequestDto){
@@ -129,16 +134,16 @@ public class ResumeController {
                 
                 ResumeRequestDto updatedDto = new ResumeRequestDto(
                 		resumerequestDto.user_id(),
-                	    resumerequestDto.school(),
-                	    resumerequestDto.status(),
-                	    resumerequestDto.personal(),
-                	    resumerequestDto.work_place_region(),
-                	    resumerequestDto.work_place_city(),
-                	    resumerequestDto.industry_occupation(),
-                	    resumerequestDto.employmentType(),
-                	    resumerequestDto.working_period(),
-                	    resumerequestDto.working_day(),
-                	    resumerequestDto.introduction(),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.school(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.status(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.personal(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.work_place_region(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.work_place_city(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.industry_occupation(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.employmentType(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.working_period(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.working_day(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.introduction(), encryptionKey),
                 	    resumerequestDto.portfolioData(),
                 	    file_url,
                 	    portfolioName,
@@ -163,16 +168,16 @@ public class ResumeController {
                 }
             	ResumeRequestDto updatedDto = new ResumeRequestDto(
             			resumerequestDto.user_id(),
-                	    resumerequestDto.school(),
-                	    resumerequestDto.status(),
-                	    resumerequestDto.personal(),
-                	    resumerequestDto.work_place_region(),
-                	    resumerequestDto.work_place_city(),
-                	    resumerequestDto.industry_occupation(),
-                	    resumerequestDto.employmentType(),
-                	    resumerequestDto.working_period(),
-                	    resumerequestDto.working_day(),
-                	    resumerequestDto.introduction(),
+            			XorEncryptUtil.xorEncrypt(resumerequestDto.school(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.status(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.personal(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.work_place_region(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.work_place_city(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.industry_occupation(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.employmentType(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.working_period(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.working_day(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resumerequestDto.introduction(), encryptionKey),
                 	    resumerequestDto.portfolioData(),
                 	    file_url,
                 	    portfolioName,

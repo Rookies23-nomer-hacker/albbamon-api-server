@@ -15,7 +15,10 @@ import static com.api.domain.user.error.UserErrorCode.USER_NOT_FOUND;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import com.api.global.common.util.XorDecryptUtil;
 
 
 @RequiredArgsConstructor
@@ -25,6 +28,9 @@ public class ResumeService {
 	private final ResumeRepository resumeRepository;
 	private final Resume_userRepository resumeUserRepository;
 	private final UserRepository userRepository;
+	
+	@Value("${spring.datasource.encryption-key}")
+  	private String encryptionKey;
 	
     public void createResume(ResumeRequestDto resumerequestDto) {
     	
@@ -62,9 +68,9 @@ public class ResumeService {
         Map<String,Object> json = new HashMap<>();
         if(resume!=null) {
         	json.put("resume_id", resume.getId());
-        	json.put("personal", resume.getPersonal());
-        	json.put("work_place_region", resume.getWork_place_region());
-        	json.put("industry_occupation", resume.getIndustry_occupation());
+        	json.put("personal", XorDecryptUtil.xorDecrypt(resume.getPersonal(), encryptionKey));
+        	json.put("work_place_region", XorDecryptUtil.xorDecrypt(resume.getWork_place_region(),encryptionKey));
+        	json.put("industry_occupation", XorDecryptUtil.xorDecrypt(resume.getIndustry_occupation(),encryptionKey));
         	json.put("last_modified_date", resume.getLastModifiedDate());
         	return json;
         }else {
@@ -78,16 +84,16 @@ public class ResumeService {
         if(resume!=null) {
         	json.put("user_id", resume.getUser().getId());
         	json.put("resume_id", resume.getId());
-        	json.put("school",resume.getSchool());
-        	json.put("status",resume.getStatus());
-        	json.put("personal",resume.getPersonal());
-        	json.put("work_place_region", resume.getWork_place_region());
-        	json.put("work_place_city", resume.getWork_place_city());
-        	json.put("industry_occupation", resume.getIndustry_occupation());
-        	json.put("employmentType", resume.getEmploymentType());
-        	json.put("working_period", resume.getWorking_period());
-        	json.put("working_day", resume.getWorking_day());
-        	json.put("introduction", resume.getIntroduction());
+        	json.put("school",XorDecryptUtil.xorDecrypt(resume.getSchool(),encryptionKey));
+        	json.put("status",XorDecryptUtil.xorDecrypt(resume.getStatus(),encryptionKey));
+        	json.put("personal",XorDecryptUtil.xorDecrypt(resume.getPersonal(),encryptionKey));
+        	json.put("work_place_region", XorDecryptUtil.xorDecrypt(resume.getWork_place_region(),encryptionKey));
+        	json.put("work_place_city", XorDecryptUtil.xorDecrypt(resume.getWork_place_city(),encryptionKey));
+        	json.put("industry_occupation", XorDecryptUtil.xorDecrypt(resume.getIndustry_occupation(),encryptionKey));
+        	json.put("employmentType", XorDecryptUtil.xorDecrypt(resume.getEmploymentType(),encryptionKey));
+        	json.put("working_period", XorDecryptUtil.xorDecrypt(resume.getWorking_period(),encryptionKey));
+        	json.put("working_day", XorDecryptUtil.xorDecrypt(resume.getWorking_day(),encryptionKey));
+        	json.put("introduction", XorDecryptUtil.xorDecrypt(resume.getIntroduction(),encryptionKey));
         	json.put("portfoliourl", resume.getPortfoliourl());
         	json.put("portfolioname", resume.getPortfolioname());
         	json.put("last_modified_date", resume.getLastModifiedDate());
