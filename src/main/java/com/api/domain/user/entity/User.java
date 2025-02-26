@@ -45,14 +45,16 @@ public class User extends BaseTimeEntity {
 
     private String company;
 
-    private String profileImg;
-    
     private String item;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Post> postList = new ArrayList<>();
 
+    public void increasePwChkNum() {
+        this.pwChkNum += 1;
+    }
+    
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Qna> qnaList = new ArrayList<>();
