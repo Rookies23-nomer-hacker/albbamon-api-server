@@ -49,20 +49,18 @@ public class UserController {
         @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @PostMapping("/sign-in")
-    public ResponseEntity<String> signIn(@RequestBody @Valid final SignInRequestDto requestDto,
+    public ResponseEntity<UserResponseDto> signIn(@RequestBody @Valid final SignInRequestDto requestDto,
                                         HttpServletRequest request,
                                         HttpServletResponse response) {
 
         // ✅ 1. email과 password를 사용해 DB에서 userId 조회
         User user = userService.signIn(requestDto);
-
-        if (userId == null) {
+        if (user.getId() == null) {
             // ✅ 기존 세션이 있다면 삭제하여 불필요한 세션 유지 방지
             HttpSession existingSession = request.getSession(false);
             if (existingSession != null) {
                 existingSession.invalidate();
             }
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("이메일 또는 비밀번호가 잘못되었습니다.");
         }
 
         // ✅ 2. 로그인 성공한 경우에만 세션 생성
