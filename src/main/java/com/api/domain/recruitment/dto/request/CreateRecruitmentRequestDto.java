@@ -5,10 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public record CreateRecruitmentRequestDto(
-        Long userId,
+        @NotNull Long userId,
         @NotNull String title,
         @NotNull String contents,
         @NotNull LocalDateTime dueDate,
-        @NotNull Integer wage
+        @NotNull Integer wage,
+        @NotNull String file
 ) {
 }

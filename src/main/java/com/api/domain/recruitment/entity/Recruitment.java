@@ -52,6 +52,7 @@ public class Recruitment extends BaseTimeEntity {
                 .dueDate(requestDto.dueDate())
                 .wage(requestDto.wage())
                 .user(user)
+                .file(requestDto.file())
                 .build();
     }
 
@@ -60,5 +61,6 @@ public class Recruitment extends BaseTimeEntity {
         this.contents = requestDto.contents();
         this.dueDate = requestDto.dueDate();
         this.wage = requestDto.wage();
+        this.file = requestDto.file();
     }
 }
