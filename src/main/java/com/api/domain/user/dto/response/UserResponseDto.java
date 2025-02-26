@@ -1,7 +1,6 @@
 package com.api.domain.user.dto.response;
 
-import com.api.domain.user.entity.User;
-
+import com.api.domain.user.vo.UserVo;
 import lombok.*;
 
 @Getter
@@ -15,11 +14,11 @@ public class UserResponseDto {
     private String ceoNum;
     private String company;
     
-    public UserResponseDto(User user) {
-        this.userId = user.getId();
-        this.email = user.getEmail();
-        this.name = user.getName();
-        this.ceoNum = user.getCeoNum();
-        this.company = user.getCompany();
+    public UserResponseDto(UserVo userVo) {
+        this.userId = userVo.id();
+        this.email = userVo.email();
+        this.name = userVo.name();
+        this.ceoNum = userVo.ceoNum();
+        this.company = userVo.company();
     }
 }

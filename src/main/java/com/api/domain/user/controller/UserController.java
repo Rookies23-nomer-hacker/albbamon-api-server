@@ -7,7 +7,9 @@ import com.api.domain.user.dto.response.UserFindResponseDto;
 import com.api.domain.user.dto.response.UserResponseDto;
 import com.api.domain.user.entity.User;
 import com.api.domain.user.service.UserService;
+import com.api.domain.user.vo.UserVo;
 import com.api.global.common.entity.SuccessResponse;
+import com.api.global.common.util.XorEncryptUtil;
 import com.api.global.error.exception.EntityNotFoundException;
 import com.api.global.error.exception.InvalidValueException;
 
@@ -22,6 +24,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +37,11 @@ import java.util.List;
 @RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
+    
+    // 키 값
+	@Value("${spring.datasource.encryption-key}")
+  	private String encryptionKey;
+	
     public static final String SESSION_NAME = "SESSIONID";
 
     @Operation(summary = "회원가입", responses = {
@@ -41,7 +49,15 @@ public class UserController {
     })
     @PostMapping
     public ResponseEntity<SuccessResponse<?>> createUser(@RequestBody @Valid final CreateUserRequestDto requestDto) {
-        userService.createUser(requestDto);
+    	CreateUserRequestDto updateDto = new CreateUserRequestDto (
+    			XorEncryptUtil.xorEncrypt(requestDto.email(), encryptionKey),
+    			requestDto.password(),
+    			XorEncryptUtil.xorEncrypt(requestDto.name(), encryptionKey),
+    			XorEncryptUtil.xorEncrypt(requestDto.phone(), encryptionKey),
+    			requestDto.company(),
+    			requestDto.ceoNum()
+    			);
+    	userService.createUser(updateDto);
         return SuccessResponse.ok(null);
     }
 
@@ -54,8 +70,8 @@ public class UserController {
                                         HttpServletResponse response) {
 
         // ✅ 1. email과 password를 사용해 DB에서 userId 조회
-        User user = userService.signIn(requestDto);
-        if (user.getId() == null) {
+        UserVo userVo = userService.signIn(requestDto);
+        if (userVo.id() == null) {
             // ✅ 기존 세션이 있다면 삭제하여 불필요한 세션 유지 방지
             HttpSession existingSession = request.getSession(false);
             if (existingSession != null) {
@@ -69,7 +85,7 @@ public class UserController {
             session = request.getSession(true); // 로그인 성공 시에만 새 세션 생성
         }
 
-        session.setAttribute("userid", user.getId()); // ✅ 세션에 사용자 ID 저장
+        session.setAttribute("userid", userVo.id()); // ✅ 세션에 사용자 ID 저장
 
         // ✅ 3. Set-Cookie 헤더 설정 (JSESSIONID 저장)
         String sessionId = session.getId();
@@ -79,7 +95,7 @@ public class UserController {
         System.out.println("로그인 성공 - 세션 저장된 userid: " + session.getAttribute("userid"));
         System.out.println("세션 ID: " + sessionId);
 
-        return ResponseEntity.ok(new UserResponseDto(user));
+        return ResponseEntity.ok(new UserResponseDto(userVo));
     }
 
     @Operation(summary = "아이디 찾기", responses = {

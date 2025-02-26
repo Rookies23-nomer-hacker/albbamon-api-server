@@ -44,7 +44,6 @@ public class User extends BaseTimeEntity {
 
     private String company;
 
-    private String profileImg;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -53,7 +52,12 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Qna> qnaList = new ArrayList<>();
-
+    
+    
+    public void increasePwChkNum() {
+        this.pwChkNum += 1;
+    }
+    
     public static User createUser(CreateUserRequestDto requestDto, String encodedPassword) {
         return User.builder()
                 .email(requestDto.email())
@@ -64,6 +68,7 @@ public class User extends BaseTimeEntity {
                 .company(requestDto.company())
                 .build();
     }
+    
 
 	public void updatePassword(String newEncryptedPassword) {
 		this.password = newEncryptedPassword;

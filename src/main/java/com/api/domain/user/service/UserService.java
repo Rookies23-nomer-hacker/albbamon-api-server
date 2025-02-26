@@ -8,6 +8,7 @@ import static com.api.domain.user.error.UserErrorCode.USER_NOT_FOUND;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,8 @@ import com.api.domain.user.mapper.UserMapper;
 import com.api.domain.user.repository.UserRepository;
 import com.api.domain.user.vo.UserVo;
 import com.api.global.common.util.EncoderUtil;
+import com.api.global.common.util.XorDecryptUtil;
+import com.api.global.common.util.XorEncryptUtil;
 import com.api.global.error.exception.ConflictException;
 import com.api.global.error.exception.EntityNotFoundException;
 import com.api.global.error.exception.InvalidValueException;
@@ -40,6 +43,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final EncoderUtil encoderUtil;
+    
+	@Value("${spring.datasource.encryption-key}")
+  	private String encryptionKey;
 
     public void createUser(CreateUserRequestDto requestDto) {
         checkAlreadyExistingUser(requestDto.email());
@@ -55,10 +61,20 @@ public class UserService {
         }
     }
 
-    public User signIn(SignInRequestDto requestDto) {
-        User user = userRepository.findUserByEmail(requestDto.email()).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        validatePassword(user.getPassword(), requestDto.password());
-        return user;
+    public UserVo signIn(SignInRequestDto requestDto) {
+        User user = userRepository.findUserByEmail(XorEncryptUtil.xorEncrypt(requestDto.email(),encryptionKey)).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));       
+        UserVo loginUserVo = UserVo.of(user, 
+        		XorDecryptUtil.xorDecrypt(user.getName(),encryptionKey), 
+        		XorDecryptUtil.xorDecrypt(user.getEmail(),encryptionKey),
+        		XorDecryptUtil.xorDecrypt(user.getPhone(),encryptionKey));
+        
+        
+        if(!validatePassword(user.getPassword(), requestDto.password())) {
+        	user.increasePwChkNum();
+        	userRepository.save(user);
+        	return null;
+        }
+        return loginUserVo;
     }
 
     public void deleteUser(Long userId) {
@@ -67,17 +83,24 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    private void validatePassword(String encodedPassword, String rawPassword) {
-        if(!encodedPassword.equals(encoderUtil.encrypt(rawPassword))) {
-            throw new InvalidValueException(PASSWORD_INCORRECT);
-        }
+    private boolean validatePassword(String encodedPassword, String rawPassword) {
+        return encodedPassword.equals(encoderUtil.encrypt(rawPassword));
     }
 
     public GetUserInfoResponseDto getUserInfo(Long userId) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         UserVo userVo = userRepository.findUserVoById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        System.out.println("📌 userVo: " + userVo);
-        return userMapper.toGetUserInfoResponseDto(userVo);
+        UserVo user = new UserVo(
+        		userVo.id(),
+        		XorDecryptUtil.xorDecrypt(userVo.name(),encryptionKey),
+        		XorDecryptUtil.xorDecrypt(userVo.email(),encryptionKey),
+        		XorDecryptUtil.xorDecrypt(userVo.phone(),encryptionKey),
+        		userVo.ceoNum(),
+        		userVo.company(),
+        		userVo.lastModifiedDate()
+        		);
+        System.out.println("📌 userVo: " + user);
+        return userMapper.toGetUserInfoResponseDto(user);
     }
     
   //아이디 찾기
