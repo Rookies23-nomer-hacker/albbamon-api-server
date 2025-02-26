@@ -32,11 +32,8 @@ public class ResumeMobileController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @PostMapping
-    public ResponseEntity<Map<String, Object>> selectResumeMobile(@RequestBody final Resume_profileRequestDto resume_profilerequestDto){
-        System.out.println("API수신");
-        Map<String,Object> response = new HashMap<>();
-        Long user_id = resume_profilerequestDto.user_id();
-        response = resumeRepository.getResumeUser_id(user_id);
+    public ResponseEntity<Map<String, Object>> selectResumeMobile(@SessionAttribute("userid") Long userId) {
+        Map<String,Object> response = resumeRepository.getResumeUser_id(userId);
         return ResponseEntity.ok(response);
     }
 
@@ -44,11 +41,8 @@ public class ResumeMobileController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @PostMapping("/profile")
-    public ResponseEntity<Map<String, Object>> selectProfileMobile(@RequestBody final Resume_profileRequestDto resume_profilerequestDto){
-        Map<String,Object> response = new HashMap<>();
-        response.put("name", resume_profilerequestDto.name());
-        Long userId = resume_profilerequestDto.user_id();
-        response = resumeService.getUserById(userId);
+    public ResponseEntity<Map<String, Object>> selectProfileMobile(@SessionAttribute("userid") Long userId){
+        Map<String,Object> response = resumeService.getUserById(userId);
         return ResponseEntity.ok(response);
     }
 
@@ -66,9 +60,7 @@ public class ResumeMobileController {
     })
     @GetMapping("/view")
     public ResponseEntity<Map<String, Object>> viewResumeMobile(@RequestParam("resume_id") Long resumeId){
-        Map<String,Object> response = new HashMap<>();
-        response = resumeRepository.getResume_id(resumeId);
-        Long userId = (Long) response.get("user_id");
+        Map<String,Object> response = resumeRepository.getResume_id(resumeId);
         return ResponseEntity.ok(response);
     }
 
@@ -76,8 +68,9 @@ public class ResumeMobileController {
         @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @PostMapping("/write")
-    public ResponseEntity<String> createResumeMobile(@RequestBody @Valid final ResumeRequestDto resumerequestDto,
-                                               HttpServletRequest request) {
+    public ResponseEntity<String> createResumeMobile(@SessionAttribute("userid") Long userId,
+                                                     @RequestBody @Valid final ResumeRequestDto resumerequestDto,
+                                                     HttpServletRequest request) {
         String portfolioName=resumerequestDto.portfolioName();
         String portfolioData=resumerequestDto.portfolioData();
         String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
@@ -88,7 +81,7 @@ public class ResumeMobileController {
                 saveBase64ToFile(portfolioData, portfolioName,request);
 
                 ResumeRequestDto updatedDto = new ResumeRequestDto(
-                        resumerequestDto.user_id(),
+                        userId,
                         resumerequestDto.school(),
                         resumerequestDto.status(),
                         resumerequestDto.personal(),
