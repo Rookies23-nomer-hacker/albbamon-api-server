@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +49,7 @@ public class ResumeController {
 		Long userId = resume_profilerequestDto.user_id();
 		response = resumeService.getUserById(userId);
 		return ResponseEntity.ok(response);
-	}	
+	}
 	
 	@GetMapping("/api/resume/delete")
 	public ResponseEntity<String> deleteResume(@RequestParam("resume_id") Long resumeId){
@@ -60,6 +62,8 @@ public class ResumeController {
 		Map<String,Object> response = new HashMap<>();
 		response = resumeRepository.getResume_id(resumeId);
 		Long userId = (Long) response.get("user_id");
+		System.out.println("img"+response.get("resume_imgurl"));
+		System.out.println("img"+response.get("resume_img_name"));
 		return ResponseEntity.ok(response);
 	}
 	
@@ -107,48 +111,86 @@ public class ResumeController {
     public ResponseEntity<String> createResume(@RequestBody @Valid final ResumeRequestDto resumerequestDto,
     		HttpServletRequest request) {
  
-    	String portfolioName=resumerequestDto.portfolioName();
+    	String portfolioName_org=resumerequestDto.portfolioName();
     	String portfolioData=resumerequestDto.portfolioData();
+    	String resume_img_name_org = resumerequestDto.resume_img_name();
+    	String resume_img_data = resumerequestDto.resume_img_data();
+    	String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+    	String portfolioName ="";
+    	String file_url ="";
     	String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
-    	String file_url= serverUrl+"/uploads/resume/";
+    	String resume_img_name = resume_img_name_org+"_"+timestamp;
+    	if(portfolioName_org==(null)){portfolioName=null;file_url=null;}
+    	else{portfolioName = portfolioName_org+"_"+timestamp;file_url=serverUrl+"/uploads/resume/";}
+    	String img_url = serverUrl+"/uploads/resume/profile/";
         try {
         	
         	
             // 파일 저장 로직 실행
             if (portfolioData != null && portfolioName != null) {
                 saveBase64ToFile(portfolioData, portfolioName,request);
-                
+                if(resume_img_data!=null) {
+                	saveImgFile(resume_img_data,resume_img_name,request);
+                }
                 
                 ResumeRequestDto updatedDto = new ResumeRequestDto(
                 		resumerequestDto.user_id(),
-                		resumerequestDto.school(),
-                		resumerequestDto.status(),
-                		resumerequestDto.personal(),
-                		resumerequestDto.work_place_region(),
-                        resumerequestDto.work_place_city(),
-                        resumerequestDto.industry_occupation(),
-                        resumerequestDto.employmentType(),
-                        resumerequestDto.working_period(),
-                        resumerequestDto.working_day(),
-                        resumerequestDto.introduction(),
-                        resumerequestDto.portfolioData(),
-                        file_url,
-                        resumerequestDto.portfolioName(),
-                        resumerequestDto.create_date(),
-                        resumerequestDto.last_modified_date()
+                	    resumerequestDto.school(),
+                	    resumerequestDto.status(),
+                	    resumerequestDto.personal(),
+                	    resumerequestDto.work_place_region(),
+                	    resumerequestDto.work_place_city(),
+                	    resumerequestDto.industry_occupation(),
+                	    resumerequestDto.employmentType(),
+                	    resumerequestDto.working_period(),
+                	    resumerequestDto.working_day(),
+                	    resumerequestDto.introduction(),
+                	    resumerequestDto.portfolioData(),
+                	    file_url,
+                	    portfolioName,
+                	    img_url, 
+                	    resume_img_name,
+                	    resumerequestDto.resume_img_data(),
+                	    resumerequestDto.create_date(),
+                	    resumerequestDto.last_modified_date()
                 );
-               
                String duplicated = resumeService.duplicated(updatedDto);
-               
+       
                if(duplicated=="중복아님") {
+            	
                 resumeService.createResume(updatedDto);
                }else {
             	   return ResponseEntity.ok("이미 이력서가 있습니다.");
                }
             } else {
-            	String duplicated = resumeService.duplicated(resumerequestDto);
+            	
+            	if(resume_img_data!=null) {
+                	saveImgFile(resume_img_data,resume_img_name,request);
+                }
+            	ResumeRequestDto updatedDto = new ResumeRequestDto(
+            			resumerequestDto.user_id(),
+                	    resumerequestDto.school(),
+                	    resumerequestDto.status(),
+                	    resumerequestDto.personal(),
+                	    resumerequestDto.work_place_region(),
+                	    resumerequestDto.work_place_city(),
+                	    resumerequestDto.industry_occupation(),
+                	    resumerequestDto.employmentType(),
+                	    resumerequestDto.working_period(),
+                	    resumerequestDto.working_day(),
+                	    resumerequestDto.introduction(),
+                	    resumerequestDto.portfolioData(),
+                	    file_url,
+                	    portfolioName,
+                	    img_url, 
+                	    resume_img_name,
+                	    resumerequestDto.resume_img_data(),
+                	    resumerequestDto.create_date(),
+                	    resumerequestDto.last_modified_date()
+                );
+            	String duplicated = resumeService.duplicated(updatedDto);
             	if(duplicated=="중복아님") {
-            		resumeService.createResume(resumerequestDto);
+            		resumeService.createResume(updatedDto);
             	}else {
             		return ResponseEntity.ok("이미 이력서가 있습니다.");
             	}
@@ -168,6 +210,19 @@ public class ResumeController {
         // Base64 데이터 디코딩
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
         String upload_dir = request.getServletContext().getRealPath("/uploads/resume/");
+        // 파일 저장
+        File file = new File(upload_dir + fileName);
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(decodedBytes);
+        }
+
+        System.out.println("File saved successfully: " + file.getAbsolutePath());
+    }
+    
+    private void saveImgFile(String base64Data, String fileName, HttpServletRequest request) throws IOException {
+        // Base64 데이터 디코딩
+        byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
+        String upload_dir = request.getServletContext().getRealPath("/uploads/resume/profile/");
         // 파일 저장
         File file = new File(upload_dir + fileName);
         try (FileOutputStream fos = new FileOutputStream(file)) {
