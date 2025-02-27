@@ -20,7 +20,6 @@ spring:
     view:
       prefix: /WEB-INF/view/
       suffix: .jsp
-    static-path-pattern: "/uploads/**"
 
   devtools:
     restart:
@@ -29,12 +28,12 @@ spring:
   thymeleaf:
     cache: false
   view:
-    prefix: /WEB-INF/view/
+    prefix: file:/home/api_root/files/
     suffix: .jsp
 
   web:
     resources:
-      static-locations: file:///home/api_root/uploads/
+      static-locations: file:/home/api_root/files/
       add-mappings: true
     
 #  http:
