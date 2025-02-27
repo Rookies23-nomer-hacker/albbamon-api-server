@@ -214,7 +214,7 @@ public class ResumeController {
             return ResponseEntity.internalServerError().body("Error while processing resume data."+e.getMessage());
         }
 
-    }
+    }//
     private void saveBase64ToFile(String base64Data, String fileName, HttpServletRequest request) throws IOException {
         // Base64 데이터 디코딩
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
