@@ -20,6 +20,7 @@ spring:
     view:
       prefix: /WEB-INF/view/
       suffix: .jsp
+    static-path-pattern: "/uploads/**"
 
   devtools:
     restart:
@@ -30,6 +31,12 @@ spring:
   view:
     prefix: /WEB-INF/view/
     suffix: .jsp
+
+  web:
+    resources:
+      static-locations: file:///home/api_root/uploads/
+      add-mappings: true
+    
 #  http:
 #    encoding:
 #      charset: UTF-8

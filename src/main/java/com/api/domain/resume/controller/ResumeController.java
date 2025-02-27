@@ -38,6 +38,8 @@ public class ResumeController {
 	@Value("${spring.datasource.encryption-key}")
   	private String encryptionKey;
 
+	
+
 	@PostMapping("/api/resume")
 	public ResponseEntity<Map<String, Object>> selectResume(@RequestBody final Resume_profileRequestDto resume_profilerequestDto){
 		System.out.println("API수신");
@@ -83,7 +85,8 @@ public class ResumeController {
 	@GetMapping("/api/resume/download")
     public void download(@RequestParam("fileName") String filename, HttpServletRequest request, HttpServletResponse response) {
         // 실제 파일 경로 지정
-        String filePath = request.getServletContext().getRealPath("/uploads/resume/") + filename;
+		String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
+        String filePath = "/home/api_root/uploads/resume/portfolio/"+ filename;
         File downloadFile = new File(filePath);
 
         // 파일 존재 여부 확인
@@ -131,7 +134,7 @@ public class ResumeController {
     	String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
     	String resume_img_name = resume_img_name_org+"_"+timestamp;
     	if(portfolioName_org==(null)){portfolioName=null;file_url=null;}
-    	else{portfolioName = portfolioName_org+"_"+timestamp;file_url=serverUrl+"/uploads/resume/";}
+    	else{portfolioName = portfolioName_org+"_"+timestamp;file_url=serverUrl+"/uploads/resume/portfolio/";}
     	String img_url = serverUrl+"/uploads/resume/profile/";
         try {
 
@@ -215,7 +218,8 @@ public class ResumeController {
     private void saveBase64ToFile(String base64Data, String fileName, HttpServletRequest request) throws IOException {
         // Base64 데이터 디코딩
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
-        String upload_dir = request.getServletContext().getRealPath("/uploads/resume/");
+        String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
+        String upload_dir = "/home/api_root/uploads/resume/portfolio/";
         // 파일 저장
         File file = new File(upload_dir + fileName);
         try (FileOutputStream fos = new FileOutputStream(file)) {
@@ -228,7 +232,8 @@ public class ResumeController {
     private void saveImgFile(String base64Data, String fileName, HttpServletRequest request) throws IOException {
         // Base64 데이터 디코딩
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
-        String upload_dir = request.getServletContext().getRealPath("/uploads/resume/profile/");
+        String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
+        String upload_dir = "/home/api_root/uploads/resume/profile/";
         // 파일 저장
         File file = new File(upload_dir + fileName);
         try (FileOutputStream fos = new FileOutputStream(file)) {
