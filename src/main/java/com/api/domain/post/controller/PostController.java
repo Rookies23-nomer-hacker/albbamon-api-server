@@ -24,13 +24,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:60083")
+@CrossOrigin(origins = "http://localhost:60083", allowCredentials = "true")
 @RequiredArgsConstructor
 @RestController
 @Tag(name = "Post")
@@ -160,7 +167,7 @@ public class PostController {
         System.out.println("✅ 게시글 삭제 완료 - Post ID: " + postId);
         return SuccessResponse.ok(null);
     } 
-
+    
     @Operation(summary = "게시글 검색", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
