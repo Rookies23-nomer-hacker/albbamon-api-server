@@ -146,7 +146,7 @@ public class RecruitmentController {
     }
 
     @Operation(summary = "채용 공고 1건의 지원 이력 유무 확인", responses = {
-            @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/{recruitmentId}/apply/check")
     public ResponseEntity<Boolean> checkAlreadyAppliedRecruitment(@PathVariable final Long recruitmentId,
