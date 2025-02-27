@@ -41,7 +41,7 @@ public class Resume extends BaseTimeEntity {
     private String resume_imgurl;
     private String resume_imgname;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
