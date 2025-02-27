@@ -30,12 +30,6 @@ import com.api.global.error.exception.EntityNotFoundException;
 import com.api.global.error.exception.InvalidValueException;
 import com.api.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Objects;
-
-import static com.api.domain.user.error.UserErrorCode.*;
 
 @RequiredArgsConstructor
 @Transactional
@@ -87,8 +81,8 @@ public class UserService {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         Resume resume = resumeRepository.findResumeByUserId(userId).orElse(null);
-        if(Objects.isNull(resume)) {
-            resumeRepository.deleteById(resume.getId());
+        if(!Objects.isNull(resume)) {
+            resumeRepository.delete(resume);
         }
         userRepository.delete(user);
     }
