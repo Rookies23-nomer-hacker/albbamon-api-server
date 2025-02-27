@@ -66,7 +66,10 @@ public class UserService {
         UserVo loginUserVo = UserVo.of(user, 
         		XorDecryptUtil.xorDecrypt(user.getName(),encryptionKey), 
         		XorDecryptUtil.xorDecrypt(user.getEmail(),encryptionKey),
-        		XorDecryptUtil.xorDecrypt(user.getPhone(),encryptionKey));
+        		XorDecryptUtil.xorDecrypt(user.getPhone(),encryptionKey),
+        		user.getCeoNum(),
+        		user.getItem()
+        		);
         
         
         if(!validatePassword(user.getPassword(), requestDto.password())) {
@@ -96,6 +99,7 @@ public class UserService {
         		XorDecryptUtil.xorDecrypt(userVo.email(),encryptionKey),
         		XorDecryptUtil.xorDecrypt(userVo.phone(),encryptionKey),
         		userVo.ceoNum(),
+        		userVo.item(),
         		userVo.company(),
         		userVo.lastModifiedDate()
         		);

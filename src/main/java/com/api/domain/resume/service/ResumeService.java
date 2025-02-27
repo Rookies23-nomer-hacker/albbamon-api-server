@@ -53,9 +53,9 @@ public class ResumeService {
     public Map<String, Object> getUserById(Long userId) {
     	User user = resumeUserRepository.findById(userId).orElse(null);
         Map<String,Object> json = new HashMap<>();
-        json.put("email", user.getEmail());
-        json.put("name", user.getName());
-        json.put("phone", user.getPhone());
+        json.put("email", XorDecryptUtil.xorDecrypt(user.getEmail(),encryptionKey));
+        json.put("name", XorDecryptUtil.xorDecrypt(user.getName(),encryptionKey));
+        json.put("phone", XorDecryptUtil.xorDecrypt(user.getPhone(),encryptionKey));
         return json;
     }
     

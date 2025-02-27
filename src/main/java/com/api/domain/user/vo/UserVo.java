@@ -15,10 +15,11 @@ public record UserVo(
         String phone,
         String ceoNum,
         String company,
+        String item,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime lastModifiedDate
 ) {
-	public static UserVo of(User user, String encryptedName, String encryptedEnail, String encryptedPhone) {
+	public static UserVo of(User user, String encryptedName, String encryptedEnail, String encryptedPhone, String ceoNum, String item) {
 		return UserVo.builder()
 				.id(user.getId())
 				.name(encryptedName)
@@ -26,6 +27,7 @@ public record UserVo(
 				.phone(encryptedPhone)
 				.ceoNum(user.getCeoNum())
 				.company(user.getCompany())
+				.item(user.getItem())
 				.lastModifiedDate(user.getLastModifiedDate())
 				.build();
 	}

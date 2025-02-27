@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
+@Setter
 @Table(name = "user")
 @Entity
 public class User extends BaseTimeEntity {
@@ -44,20 +45,20 @@ public class User extends BaseTimeEntity {
 
     private String company;
 
+    private String item;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Post> postList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Qna> qnaList = new ArrayList<>();
-    
-    
     public void increasePwChkNum() {
         this.pwChkNum += 1;
     }
     
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Qna> qnaList = new ArrayList<>();
+
     public static User createUser(CreateUserRequestDto requestDto, String encodedPassword) {
         return User.builder()
                 .email(requestDto.email())
@@ -68,7 +69,6 @@ public class User extends BaseTimeEntity {
                 .company(requestDto.company())
                 .build();
     }
-    
 
 	public void updatePassword(String newEncryptedPassword) {
 		this.password = newEncryptedPassword;

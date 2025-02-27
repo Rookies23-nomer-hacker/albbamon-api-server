@@ -11,7 +11,9 @@ public record RecruitmentVo(
         LocalDateTime dueDate,
         LocalDateTime createDate,
         Integer wage,
+        String file,
         String company,
-        String file
+        String userName,
+        String item
 ) {
 }
