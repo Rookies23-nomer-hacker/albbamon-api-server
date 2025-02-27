@@ -128,7 +128,7 @@ public class ResumeController {
     	String portfolioData=resumerequestDto.portfolioData();
     	String resume_img_name_org = resumerequestDto.resume_img_name();
     	String resume_img_data = resumerequestDto.resume_img_data();
-    	String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+    	String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     	String portfolioName ="";
     	String file_url ="";
     	String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
