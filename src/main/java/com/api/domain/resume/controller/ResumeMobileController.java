@@ -1,5 +1,6 @@
 package com.api.domain.resume.controller;
 
+import com.api.domain.resume.dto.request.CreateResumeRequestDto;
 import com.api.domain.resume.request.ResumeRequestDto;
 import com.api.domain.resume.request.Resume_profileRequestDto;
 import com.api.domain.resume.service.ResumeService;
@@ -81,7 +82,7 @@ public class ResumeMobileController {
     })
     @PostMapping("/write")
     public ResponseEntity<String> createResumeMobile(@SessionAttribute("userid") Long userId,
-                                                     @RequestBody @Valid final ResumeRequestDto resumerequestDto,
+                                                     @RequestBody @Valid final CreateResumeRequestDto resumerequestDto,
                                                      HttpServletRequest request) {
         String portfolioName_org=resumerequestDto.portfolioName();
         String portfolioData=resumerequestDto.portfolioData();
@@ -122,8 +123,8 @@ public class ResumeMobileController {
                         img_url,
                         resume_img_name,
                         resumerequestDto.resume_img_data(),
-                        resumerequestDto.create_date(),
-                        resumerequestDto.last_modified_date()
+                        LocalDateTime.now(),
+                        LocalDateTime.now()
                 );
                 String duplicated = resumeService.duplicated(updatedDto);
 
@@ -156,8 +157,8 @@ public class ResumeMobileController {
                         img_url,
                         resume_img_name,
                         resumerequestDto.resume_img_data(),
-                        resumerequestDto.create_date(),
-                        resumerequestDto.last_modified_date()
+                        LocalDateTime.now(),
+                        LocalDateTime.now()
                 );
                 String duplicated = resumeService.duplicated(updatedDto);
                 if(duplicated=="중복아님") {
