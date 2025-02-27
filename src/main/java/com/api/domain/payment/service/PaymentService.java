@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.api.domain.payment.entity.Payment;
 import com.api.domain.post.mapper.PostMapper;
 import com.api.domain.post.repository.PostRepository;
 import com.api.domain.user.entity.User;
