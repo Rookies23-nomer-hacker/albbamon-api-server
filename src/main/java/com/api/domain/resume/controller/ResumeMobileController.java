@@ -3,6 +3,7 @@ package com.api.domain.resume.controller;
 import com.api.domain.resume.request.ResumeRequestDto;
 import com.api.domain.resume.request.Resume_profileRequestDto;
 import com.api.domain.resume.service.ResumeService;
+import com.api.domain.user.dto.request.UserRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -46,6 +47,15 @@ public class ResumeMobileController {
     public ResponseEntity<Map<String, Object>> selectProfileMobile(@SessionAttribute("userid") Long userId){
         Map<String,Object> response = resumeService.getUserById(userId);
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "[모바일] 작성한 이력서 유무 조회", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/check")
+    public ResponseEntity<?> checkResumeExists(@SessionAttribute("userid") Long userId) {
+        Boolean resumeExists = resumeService.checkResumeExists(userId);
+        return ResponseEntity.ok(resumeExists);
     }
 
     @Operation(summary = "[모바일] 이력서 삭제", responses = {

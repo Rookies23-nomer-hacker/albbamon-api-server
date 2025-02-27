@@ -1,5 +1,8 @@
 package com.api.domain.resume.controller;
 
+import com.api.domain.user.dto.request.UserRequestDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,6 +53,15 @@ public class ResumeController {
 		Long userId = resume_profilerequestDto.user_id();
 		response = resumeService.getUserById(userId);
 		return ResponseEntity.ok(response);
+	}
+
+	@Operation(summary = "작성한 이력서 유무 조회", responses = {
+			@ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+	})
+	@GetMapping("/api/resume/check")
+	public ResponseEntity<?> checkResumeExists(@RequestBody final UserRequestDto userRequestDto) {
+		Boolean resumeExists = resumeService.checkResumeExists(userRequestDto.userId());
+		return ResponseEntity.ok(resumeExists);
 	}
 	
 	@GetMapping("/api/resume/delete")
@@ -104,8 +116,6 @@ public class ResumeController {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
-
-
 
     @PostMapping("/api/resume/write")
     public ResponseEntity<String> createResume(@RequestBody @Valid final ResumeRequestDto resumerequestDto,

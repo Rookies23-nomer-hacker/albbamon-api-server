@@ -13,20 +13,20 @@ import java.util.Optional;
 public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> {
     Optional<Recruitment> findRecruitmentById(Long id);
 
-    @Query(value = "SELECT new com.api.domain.recruitment.vo.RecruitmentVo(r.id, r.title, r.dueDate, r.wage, u.name, u.item) " +
+    @Query(value = "SELECT new com.api.domain.recruitment.vo.RecruitmentVo(r.id, r.title, r.dueDate, r.createDate, r.wage, r.file, u.company, u.name, u.item) " +
             "FROM Recruitment r " +
             "LEFT JOIN User u ON r.user = u " +
             "ORDER BY r.createDate desc")
     List<RecruitmentVo> findAllRecruitmentVos();
 
-    @Query(value = "SELECT new com.api.domain.recruitment.vo.RecruitmentVo(r.id, r.title, r.dueDate, r.wage, u.name, u.item) " +
+    @Query(value = "SELECT new com.api.domain.recruitment.vo.RecruitmentVo(r.id, r.title, r.dueDate, r.createDate, r.wage, r.file, u.company, u.name, u.item) " +
             "FROM Recruitment r " +
             "JOIN User u ON r.user = u " +
             "WHERE u.id = :userId " +
             "ORDER BY r.createDate desc")
     List<RecruitmentVo> findAllRecruitmentVosByUserId(@Param("userId") Long userId);
 
-    @Query(value = "SELECT new com.api.domain.recruitment.vo.RecruitmentDetailVo(r.id, r.title, r.dueDate, r.createDate, r.contents, r.wage, u.name, u.company) " +
+    @Query(value = "SELECT new com.api.domain.recruitment.vo.RecruitmentDetailVo(r.id, r.title, r.dueDate, r.createDate, r.contents, r.wage, u.name, u.company, r.file) " +
             "FROM Recruitment r " +
             "JOIN User u ON r.user = u " +
             "WHERE r.id = :recruitmentId")

@@ -93,5 +93,9 @@ public class RecruitmentService {
 
         applyRepository.save(apply); // 상태 저장
     }
-    
+
+    public Boolean checkAlreadyAppliedRecruitment(Long userId, Long recruitmentId) {
+        Resume resume = resumeRepository.findResumeByUserId(userId).orElseThrow(() -> new EntityNotFoundException(RESUME_NOT_FOUND));
+        return applyRepository.existsByResumeIdAndRecruitmentId(resume.getId(), recruitmentId);
+    }
 }
