@@ -46,7 +46,7 @@ public class PostController {
 
     private final PostService postService;
 
-    @Value("${upload.post.path:C:/Users/r2com/git/albbamon-api-server/src/main/webapp/uploads/post/}")
+    @Value("${upload.post.path:C:/Users/r2com/Documents/GitHub/albbamon-api-server/src/main/webapp/uploads/post}")
     private String uploadDir;
     
     // 📌 게시글 목록 조회
