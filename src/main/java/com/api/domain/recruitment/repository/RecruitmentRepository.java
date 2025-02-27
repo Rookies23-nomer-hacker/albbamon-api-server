@@ -13,13 +13,13 @@ import java.util.Optional;
 public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> {
     Optional<Recruitment> findRecruitmentById(Long id);
 
-    @Query(value = "SELECT new com.api.domain.recruitment.vo.RecruitmentVo(r.id, r.title, r.dueDate, r.wage, u.name) " +
+    @Query(value = "SELECT new com.api.domain.recruitment.vo.RecruitmentVo(r.id, r.title, r.dueDate, r.wage, u.name, u.item) " +
             "FROM Recruitment r " +
             "LEFT JOIN User u ON r.user = u " +
             "ORDER BY r.createDate desc")
     List<RecruitmentVo> findAllRecruitmentVos();
 
-    @Query(value = "SELECT new com.api.domain.recruitment.vo.RecruitmentVo(r.id, r.title, r.dueDate, r.wage, u.name) " +
+    @Query(value = "SELECT new com.api.domain.recruitment.vo.RecruitmentVo(r.id, r.title, r.dueDate, r.wage, u.name, u.item) " +
             "FROM Recruitment r " +
             "JOIN User u ON r.user = u " +
             "WHERE u.id = :userId " +

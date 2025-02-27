@@ -21,11 +21,10 @@ public class PaymentService {
     private final UserRepository userRepository;
 
     public void updateUserPayStatus(Long userId) {
-        // userId에 해당하는 사용자 정보를 조회
+    	
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        // DB에 저장하여 업데이트를 반영
         userRepository.updateItemStatus(userId, "Y");
     }
 }
