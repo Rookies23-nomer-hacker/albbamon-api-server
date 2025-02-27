@@ -35,6 +35,9 @@ import java.util.Objects;
 
 import static com.api.domain.user.error.UserErrorCode.*;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -79,6 +82,29 @@ public class UserService {
         }
         return loginUserVo;
     }
+
+    public UserVo autosignIn(String email) {
+
+        System.out.println("base64 encode email : " + email);
+        String decodedEmail = decodeBase64(email);
+
+        User user = userRepository.findUserByEmail(XorEncryptUtil.xorEncrypt(decodedEmail,encryptionKey)).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));       
+        UserVo loginUserVo = UserVo.of(user, 
+        	                        XorDecryptUtil.xorDecrypt(user.getName(),encryptionKey), 
+                                    XorDecryptUtil.xorDecrypt(user.getEmail(),encryptionKey),
+                                    XorDecryptUtil.xorDecrypt(user.getPhone(),encryptionKey),
+                                    user.getCeoNum(),
+                                    user.getItem()
+                                    );
+        
+        return loginUserVo;
+    }
+
+    private String decodeBase64(String encodedEmail) {
+        byte[] decodedBytes = Base64.getDecoder().decode(encodedEmail);
+        return new String(decodedBytes, StandardCharsets.UTF_8);
+    }
+
 
     public void deleteUser(Long userId) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
