@@ -3,6 +3,7 @@ package com.api.domain.resume.service;
 import com.api.domain.resume.entity.Resume;
 import com.api.domain.resume.repository.ResumeRepository;
 import com.api.domain.resume.repository.Resume_userRepository;
+import com.api.domain.resume.request.ResumeListDto;
 import com.api.domain.resume.request.ResumeRequestDto;
 import com.api.domain.user.entity.User;
 import com.api.domain.user.repository.UserRepository;
@@ -13,8 +14,10 @@ import lombok.RequiredArgsConstructor;
 import static com.api.domain.user.error.UserErrorCode.USER_NOT_FOUND;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -110,4 +113,29 @@ public class ResumeService {
 	public Boolean checkResumeExists(Long userId) {
 		return resumeRepository.existsByUserId(userId);
 	}
+	
+    // 이력서 전체 조회
+    public List<ResumeListDto> getAllResumes() {
+        List<Resume> resumes = resumeRepository.findAll();
+        
+        // Resume -> ResumeList DTO 변환
+        return resumes.stream()
+                .map(resume -> new ResumeListDto(
+                        resume.getId(),
+                        resume.getSchool(),
+                        resume.getStatus(),
+                        resume.getPersonal(),
+                        resume.getWork_place_region(),
+                        resume.getWork_place_city(),
+                        resume.getIndustry_occupation(),
+                        resume.getEmploymentType(),
+                        resume.getWorking_period(),
+                        resume.getWorking_day(),
+                        resume.getIntroduction(),
+                        resume.getPortfolioname(),
+                        resume.getPortfoliourl(),
+                        resume.getResume_imgurl(),
+                        resume.getResume_imgname()))
+                .collect(Collectors.toList());
+    }
 }
