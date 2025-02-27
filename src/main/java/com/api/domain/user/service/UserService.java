@@ -100,11 +100,10 @@ public class UserService {
         		XorDecryptUtil.xorDecrypt(userVo.email(),encryptionKey),
         		XorDecryptUtil.xorDecrypt(userVo.phone(),encryptionKey),
         		userVo.ceoNum(),
+                userVo.company(),
         		userVo.item(),
-        		userVo.company(),
         		userVo.lastModifiedDate()
-        		);
-        System.out.println("📌 userVo: " + user);
+        );
         return userMapper.toGetUserInfoResponseDto(user);
     }
     

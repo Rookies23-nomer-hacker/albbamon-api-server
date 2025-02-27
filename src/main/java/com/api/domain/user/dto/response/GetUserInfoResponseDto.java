@@ -9,7 +9,6 @@ public record GetUserInfoResponseDto(
         UserVo userInfo
 ) {
     public static GetUserInfoResponseDto of(UserVo userInfo) {
-    	System.out.println("📌 GetUserInfoResponseDto.of() 호출됨. userInfo: " + userInfo);
         return GetUserInfoResponseDto.builder()
                 .userInfo(userInfo)
                 .build();
