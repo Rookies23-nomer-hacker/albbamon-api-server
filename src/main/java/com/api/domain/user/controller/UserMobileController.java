@@ -76,7 +76,10 @@ public class UserMobileController {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetUserInfoResponseDto.class)))
     })
     @GetMapping
-    public ResponseEntity<SuccessResponse<?>> getUserInfoMobile(@SessionAttribute("userid") Long userId) {
+    public ResponseEntity<SuccessResponse<?>> getUserInfoMobile(HttpServletRequest request) {
+        Long userId = Long.valueOf((String) request.getSession().getAttribute("userid"));
+        System.out.println("------------------------------------------ " + userId);
+        System.out.println("#------------------------------------------ " + userId.getClass());
         GetUserInfoResponseDto responseDto = userService.getUserInfo(userId);
         return SuccessResponse.ok(responseDto);
     }

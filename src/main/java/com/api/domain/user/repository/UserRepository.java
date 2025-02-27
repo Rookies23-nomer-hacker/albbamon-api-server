@@ -21,6 +21,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     //이름과 전화번호로 사용자 찾기
     List<User> findByNameAndPhone(String name, String phone);
     List<User> findByNameAndCeoNum(String name, String ceoNum); // 기업 회원 검색
+    
+    // payment에서 사용 - item 구매 시 item 컬럼 'y'
     @Modifying
     @Transactional
     @Query("UPDATE User u SET u.item = :item WHERE u.id = :userId")

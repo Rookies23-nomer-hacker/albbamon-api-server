@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class RecruitmentMobileController {
     private final RecruitmentService recruitmentService;
 
-
     @Operation(summary = "[모바일] 내가 작성한 채용 공고 목록 보기", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
@@ -49,6 +48,15 @@ public class RecruitmentMobileController {
                                                                 @RequestBody @Valid final CreateRecruitmentRequestDto requestDto) {
         recruitmentService.updateRecruitment(userId, recruitmentId, requestDto);
         return SuccessResponse.ok(null);
+    }
+
+    @Operation(summary = "[모바일] 채용 공고 1건의 지원 이력 유무 확인", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/{recruitmentId}/apply/check")
+    public ResponseEntity<Boolean> checkAlreadyAppliedRecruitment(@SessionAttribute("userid") Long userId,
+                                                                  @PathVariable final Long recruitmentId) {
+        return ResponseEntity.ok(recruitmentService.checkAlreadyAppliedRecruitment(userId, recruitmentId));
     }
 
     @Operation(summary = "[모바일] 채용 공고 지원하기", responses = {

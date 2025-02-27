@@ -14,6 +14,7 @@ import static com.api.domain.user.error.UserErrorCode.USER_NOT_FOUND;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -105,4 +106,8 @@ public class ResumeService {
         	return null;
         }
     }
+
+	public Boolean checkResumeExists(Long userId) {
+		return resumeRepository.existsByUserId(userId);
+	}
 }
