@@ -1,9 +1,15 @@
 package com.api.domain.post.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.api.domain.post.dto.request.CreatePostRequestDto;
 import com.api.domain.post.service.PostService;
@@ -22,20 +29,7 @@ import com.api.global.common.entity.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:60083", allowCredentials = "true")
 @RequiredArgsConstructor
@@ -46,7 +40,9 @@ public class PostController {
 
     private final PostService postService;
 
-    @Value("${upload.post.path:C:/Users/r2com/Documents/GitHub/albbamon-api-server/src/main/webapp/uploads/post}")
+    // @Value("${upload.post.path:C:/Users/r2com/Documents/GitHub/albbamon-api-server/src/main/webapp/uploads/post/}")
+    
+    @Value("${upload.post.path:D:/abbamon/albbamon-api-server/src/main/webapp/uploads/post/}")
     private String uploadDir;
     
     // 📌 게시글 목록 조회
@@ -69,7 +65,7 @@ public class PostController {
             @RequestParam("title") String title, 
             @RequestParam("contents") String contents) {  
 
-        System.out.println("✅ 게시글 작성 요청 - userId: " + userId);
+        System.out.println("게시글 작성 요청 - userId: " + userId);
 
         String filePath = null;
         if (file != null && !file.isEmpty()) {

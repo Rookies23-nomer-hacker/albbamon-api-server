@@ -74,9 +74,9 @@ public class UserController {
         if (userVo.id() == null) {
             // ✅ 기존 세션이 있다면 삭제하여 불필요한 세션 유지 방지
             HttpSession existingSession = request.getSession(false);
-            if (existingSession != null) {
-                existingSession.invalidate();
-            }
+            // if (existingSession != null) {
+            //     existingSession.invalidate();
+            // }
         }
 
         // ✅ 2. 로그인 성공한 경우에만 세션 생성
