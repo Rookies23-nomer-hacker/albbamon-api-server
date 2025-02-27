@@ -113,32 +113,35 @@ public class PostController {
         return SuccessResponse.ok(postVo);
     }
 
-    // 📌 게시글 수정
-    @Operation(summary = "게시글 수정", responses = {
-            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
-    })
-    @PostMapping("/update/{postId}")
+    // 📌 게시글 수정 (파일 수정 X, 제목과 내용만 수정)
+   @PostMapping("/update/{postId}")
     public ResponseEntity<SuccessResponse<?>> updatePost(
-        @PathVariable("postId") final Long postId,
-        @RequestParam(value = "file", required = false) MultipartFile file,
-        @RequestParam("userId") Long userId,
-        @RequestParam("title") String title,
-        @RequestParam("contents") String contents) {  
+            @PathVariable("postId") final Long postId,
+            @RequestBody Map<String, Object> requestBody) {  // ✅ JSON 데이터를 받도록 설정
 
-        String filePath = null;
-        if (file != null && !file.isEmpty()) {
-            try {
-                filePath = saveFile(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return ResponseEntity.badRequest().body(new SuccessResponse<>("파일 업로드 오류"));
-            }
+        System.out.println("📌 요청 데이터 (requestBody): " + requestBody);
+
+        // ✅ 요청에서 userId, title, contents 추출
+        Long userId = requestBody.get("userid") != null ? Long.parseLong(requestBody.get("userid").toString()) : null;
+        String title = requestBody.get("title") != null ? requestBody.get("title").toString() : null;
+        String contents = requestBody.get("contents") != null ? requestBody.get("contents").toString() : null;
+
+        // ✅ 로그 확인
+        System.out.println("✅ 게시글 수정 요청 - postId: " + postId + ", userId: " + userId);
+
+        if (userId == null) {
+            System.out.println("🚨 userId가 null입니다! 로그인 세션 확인 필요.");
+            return ResponseEntity.status(401).body(new SuccessResponse<>("로그인이 필요한 서비스입니다."));
         }
 
-        CreatePostRequestDto requestDto = new CreatePostRequestDto(userId, title, contents, filePath);
-        postService.updatePost(requestDto.userid(), postId, requestDto);
+        // ✅ 게시글 수정 요청 처리 (파일 수정 X)
+        CreatePostRequestDto requestDto = new CreatePostRequestDto(userId, title, contents, null);
+        postService.updatePost(userId, postId, requestDto);
+
         return SuccessResponse.ok(null);
     }
+
+
 
     // 📌 게시글 삭제
     @Operation(summary = "게시글 삭제", responses = {
