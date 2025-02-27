@@ -8,6 +8,8 @@ import static com.api.domain.user.error.UserErrorCode.USER_NOT_FOUND;
 import java.util.List;
 import java.util.Objects;
 
+import com.api.domain.resume.entity.Resume;
+import com.api.domain.resume.repository.ResumeRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,12 +30,6 @@ import com.api.global.error.exception.EntityNotFoundException;
 import com.api.global.error.exception.InvalidValueException;
 import com.api.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Objects;
-
-import static com.api.domain.user.error.UserErrorCode.*;
 
 @RequiredArgsConstructor
 @Transactional
@@ -41,6 +37,7 @@ import static com.api.domain.user.error.UserErrorCode.*;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ResumeRepository resumeRepository;
     private final UserMapper userMapper;
     private final EncoderUtil encoderUtil;
     
@@ -83,6 +80,10 @@ public class UserService {
     public void deleteUser(Long userId) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        Resume resume = resumeRepository.findResumeByUserId(userId).orElse(null);
+        if(!Objects.isNull(resume)) {
+            resumeRepository.delete(resume);
+        }
         userRepository.delete(user);
     }
 
@@ -99,11 +100,10 @@ public class UserService {
         		XorDecryptUtil.xorDecrypt(userVo.email(),encryptionKey),
         		XorDecryptUtil.xorDecrypt(userVo.phone(),encryptionKey),
         		userVo.ceoNum(),
+                userVo.company(),
         		userVo.item(),
-        		userVo.company(),
         		userVo.lastModifiedDate()
-        		);
-        System.out.println("📌 userVo: " + user);
+        );
         return userMapper.toGetUserInfoResponseDto(user);
     }
     

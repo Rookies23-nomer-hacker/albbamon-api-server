@@ -1,5 +1,6 @@
 package com.api.domain.resume.entity;
 
+import com.api.domain.apply.entity.Apply;
 import com.api.domain.career.entity.Career;
 import com.api.domain.resume.request.ResumeRequestDto;
 import com.api.domain.user.dto.request.CreateUserRequestDto;
@@ -39,10 +40,14 @@ public class Resume extends BaseTimeEntity {
     private LocalDateTime lastModifiedDate;
     private String resume_imgurl;
     private String resume_imgname;
-    
-    @OneToOne(fetch = FetchType.LAZY)
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Apply> applyList = new ArrayList<>();
 
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

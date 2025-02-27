@@ -11,7 +11,7 @@ public class ServletConfig {
 
     @Bean
     public ServletRegistrationBean<JspServlet> jspServletRegistrationBean() {
-        ServletRegistrationBean<JspServlet> registration = new ServletRegistrationBean<>(new JspServlet(), "/uploads/resume/*");
+        ServletRegistrationBean<JspServlet> registration = new ServletRegistrationBean<>(new JspServlet(), "/upload/resume/portfolio/*");
         registration.setLoadOnStartup(1);
         return registration;
     }

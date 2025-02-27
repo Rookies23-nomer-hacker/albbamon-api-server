@@ -20,6 +20,9 @@ public record RecruitmentApplyVo(
         String workingDay,
         String introduction,
         String portfoliourl,
+        String portfolioname,
+        String resume_imgurl,
+        String resume_imgname,
         LocalDateTime createDate,
         ApplyStatus applyStatus
 ) {
