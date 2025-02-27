@@ -1,30 +1,29 @@
 package com.api.domain.post.service;
 
-import static com.api.domain.post.error.PostErrorCode.POST_NOT_FOUND;
-import static com.api.domain.user.error.UserErrorCode.SIGN_IN_REQUIRED;
-import static com.api.domain.user.error.UserErrorCode.USER_NOT_FOUND;
-
+import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.sql.Timestamp;
 
 import com.api.domain.post.dto.request.CreatePostRequestDto;
-import com.api.domain.post.dto.response.GetPostResponseDto;
-import com.api.domain.post.vo.PostListVo;
 import com.api.domain.post.entity.Post;
-import com.api.domain.post.mapper.PostMapper;
-import com.api.domain.post.repository.*;
+import static com.api.domain.post.error.PostErrorCode.POST_NOT_FOUND;
+import com.api.domain.post.repository.PostRepo;
+import com.api.domain.post.repository.PostRepository;
+import com.api.domain.post.vo.PostListVo;
 import com.api.domain.post.vo.PostVo;
 import com.api.domain.user.entity.User;
+import static com.api.domain.user.error.UserErrorCode.SIGN_IN_REQUIRED;
+import static com.api.domain.user.error.UserErrorCode.USER_NOT_FOUND;
 import com.api.domain.user.repository.UserRepository;
+import com.api.global.common.util.XorDecryptUtil;
 import com.api.global.error.exception.EntityNotFoundException;
 import com.api.global.error.exception.UnauthorizedException;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import lombok.RequiredArgsConstructor;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -33,12 +32,25 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostRepo postRepo;
     private final UserRepository userRepository;
-    private final PostMapper postMapper;
 
+    @Value("${spring.datasource.encryption-key}")
+  	private String encryptionKey;
     // 모든 게시물 조회
     public List<PostListVo> getAllPosts() {
-        return postRepository.findPostList();
-    }
+    List<PostListVo> postlistvo = postRepository.findPostList();
+    // Stream API를 사용하여 변환
+    List<PostListVo> postlist = postlistvo.stream()
+        .map(post -> new PostListVo(
+            post.postId(),
+            post.title(),
+            post.contents(),
+            post.createDate(),
+            XorDecryptUtil.xorDecrypt(post.userName(), encryptionKey) // 이름 복호화
+        ))
+        .toList(); // Java 16+ 최적화
+
+    return postlist;
+}
 
     public void createPost(Long userId, CreatePostRequestDto requestDto) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
@@ -79,14 +91,24 @@ public class PostService {
             (String) obj[1],                   // title
             (String) obj[2],                   // contents
             ((Timestamp) obj[3]).toLocalDateTime(),  // create_date
-            (String) obj[4]                    // user_name
+            XorDecryptUtil.xorDecrypt((String) obj[4], encryptionKey)           // user_name
         )).collect(Collectors.toList());
     }
 
 
     public PostVo findById(Long postId) {
-    	System.out.println("fsadasddasddasasdasdasdass");
-        return postRepository.findPostVoById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
+        PostVo postvo = postRepository.findPostVoById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
+        // Stream API를 사용하여 변환
+        PostVo post = new PostVo(
+            postvo.postId(),
+            postvo.userId(),
+            postvo.title(),
+            postvo.contents(),
+            postvo.file(),
+            postvo.createDate(),
+            XorDecryptUtil.xorDecrypt(postvo.userName(), encryptionKey) // 이름 복호화
+        );
+        return post;
     }
     
 }
