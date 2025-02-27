@@ -145,6 +145,15 @@ public class RecruitmentController {
         return SuccessResponse.ok(null);
     }
 
+    @Operation(summary = "채용 공고 1건의 지원 이력 유무 확인", responses = {
+            @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
+    })
+    @GetMapping("/{recruitmentId}/apply/check")
+    public ResponseEntity<Boolean> checkAlreadyAppliedRecruitment(@PathVariable final Long recruitmentId,
+                                                                  @RequestBody @Valid final UserRequestDto userRequestDto) {
+        return ResponseEntity.ok(recruitmentService.checkAlreadyAppliedRecruitment(userRequestDto.userId(), recruitmentId));
+    }
+
     @Operation(summary = "채용 공고 지원하기", responses = {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
     })
