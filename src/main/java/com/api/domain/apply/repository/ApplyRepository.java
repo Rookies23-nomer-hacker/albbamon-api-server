@@ -36,5 +36,5 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     @Query("UPDATE Apply a SET a.status = :status WHERE a.id = :applyId")
     void updateStatus(@Param("recruitmentId") Long recruitmentId, @Param("applyId") Long applyId, @Param("status") ApplyStatus status);
 
-    Boolean existsByResumeIdAndRecruitmentId(Long resumeId, Long recruitmentId);
+    Boolean existsByResumeIdAndRecruitmentId(@Param("resumeId")Long resumeId, @Param("recruitmentId") Long recruitmentId);
 }
