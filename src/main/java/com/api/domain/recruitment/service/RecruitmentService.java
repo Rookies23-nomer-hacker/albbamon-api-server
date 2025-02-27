@@ -53,7 +53,7 @@ public class RecruitmentService {
     }
 
     public RecruitmentDetailVo getRecruitment(Long recruitmentId) {
-        return recruitmentRepository.findRecruitmentDetailVoById(recruitmentId).orElseThrow();
+        return recruitmentRepository.findRecruitmentDetailVoById(recruitmentId).orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
     }
 
     public void createRecruitment(Long userId, CreateRecruitmentRequestDto requestDto) {
