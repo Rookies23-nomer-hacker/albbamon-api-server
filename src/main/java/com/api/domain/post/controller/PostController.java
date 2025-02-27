@@ -1,23 +1,29 @@
 package com.api.domain.post.controller;
 
-import static com.api.domain.user.controller.UserController.SESSION_NAME;
+import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.api.domain.post.dto.request.CreatePostRequestDto;
 import com.api.domain.post.service.PostService;
 import com.api.domain.post.vo.PostListVo;
 import com.api.domain.post.vo.PostVo;
 import com.api.global.common.entity.SuccessResponse;
-import com.api.domain.post.dto.request.CreatePostRequestDto;
-import java.util.Map;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -92,6 +98,20 @@ public class PostController {
         return SuccessResponse.ok(null);
     } 
     
+    @Operation(summary = "모바일 게시글 삭제", responses = {
+        @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @DeleteMapping("/mobile/delete/{postId}")
+    public ResponseEntity<SuccessResponse<?>> mobiledeletePost(
+            @PathVariable final Long postId, 
+            @RequestParam final Long userId) {  
+
+        System.out.println("✅ API 서버 - 삭제 요청 - 사용자 ID: " + userId + ", Post ID: " + postId);
+        postService.deletePost(userId, postId);
+        System.out.println("✅ 게시글 삭제 완료 - Post ID: " + postId);
+        return SuccessResponse.ok(null);
+    } 
+
     @Operation(summary = "게시글 검색", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
