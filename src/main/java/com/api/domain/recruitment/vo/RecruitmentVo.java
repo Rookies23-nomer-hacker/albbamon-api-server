@@ -9,7 +9,9 @@ public record RecruitmentVo(
         Long id,
         String title,
         LocalDateTime dueDate,
+        LocalDateTime createDate,
         Integer wage,
-        String userName
+        String company,
+        String file
 ) {
 }

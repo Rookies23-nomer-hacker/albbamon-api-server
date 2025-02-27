@@ -13,6 +13,7 @@ public record RecruitmentDetailVo(
         String contents,
         Integer wage,
         String userName,
-        String company
+        String company,
+        String file
 ) {
 }
