@@ -149,7 +149,7 @@ public class RecruitmentController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/{recruitmentId}/apply/check")
-    public ResponseEntity<Boolean> checkAlreadyAppliedRecruitment(@PathVariable final Long recruitmentId,
+    public ResponseEntity<Boolean> checkAlreadyAppliedRecruitment(@PathVariable("recruitmentId") final Long recruitmentId,
                                                                   @RequestBody @Valid final UserRequestDto userRequestDto) {
         return ResponseEntity.ok(recruitmentService.checkAlreadyAppliedRecruitment(userRequestDto.userId(), recruitmentId));
     }
@@ -158,7 +158,7 @@ public class RecruitmentController {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
     })
     @PostMapping("/{recruitmentId}/apply")
-    public ResponseEntity<SuccessResponse<?>> applyRecruitment(@PathVariable final Long recruitmentId,
+    public ResponseEntity<SuccessResponse<?>> applyRecruitment(@PathVariable("recruitmentId") final Long recruitmentId,
                                                                @RequestBody @Valid final UserRequestDto userRequestDto) {
         recruitmentService.applyRecruitment(userRequestDto.userId(), recruitmentId);
         return SuccessResponse.ok(null);
