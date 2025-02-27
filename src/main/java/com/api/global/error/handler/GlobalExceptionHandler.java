@@ -18,7 +18,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.util.List;
 
 @Slf4j
-@ControllerAdvice
+//@ControllerAdvice
 public class GlobalExceptionHandler {
     /**
      * Valid & Validated annotation의 binding error를 handling합니다.
