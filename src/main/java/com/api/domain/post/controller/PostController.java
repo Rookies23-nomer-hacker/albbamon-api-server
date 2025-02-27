@@ -13,12 +13,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:60083")
 @RequiredArgsConstructor
 @RestController
 @Tag(name = "Post")
@@ -27,6 +35,9 @@ public class PostController {
 
     private final PostService postService;
 
+    @Value("${upload.post.path:C:/Users/r2com/git/albbamon-api-server/src/main/webapp/uploads/post/}")
+    private String uploadDir;
+    
     // 📌 게시글 목록 조회
     @Operation(summary = "게시글 목록 보기", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
@@ -41,9 +52,44 @@ public class PostController {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
     })
     @PostMapping("/write")
-    public ResponseEntity<SuccessResponse<?>> createPost(@RequestBody @Valid final CreatePostRequestDto requestDto) {
+    public ResponseEntity<SuccessResponse<?>> createPost(
+            @RequestParam(value = "file", required = false) MultipartFile file,  // ✅ @RequestPart → @RequestParam 변경
+            @RequestParam("userId") Long userId,
+            @RequestParam("title") String title, 
+            @RequestParam("contents") String contents) {  
+
+        System.out.println("✅ 게시글 작성 요청 - userId: " + userId);
+
+        String filePath = null;
+        if (file != null && !file.isEmpty()) {
+            try {
+                filePath = saveFile(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return ResponseEntity.badRequest().body(new SuccessResponse<>("파일 업로드 오류"));
+            }
+        }
+
+        CreatePostRequestDto requestDto = new CreatePostRequestDto(userId, title, contents, filePath);
         postService.createPost(requestDto.userid(), requestDto);
+
         return SuccessResponse.ok(null);
+    }
+
+
+
+    private String saveFile(MultipartFile file) throws IOException {
+        String directory = uploadDir;
+        Path path = Paths.get(directory);
+        if (Files.notExists(path)) {
+            Files.createDirectories(path);
+        }
+
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        Path filePath = Paths.get(directory + fileName);
+        Files.copy(file.getInputStream(), filePath);
+
+        return filePath.toString().replace("\\", "/");
     }
 
     // 📌 게시글 1건 조회
@@ -62,13 +108,23 @@ public class PostController {
     })
     @PostMapping("/update/{postId}")
     public ResponseEntity<SuccessResponse<?>> updatePost(
-    	@PathVariable("postId") final Long postId,
-        @RequestBody @Valid final CreatePostRequestDto requestDto) {  
+        @PathVariable("postId") final Long postId,
+        @RequestParam(value = "file", required = false) MultipartFile file,
+        @RequestParam("userId") Long userId,
+        @RequestParam("title") String title,
+        @RequestParam("contents") String contents) {  
 
-        System.out.println("✅ 게시글 수정 요청 - Post ID: " + postId);
-        System.out.println("✅ 수정 요청 - Title: " + requestDto.title());
-        System.out.println("✅ 수정 요청 - Contents: " + requestDto.contents());
+        String filePath = null;
+        if (file != null && !file.isEmpty()) {
+            try {
+                filePath = saveFile(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return ResponseEntity.badRequest().body(new SuccessResponse<>("파일 업로드 오류"));
+            }
+        }
 
+        CreatePostRequestDto requestDto = new CreatePostRequestDto(userId, title, contents, filePath);
         postService.updatePost(requestDto.userid(), postId, requestDto);
         return SuccessResponse.ok(null);
     }
@@ -79,16 +135,11 @@ public class PostController {
     })
     @DeleteMapping("/delete/{postId}")
     public ResponseEntity<SuccessResponse<?>> deletePost(
-    		@PathVariable("postId") final Long postId,
+            @PathVariable("postId") final Long postId,
             @RequestBody Map<String, Object> requestBody) {  
 
-        // ✅ JSON에서 userId 추출
         Long userId = requestBody.get("userId") != null ? Long.parseLong(requestBody.get("userId").toString()) : null;
-
-        System.out.println("✅ API 서버 - 삭제 요청 - 사용자 ID: " + userId + ", Post ID: " + postId);
-
         postService.deletePost(userId, postId);
-        System.out.println("✅ 게시글 삭제 완료 - Post ID: " + postId);
         return SuccessResponse.ok(null);
     } 
     
@@ -97,11 +148,6 @@ public class PostController {
     })
     @GetMapping("/search")
     public List<PostListVo> getSearchPostList(@RequestParam("keyword") String keyword) {
-        System.out.println("keyword : "+keyword);
         return postService.getSearchPostList(keyword);
     }
-
-
-
-
 }
