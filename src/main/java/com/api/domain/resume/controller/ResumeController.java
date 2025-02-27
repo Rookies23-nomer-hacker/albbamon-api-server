@@ -132,9 +132,20 @@ public class ResumeController {
     	String portfolioName ="";
     	String file_url ="";
     	String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
-    	String resume_img_name = resume_img_name_org+"_"+timestamp;
-    	if(portfolioName_org==(null)){portfolioName=null;file_url=null;}
-    	else{portfolioName = portfolioName_org+"_"+timestamp;file_url=serverUrl+"/uploads/resume/portfolio/";}
+    	
+    	
+    	String img_name = resume_img_name_org.substring(0, resume_img_name_org.lastIndexOf("."));
+    	String img_extension = resume_img_name_org.substring(resume_img_name_org.lastIndexOf("."));
+    	String resume_img_name = img_name+"_"+timestamp+img_extension;
+    	if(portfolioName_org==(null)){
+    		portfolioName=null;
+    		file_url=null;
+    	}
+    	else{
+    		String fileNameWithoutExt = portfolioName_org.substring(0, portfolioName_org.lastIndexOf("."));
+    		String extension = portfolioName_org.substring(portfolioName_org.lastIndexOf("."));
+    		portfolioName =  fileNameWithoutExt+"_"+timestamp +extension;
+    		file_url=serverUrl+"/uploads/resume/portfolio/";}
     	String img_url = serverUrl+"/uploads/resume/profile/";
         try {
 
