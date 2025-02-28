@@ -41,15 +41,13 @@ import static com.api.domain.user.error.UserErrorCode.USER_NOT_FOUND;
 @Transactional
 @Service
 public class RecruitmentService {
+    private static final String RECRUITMENT_FILE_DIR = "/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/recruitment/";
     private final RecruitmentRepository recruitmentRepository;
     private final UserRepository userRepository;
     private final ResumeRepository resumeRepository;
     private final ApplyRepository applyRepository;
     private final RecruitmentMapper recruitmentMapper;
     private final FileUtil fileUtil;
-
-    @Value("${upload.recruitment.path:C:/Users/parksh/git/albbamon-api-server/src/main/webapp/uploads/recruitment/}")
-    private String uploadDir;
 
     public GetRecruitmentResponseDto getRecruitmentList() {
         List<RecruitmentVo> recruitmentList = recruitmentRepository.findAllRecruitmentVos();
@@ -69,7 +67,7 @@ public class RecruitmentService {
     public void createRecruitment(Long userId, CreateRecruitmentRequestDto requestDto, MultipartFile file) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        String filePath = (file != null && !file.isEmpty()) ? fileUtil.saveFile(file, uploadDir) : null;
+        String filePath = (file != null && !file.isEmpty()) ? fileUtil.saveFile(file, RECRUITMENT_FILE_DIR) : null;
         Recruitment recruitment = Recruitment.createRecruitment(user, requestDto, filePath);
         recruitmentRepository.save(recruitment);
     }

@@ -31,15 +31,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 @Service
 public class PostService {
+    private static final String POST_FILE_DIR = "/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/post/";
     private final PostRepository postRepository;
     private final PostRepo postRepo;
     private final UserRepository userRepository;
 
     private final FileUtil fileUtil;
-
-    // @Value("${upload.post.path:C:/Users/r2com/Documents/GitHub/albbamon-api-server/src/main/webapp/uploads/post/}")
-    @Value("${upload.post.path:D:/abbamon/albbamon-api-server/src/main/webapp/uploads/post/}")
-    private String uploadDir;
 
     @Value("${spring.datasource.encryption-key}")
   	private String encryptionKey;
@@ -60,7 +57,7 @@ public class PostService {
     public void createPost(Long userId, String title, String contents, MultipartFile file) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        String filePath = fileUtil.saveFile(file, uploadDir);
+        String filePath = fileUtil.saveFile(file, POST_FILE_DIR);
         Post post = Post.createPost(user, title, contents, filePath);
         postRepository.save(post);
     }
