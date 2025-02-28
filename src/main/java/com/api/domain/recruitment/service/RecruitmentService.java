@@ -15,13 +15,18 @@ import com.api.domain.resume.entity.Resume;
 import com.api.domain.resume.repository.ResumeRepository;
 import com.api.domain.user.entity.User;
 import com.api.domain.user.repository.UserRepository;
+import com.api.global.common.entity.SuccessResponse;
+import com.api.global.common.util.FileUtil;
 import com.api.global.error.exception.ConflictException;
 import com.api.global.error.exception.EntityNotFoundException;
 import com.api.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,6 +45,7 @@ public class RecruitmentService {
     private final ResumeRepository resumeRepository;
     private final ApplyRepository applyRepository;
     private final RecruitmentMapper recruitmentMapper;
+    private final FileUtil fileUtil;
 
     public GetRecruitmentResponseDto getRecruitmentList() {
         List<RecruitmentVo> recruitmentList = recruitmentRepository.findAllRecruitmentVos();
@@ -56,10 +62,11 @@ public class RecruitmentService {
         return recruitmentRepository.findRecruitmentDetailVoById(recruitmentId).orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
     }
 
-    public void createRecruitment(Long userId, CreateRecruitmentRequestDto requestDto) {
+    public void createRecruitment(Long userId, CreateRecruitmentRequestDto requestDto, MultipartFile file) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        Recruitment recruitment = Recruitment.createRecruitment(user, requestDto);
+        String filePath = (file != null && !file.isEmpty()) ? fileUtil.saveFile(file) : null;
+        Recruitment recruitment = Recruitment.createRecruitment(user, requestDto, filePath);
         recruitmentRepository.save(recruitment);
     }
 

@@ -66,8 +66,8 @@ public class UserController {
     })
     @PostMapping("/sign-in")
     public ResponseEntity<UserResponseDto> signIn(@RequestBody @Valid final SignInRequestDto requestDto,
-                                        HttpServletRequest request,
-                                        HttpServletResponse response) {
+                                                  HttpServletRequest request,
+                                                  HttpServletResponse response) {
 
         // ✅ 1. email과 password를 사용해 DB에서 userId 조회
         UserVo userVo = userService.signIn(requestDto);
