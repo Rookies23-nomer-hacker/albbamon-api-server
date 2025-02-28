@@ -2,9 +2,7 @@ package com.api.domain.resume.controller;
 
 import com.api.domain.resume.dto.request.CreateResumeRequestDto;
 import com.api.domain.resume.request.ResumeRequestDto;
-import com.api.domain.resume.request.Resume_profileRequestDto;
 import com.api.domain.resume.service.ResumeService;
-import com.api.domain.user.dto.request.UserRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,7 +18,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -63,8 +60,8 @@ public class ResumeMobileController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/delete")
-    public ResponseEntity<String> deleteResumeMobile(@RequestParam("resume_id") Long resumeId){
-        String response = resumeService.delete(resumeId);
+    public ResponseEntity<String> deleteResumeMobile(@SessionAttribute("userid") Long userId){
+        String response = resumeService.deleteResumeByUserId(userId);
         return ResponseEntity.ok(response);
     }
 
@@ -72,9 +69,9 @@ public class ResumeMobileController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/view")
-    public ResponseEntity<Map<String, Object>> viewResumeMobile(@RequestParam("resume_id") Long resumeId){
-        Map<String,Object> response = resumeRepository.getResume_id(resumeId);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Map<String,Object>> viewResumeMobile(@SessionAttribute("userid") Long userId) {
+        Map<String,Object> responseDto = resumeRepository.getResumeDetail(userId);
+        return ResponseEntity.ok(responseDto);
     }
 
     @Operation(summary = "[모바일] 이력서 생성", responses = {
