@@ -91,7 +91,12 @@ public class ResumeMobileController {
         String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
         String resume_img_name = resume_img_name_org+"_"+timestamp;
         if(portfolioName_org==(null)){portfolioName=null;file_url=null;}
-        else{portfolioName = portfolioName_org+"_"+timestamp;file_url=serverUrl+"/uploads/resume/";}
+        else{
+            String fileNameWithoutExt = portfolioName_org.substring(0, portfolioName_org.lastIndexOf("."));
+            String extension = portfolioName_org.substring(portfolioName_org.lastIndexOf("."));
+            portfolioName =  fileNameWithoutExt+"_"+timestamp +extension;
+            file_url=serverUrl+"/upload/resume/portfolio/";
+        }
         String img_url = serverUrl+"/uploads/resume/profile/";
         try {
 
@@ -175,7 +180,7 @@ public class ResumeMobileController {
     private void saveBase64ToFile(String base64Data, String fileName, HttpServletRequest request) throws IOException {
         // Base64 데이터 디코딩
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
-        String upload_dir = request.getServletContext().getRealPath("/uploads/resume/");
+        String upload_dir = request.getServletContext().getRealPath("/upload/resume/portfolio/");
         // 파일 저장
         File file = new File(upload_dir + fileName);
         try (FileOutputStream fos = new FileOutputStream(file)) {
