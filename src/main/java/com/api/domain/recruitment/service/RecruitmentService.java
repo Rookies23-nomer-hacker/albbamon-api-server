@@ -21,6 +21,7 @@ import com.api.global.error.exception.ConflictException;
 import com.api.global.error.exception.EntityNotFoundException;
 import com.api.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +48,9 @@ public class RecruitmentService {
     private final RecruitmentMapper recruitmentMapper;
     private final FileUtil fileUtil;
 
+    @Value("${upload.recruitment.path:C:/Users/r2com/git/albbamon-api-server/src/main/webapp/uploads/recruitment/}")
+    private String uploadDir;
+
     public GetRecruitmentResponseDto getRecruitmentList() {
         List<RecruitmentVo> recruitmentList = recruitmentRepository.findAllRecruitmentVos();
         return recruitmentMapper.toGetRecruitmentResponseDto(recruitmentList);
@@ -65,7 +69,7 @@ public class RecruitmentService {
     public void createRecruitment(Long userId, CreateRecruitmentRequestDto requestDto, MultipartFile file) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        String filePath = (file != null && !file.isEmpty()) ? fileUtil.saveFile(file) : null;
+        String filePath = (file != null && !file.isEmpty()) ? fileUtil.saveFile(file, uploadDir) : null;
         Recruitment recruitment = Recruitment.createRecruitment(user, requestDto, filePath);
         recruitmentRepository.save(recruitment);
     }
@@ -89,15 +93,10 @@ public class RecruitmentService {
         Apply apply = applyRepository.findApplyByRecruitmentIdAndResumeId(recruitmentId, resumeId);
         if(!Objects.isNull(apply)) throw new ConflictException(APPLY_ALREADY_EXISTS);
     }
-    
-    //updateApplyStatus
-    // 상태 업데이트 처리
-    public void updateApplyStatus(Long recruitmentId, Long applyId, ApplyStatus status) {
-        Apply apply = applyRepository.findById(applyId)
-                .orElseThrow(() -> new IllegalArgumentException("지원서를 찾을 수 없습니다."));
 
-        apply.setStatus(status);  // ApplyStatus로 상태를 설정
-
+    public void updateApplyStatus(Long applyId, ApplyStatus status) {
+        Apply apply = applyRepository.findById(applyId).orElseThrow(() -> new IllegalArgumentException("지원서를 찾을 수 없습니다."));
+        apply.setStatus(status);
         applyRepository.save(apply); // 상태 저장
     }
 

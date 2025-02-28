@@ -1,7 +1,6 @@
 package com.api.domain.recruitment.controller;
 
 import com.api.domain.apply.service.ApplyService;
-import com.api.domain.apply.type.ApplyStatus;
 import com.api.domain.recruitment.dto.request.CreateRecruitmentRequestDto;
 import com.api.domain.recruitment.dto.request.UpdateApplyStatusRequestDto;
 import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListResponseDto;
@@ -17,16 +16,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @RestController
@@ -124,8 +116,7 @@ public class RecruitmentController {
     public ResponseEntity<?> updateApplyStatus(@PathVariable("recruitmentId") Long recruitmentId,
                                                @PathVariable("applyId") Long applyId,
                                                @RequestBody UpdateApplyStatusRequestDto requestDto) {
-        ApplyStatus status = requestDto.getStatusAsEnum();
-        recruitmentService.updateApplyStatus(recruitmentId, applyId, status);
+        recruitmentService.updateApplyStatus(applyId, requestDto.getStatusAsEnum());
         return ResponseEntity.ok(new SuccessResponse<>("상태가 성공적으로 변경되었습니다."));
     }
 }
