@@ -21,7 +21,7 @@ import com.api.domain.user.entity.User;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
-@CrossOrigin(origins = "http://localhost:60083", allowCredentials = "true")
+//@CrossOrigin(origins = "http://localhost:60083", allowCredentials = "true")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/payment")

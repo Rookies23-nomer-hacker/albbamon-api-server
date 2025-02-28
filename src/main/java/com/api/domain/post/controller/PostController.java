@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@CrossOrigin(origins = "http://localhost:60083, http://192.168.0.230:60083", allowCredentials = "true")
+//@CrossOrigin(origins = "http://localhost:60083, http://192.168.0.230:60083", allowCredentials = "true")
 @RequiredArgsConstructor
 @RestController
 @Tag(name = "Post")
