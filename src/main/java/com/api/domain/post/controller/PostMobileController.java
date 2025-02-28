@@ -3,7 +3,6 @@ package com.api.domain.post.controller;
 import com.api.domain.post.dto.request.CreatePostRequestDto;
 import com.api.domain.post.service.PostService;
 import com.api.global.common.entity.SuccessResponse;
-import com.api.global.common.util.FileUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,9 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "Post")
 @RequestMapping("/api/mobile/post")
 public class PostMobileController {
-
     private final PostService postService;
-    private final FileUtil fileUtil;
 
     @Operation(summary = "[모바일] 게시글 작성", responses = {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
