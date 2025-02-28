@@ -17,9 +17,11 @@ public record UserVo(
         String company,
         String item,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-        LocalDateTime lastModifiedDate
+        LocalDateTime lastModifiedDate,
+        Integer pwChkNum,
+        Boolean pwCheck
 ) {
-	public static UserVo of(User user, String encryptedName, String encryptedEnail, String encryptedPhone, String ceoNum, String item) {
+	public static UserVo of(User user, String encryptedName, String encryptedEnail, String encryptedPhone, String ceoNum, String item, Integer integer, Boolean boolean1) {
 		return UserVo.builder()
 				.id(user.getId())
 				.name(encryptedName)
@@ -29,6 +31,8 @@ public record UserVo(
 				.company(user.getCompany())
 				.item(user.getItem())
 				.lastModifiedDate(user.getLastModifiedDate())
+				.pwChkNum(user.getPwChkNum())
+				.pwCheck(user.getPwCheck())
 				.build();
 	}
 }

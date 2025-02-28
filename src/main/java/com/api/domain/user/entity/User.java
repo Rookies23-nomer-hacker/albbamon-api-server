@@ -53,6 +53,14 @@ public class User extends BaseTimeEntity {
 
     public void increasePwChkNum() {
         this.pwChkNum += 1;
+        if (this.pwChkNum >= 5) {
+            this.pwCheck = true;
+        }
+    }
+    
+    public void unlockAccount() {
+        this.pwChkNum = 0;
+        this.pwCheck = false;
     }
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -63,21 +63,32 @@ public class UserService {
 
     public UserVo signIn(SignInRequestDto requestDto) {
         User user = userRepository.findUserByEmail(XorEncryptUtil.xorEncrypt(requestDto.email(),encryptionKey)).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));       
-        UserVo loginUserVo = UserVo.of(user, 
+        if(user.getPwCheck()) {
+    		return null;
+    	}
+        if(!validatePassword(user.getPassword(), requestDto.password())) {
+        	user.increasePwChkNum();
+        	userRepository.save(user);
+        	return UserVo.of(user, 
+            		XorDecryptUtil.xorDecrypt(user.getName(),encryptionKey), 
+            		XorDecryptUtil.xorDecrypt(user.getEmail(),encryptionKey),
+            		XorDecryptUtil.xorDecrypt(user.getPhone(),encryptionKey),
+            		user.getCeoNum(),
+            		user.getItem(),
+            		user.getPwChkNum(),
+            		user.getPwCheck()
+            		);
+        }
+        user.unlockAccount();
+        return UserVo.of(user, 
         		XorDecryptUtil.xorDecrypt(user.getName(),encryptionKey), 
         		XorDecryptUtil.xorDecrypt(user.getEmail(),encryptionKey),
         		XorDecryptUtil.xorDecrypt(user.getPhone(),encryptionKey),
         		user.getCeoNum(),
-        		user.getItem()
+        		user.getItem(),
+        		user.getPwChkNum(),
+        		user.getPwCheck()
         		);
-        
-        
-        if(!validatePassword(user.getPassword(), requestDto.password())) {
-        	user.increasePwChkNum();
-        	userRepository.save(user);
-        	return null;
-        }
-        return loginUserVo;
     }
 
     public UserVo autosignIn(String email) {
@@ -91,9 +102,10 @@ public class UserService {
                                     XorDecryptUtil.xorDecrypt(user.getEmail(),encryptionKey),
                                     XorDecryptUtil.xorDecrypt(user.getPhone(),encryptionKey),
                                     user.getCeoNum(),
-                                    user.getItem()
+                                    user.getItem(),
+                                    user.getPwChkNum(),
+                            		user.getPwCheck()
                                     );
-        
         return loginUserVo;
     }
 
@@ -128,20 +140,22 @@ public class UserService {
         		userVo.ceoNum(),
                 userVo.company(),
         		userVo.item(),
-        		userVo.lastModifiedDate()
+        		userVo.lastModifiedDate(),
+        		userVo.pwChkNum(),
+        		userVo.pwCheck()
         );
         return userMapper.toGetUserInfoResponseDto(user);
     }
     
   //아이디 찾기
     public List<UserFindResponseDto> findUserByNameAndPhone(String name, String phone) {
-    	List<User> users = userRepository.findByNameAndPhone(name, phone);
+    	List<User> users = userRepository.findByNameAndPhone(XorEncryptUtil.xorEncrypt(name,encryptionKey),XorEncryptUtil.xorEncrypt(phone,encryptionKey));
 		if (users.isEmpty()) {
 	        throw new EntityNotFoundException(USER_NOT_FOUND);
 	    }
         List<UserFindResponseDto> responseDtos = users.stream()
                 .map(user -> UserFindResponseDto.builder()
-                        .email(user.getEmail())  // 이메일 설정
+                        .email(XorDecryptUtil.xorDecrypt(user.getEmail(),encryptionKey))  // 이메일 설정
                         .type("per")
                         .success(true)           // 성공 여부
                         .build())
@@ -149,13 +163,13 @@ public class UserService {
         return responseDtos;
     }
     public List<UserFindResponseDto> findUserByNameAndCeoNum(String name, String ceoNum) {
-        List<User> users = userRepository.findByNameAndCeoNum(name, ceoNum);
+        List<User> users = userRepository.findByNameAndCeoNum(XorEncryptUtil.xorEncrypt(name,encryptionKey),ceoNum);
         if (users.isEmpty()) {
             throw new EntityNotFoundException(USER_NOT_FOUND);
         }
         List<UserFindResponseDto> responseDtos = users.stream()
                 .map(user -> UserFindResponseDto.builder()
-                        .email(user.getEmail())  // 이메일 설정
+                        .email(XorDecryptUtil.xorDecrypt(user.getEmail(),encryptionKey))  // 이메일 설정
                         .type("cor")
                         .success(true)           // 성공 여부
                         .build())
@@ -164,20 +178,14 @@ public class UserService {
     }
     @Transactional
     public boolean changePassword(Long userId, String currentPassword, String newPassword) {
-        // ✅ 1. userId로 사용자 조회 (Long 타입 사용)
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-
-        // ✅ 2. 현재 비밀번호 검증 (EncoderUtil 사용)
         if (!user.getPassword().equals(encoderUtil.encrypt(currentPassword))) {
-            throw new InvalidValueException(PASSWORD_INCORRECT); // 현재 비밀번호 불일치 예외 발생
+            throw new InvalidValueException(PASSWORD_INCORRECT);
         }
-
-        // ✅ 3. 새 비밀번호 설정 및 저장 (EncoderUtil로 암호화)
         user.updatePassword(encoderUtil.encrypt(newPassword));
         userRepository.save(user);
-
-        return true; // 비밀번호 변경 성공
+        return true;
     }
     
 }
