@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "http://localhost:60083")
+@CrossOrigin(origins = "http://localhost:60083", allowCredentials = "true")
 @Tag(name = "Recruitment")
 @RequestMapping("/api/recruitment")
 public class RecruitmentController {
