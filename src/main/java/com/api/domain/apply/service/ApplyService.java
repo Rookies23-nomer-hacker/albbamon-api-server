@@ -32,7 +32,7 @@ public class ApplyService {
         List<ApplyVo> applyVoList = applyRepository.findApplyVoByUserId(userId);
 
         return GetApplyListResponseDto.of(applyVoList);
-    }
+    }//
 
     public GetRecruitmentApplyListResponseDto getRecruitmentApplyList(@PathVariable("recruitmentId") Long recruitmentId) {
         List<RecruitmentApplyVo> recruitmentApplyVoList = applyRepository.findRecruitmentApplyVoByRecruitmentId(recruitmentId);
