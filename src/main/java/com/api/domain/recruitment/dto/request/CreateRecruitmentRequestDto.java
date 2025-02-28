@@ -9,7 +9,6 @@ public record CreateRecruitmentRequestDto(
         @NotNull String title,
         @NotNull String contents,
         @NotNull LocalDateTime dueDate,
-        @NotNull Integer wage,
-        @NotNull String file
+        @NotNull Integer wage
 ) {
 }
