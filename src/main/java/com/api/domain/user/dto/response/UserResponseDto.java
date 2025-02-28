@@ -14,6 +14,8 @@ public class UserResponseDto {
     private String ceoNum;
     private String company;
     private String item;
+    private Integer pwChkNum;
+    Boolean pwCheck;
     
     public UserResponseDto(UserVo userVo) {
         this.userId = userVo.id();
@@ -22,5 +24,7 @@ public class UserResponseDto {
         this.ceoNum = userVo.ceoNum();
         this.company = userVo.company();
         this.item = userVo.item();
+        this.pwChkNum = userVo.pwChkNum();
+        this.pwCheck = userVo.pwCheck();
     }
 }

@@ -68,33 +68,20 @@ public class UserController {
     public ResponseEntity<UserResponseDto> signIn(@RequestBody @Valid final SignInRequestDto requestDto,
                                         HttpServletRequest request,
                                         HttpServletResponse response) {
-
-        // ✅ 1. email과 password를 사용해 DB에서 userId 조회
         UserVo userVo = userService.signIn(requestDto);
+        if (userVo == null) {
+        	return null;
+        }
         if (userVo.id() == null) {
-            // ✅ 기존 세션이 있다면 삭제하여 불필요한 세션 유지 방지
             HttpSession existingSession = request.getSession(false);
-            // if (existingSession != null) {
-            //     existingSession.invalidate();
-            // }
         }
-
-        // ✅ 2. 로그인 성공한 경우에만 세션 생성
-        HttpSession session = request.getSession(false); // 기존 세션 확인
+        HttpSession session = request.getSession(false);
         if (session == null) {
-            session = request.getSession(true); // 로그인 성공 시에만 새 세션 생성
+            session = request.getSession(true);
         }
-
-        session.setAttribute("userid", userVo.id()); // ✅ 세션에 사용자 ID 저장
-
-        // ✅ 3. Set-Cookie 헤더 설정 (JSESSIONID 저장)
+        session.setAttribute("userid", userVo.id());
         String sessionId = session.getId();
         response.setHeader("Set-Cookie", "JSESSIONID=" + sessionId + "; Path=/; HttpOnly; Secure");
-
-        // ✅ 4. 디버깅 로그 출력
-        System.out.println("로그인 성공 - 세션 저장된 userid: " + session.getAttribute("userid"));
-        System.out.println("세션 ID: " + sessionId);
-
         return ResponseEntity.ok(new UserResponseDto(userVo));
     }
 
@@ -105,14 +92,11 @@ public class UserController {
     public ResponseEntity<List<UserFindResponseDto>> findUserId(@ModelAttribute UserFindRequestDto requestDto) {
     	List<UserFindResponseDto> responseDto;
         if (requestDto.getPhone() != "") {
-            // ✅ 개인 회원 검색 (phone이 존재하는 경우)
             responseDto = userService.findUserByNameAndPhone(requestDto.getName(), requestDto.getPhone());
-            
         } else if (requestDto.getCeoNum() != "") {
-            // ✅ 기업 회원 검색 (ceoNum이 존재하는 경우)
             responseDto = userService.findUserByNameAndCeoNum(requestDto.getName(), requestDto.getCeoNum());
         } else {
-            return ResponseEntity.badRequest().body(null); // phone과 ceoNum 둘 다 없으면 잘못된 요청
+            return ResponseEntity.badRequest().body(null);
         }
 
         return ResponseEntity.ok(responseDto);
