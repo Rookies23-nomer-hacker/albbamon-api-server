@@ -74,7 +74,7 @@ public class RecruitmentController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @PostMapping("/{recruitmentId}")
-    public ResponseEntity<SuccessResponse<?>> updateRecruitment(@PathVariable final Long recruitmentId,
+    public ResponseEntity<SuccessResponse<?>> updateRecruitment(@PathVariable("recruitmentId") final Long recruitmentId,
                                                                 @RequestBody @Valid final CreateRecruitmentRequestDto requestDto) {
         recruitmentService.updateRecruitment(requestDto.userId(), recruitmentId, requestDto);
         return SuccessResponse.ok(null);
