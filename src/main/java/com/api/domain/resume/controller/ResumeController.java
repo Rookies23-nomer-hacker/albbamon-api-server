@@ -229,12 +229,9 @@ public class ResumeController {
         // Base64 데이터 디코딩
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
         String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
-<<<<<<< HEAD
-        // String upload_dir = "/home/api_root/files/uploads/resume/portfolio/";
-        String upload_dir = "/uploads/resume/";
-=======
+
         String upload_dir = "/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/resume/portfolio/";
->>>>>>> 1cf4d6c4db3a9154aee7156ca62055feb345b509
+
         // 파일 저장
         File file = new File(upload_dir + fileName);
         try (FileOutputStream fos = new FileOutputStream(file)) {
@@ -248,12 +245,9 @@ public class ResumeController {
         // Base64 데이터 디코딩
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
         String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
-<<<<<<< HEAD
-        // String upload_dir = "/home/api_root/files/uploads/resume/profile/";
-        String upload_dir = "/uploads/resume/";
-=======
+
         String upload_dir = "/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/resume/profile/";
->>>>>>> 1cf4d6c4db3a9154aee7156ca62055feb345b509
+
         // 파일 저장
         File file = new File(upload_dir + fileName);
         try (FileOutputStream fos = new FileOutputStream(file)) {
