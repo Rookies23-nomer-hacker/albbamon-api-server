@@ -1,56 +1,65 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.4.2'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'org.springframework.boot' version '3.4.2'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'war'  // WAR 플러그인 사용
 }
 
 group = 'com'
 version = '0.0.1-SNAPSHOT'
-apply plugin: 'war'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // 기본 Spring Boot 웹 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    
+    // 내장 톰캣을 제외하기 위해 compileOnly 사용
+    compileOnly 'org.springframework.boot:spring-boot-starter-tomcat'
+    
+    // 개발 중에만 필요한 의존성 (DevTools)
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-	// lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+    // JPA 관련 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-	// mysql
-	runtimeOnly 'com.mysql:mysql-connector-j'
+    // Swagger 의존성
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.1.0'
+    
+    // 보안 관련 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    
+    // Validation 관련 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-	// jpa
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // MySQL 커넥터 의존성
+    runtimeOnly 'com.mysql:mysql-connector-j'
 
-	// swagger
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.1.0'
-	
-	// security
-	//implementation 'org.springframework.boot:spring-boot-starter-security'
-	
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
-  compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    // Lombok 의존성
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // JSP를 사용할 경우 톰캣과 관련된 의존성
+    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+    
+    // Jakarta Servlet API 의존성
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+    // 테스트 의존성
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
+

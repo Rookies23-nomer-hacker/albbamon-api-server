@@ -1,5 +1,9 @@
 server:
   port: 60085
+  tomcat:
+    accesslog:
+     enabled: true              # 액세스 로그 활성화
+     pattern: '%h %l %u %t "%r" %s %b %D'  # 액세스 로그 포맷
 
 spring:
   datasource:
@@ -16,26 +20,24 @@ spring:
     properties:
       hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
 
-  mvc:
-    view:
-      prefix: /WEB-INF/view/
-      suffix: .jsp
-
   devtools:
     restart:
       enabled: false
 
   thymeleaf:
     cache: false
-  view:
-    prefix: file:/home/api_root/files/
-    suffix: .jsp
 
   web:
     resources:
-      static-locations: file:/home/api_root/files/
+      static-locations: /webapp/upload/
       add-mappings: true
-    
+
+  security:
+    enabled: false
+
+  main:
+    web-application-type: servlet
+
 #  http:
 #    encoding:
 #      charset: UTF-8
