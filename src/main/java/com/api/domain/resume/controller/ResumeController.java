@@ -85,8 +85,7 @@ public class ResumeController {
 	@GetMapping("/api/resume/download")
     public void download(@RequestParam("fileName") String filename, HttpServletRequest request, HttpServletResponse response) {
         // 실제 파일 경로 지정
-		String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
-        String filePath = "/home/api_root/files/uploads/resume/portfolio/"+ filename;
+        String filePath = "/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/resume/portfolio/"+ filename;
         File downloadFile = new File(filePath);
 
         // 파일 존재 여부 확인
@@ -145,8 +144,8 @@ public class ResumeController {
     		String fileNameWithoutExt = portfolioName_org.substring(0, portfolioName_org.lastIndexOf("."));
     		String extension = portfolioName_org.substring(portfolioName_org.lastIndexOf("."));
     		portfolioName =  fileNameWithoutExt+"_"+timestamp +extension;
-    		file_url=serverUrl+"/files/uploads/resume/portfolio/";}
-    	String img_url = serverUrl+"/files/uploads/resume/profile/";
+    		file_url=serverUrl+"/upload/resume/portfolio/";}
+    	String img_url = serverUrl+"/upload/resume/profile/";
         try {
 
             // 파일 저장 로직 실행
@@ -230,7 +229,7 @@ public class ResumeController {
         // Base64 데이터 디코딩
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
         String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
-        String upload_dir = "/home/api_root/files/uploads/resume/portfolio/";
+        String upload_dir = "/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/resume/portfolio/";
         // 파일 저장
         File file = new File(upload_dir + fileName);
         try (FileOutputStream fos = new FileOutputStream(file)) {
@@ -244,7 +243,7 @@ public class ResumeController {
         // Base64 데이터 디코딩
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
         String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
-        String upload_dir = "/home/api_root/files/uploads/resume/profile/";
+        String upload_dir = "/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/resume/profile/";
         // 파일 저장
         File file = new File(upload_dir + fileName);
         try (FileOutputStream fos = new FileOutputStream(file)) {
