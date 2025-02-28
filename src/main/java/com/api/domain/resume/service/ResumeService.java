@@ -11,6 +11,7 @@ import com.api.global.error.exception.EntityNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
+import static com.api.domain.resume.error.RecruitmentErrorCode.RESUME_NOT_FOUND;
 import static com.api.domain.user.error.UserErrorCode.USER_NOT_FOUND;
 
 import java.util.HashMap;
@@ -110,6 +111,34 @@ public class ResumeService {
         }
     }
 
+	public Map<String,Object> getResumeDetail(Long userId) {
+		Resume resume = resumeRepository.findResumeByUserId(userId).orElseThrow(() -> new EntityNotFoundException(RESUME_NOT_FOUND));
+		Map<String,Object> json = new HashMap<>();
+		if(resume!=null) {
+			json.put("user_id", resume.getUser().getId());
+			json.put("resume_id", resume.getId());
+			json.put("school",XorDecryptUtil.xorDecrypt(resume.getSchool(),encryptionKey));
+			json.put("status",XorDecryptUtil.xorDecrypt(resume.getStatus(),encryptionKey));
+			json.put("personal",XorDecryptUtil.xorDecrypt(resume.getPersonal(),encryptionKey));
+			json.put("work_place_region", XorDecryptUtil.xorDecrypt(resume.getWork_place_region(),encryptionKey));
+			json.put("work_place_city", XorDecryptUtil.xorDecrypt(resume.getWork_place_city(),encryptionKey));
+			json.put("industry_occupation", XorDecryptUtil.xorDecrypt(resume.getIndustry_occupation(),encryptionKey));
+			json.put("employmentType", XorDecryptUtil.xorDecrypt(resume.getEmploymentType(),encryptionKey));
+			json.put("working_period", XorDecryptUtil.xorDecrypt(resume.getWorking_period(),encryptionKey));
+			json.put("working_day", XorDecryptUtil.xorDecrypt(resume.getWorking_day(),encryptionKey));
+			json.put("introduction", XorDecryptUtil.xorDecrypt(resume.getIntroduction(),encryptionKey));
+			json.put("portfoliourl", resume.getPortfoliourl());
+			json.put("portfolioname", resume.getPortfolioname());
+			json.put("last_modified_date", resume.getLastModifiedDate());
+			json.put("resume_imgurl", resume.getResume_imgurl());
+			json.put("resume_img_name", resume.getResume_imgname());
+			return json;
+		}else {
+
+			return null;
+		}
+	}
+
 	public Boolean checkResumeExists(Long userId) {
 		return resumeRepository.existsByUserId(userId);
 	}
@@ -138,4 +167,13 @@ public class ResumeService {
                         resume.getResume_imgname()))
                 .collect(Collectors.toList());
     }
+
+	public String deleteResumeByUserId(Long userId) {
+		Resume resume = resumeRepository.findResumeByUserId(userId).orElse(null);
+		if(!Objects.isNull(resume)) {
+			resumeRepository.delete(resume);
+			return "삭제완료";
+		}
+		return "이력서가 없습니다";
+	}
 }
