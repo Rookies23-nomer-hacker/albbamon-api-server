@@ -48,7 +48,7 @@ public class RecruitmentService {
     private final RecruitmentMapper recruitmentMapper;
     private final FileUtil fileUtil;
 
-    @Value("${upload.recruitment.path:C:/Users/r2com/git/albbamon-api-server/src/main/webapp/uploads/recruitment/}")
+    @Value("${upload.recruitment.path:C:/Users/parksh/git/albbamon-api-server/src/main/webapp/uploads/recruitment/}")
     private String uploadDir;
 
     public GetRecruitmentResponseDto getRecruitmentList() {

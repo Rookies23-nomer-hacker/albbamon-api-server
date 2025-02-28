@@ -62,7 +62,7 @@ public class RecruitmentController {
     })
     @PostMapping
     public ResponseEntity<SuccessResponse<?>> createRecruitment(@RequestPart(value = "file", required = false) MultipartFile file,
-                                                                @RequestPart final CreateRecruitmentRequestDto requestDto) {
+                                                                @RequestPart(value = "requestDto") final CreateRecruitmentRequestDto requestDto) {
         if (requestDto == null) {
             throw new IllegalArgumentException("요청 데이터가 없습니다.");
         }
