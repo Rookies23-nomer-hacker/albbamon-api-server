@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "http://localhost:60083")
+//@CrossOrigin(origins = "http://localhost:60083")
 @Tag(name = "RecruitmentMobile")
 @RequestMapping("/api/mobile/recruitment")
 public class RecruitmentMobileController {

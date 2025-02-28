@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@CrossOrigin(origins = "http://localhost:60083", allowCredentials = "true")
+//@CrossOrigin(origins = "http://localhost:60083", allowCredentials = "true")
 @RequiredArgsConstructor
 @RestController
 @Tag(name = "Post")
