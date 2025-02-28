@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -62,11 +63,12 @@ public class RecruitmentController {
     })
     @PostMapping
     public ResponseEntity<SuccessResponse<?>> createRecruitment(@RequestPart(value = "file", required = false) MultipartFile file,
-                                                                @RequestPart(value = "requestDto") final CreateRecruitmentRequestDto requestDto) {
+                                                                @RequestPart(value = "requestDto") final CreateRecruitmentRequestDto requestDto,
+                                                                HttpServletRequest request) {
         if (requestDto == null) {
             throw new IllegalArgumentException("요청 데이터가 없습니다.");
         }
-        recruitmentService.createRecruitment(requestDto.userId(), requestDto, file);
+        recruitmentService.createRecruitment(requestDto.userId(), requestDto, file, request);
         return SuccessResponse.created(null);
     }
 

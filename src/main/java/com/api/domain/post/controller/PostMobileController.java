@@ -6,6 +6,7 @@ import com.api.global.common.entity.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +27,9 @@ public class PostMobileController {
     public ResponseEntity<SuccessResponse<?>> createPost(@SessionAttribute("userid") Long userId,
                                                          @RequestParam(value = "file", required = false) MultipartFile file,
                                                          @RequestParam("title") String title,
-                                                         @RequestParam("contents") String contents) {
-        postService.createPost(userId, title, contents, file);
+                                                         @RequestParam("contents") String contents,
+                                                         HttpServletRequest request) {
+        postService.createPost(userId, title, contents, file, request);
         return SuccessResponse.ok(null);
     }
 

@@ -7,6 +7,7 @@ import com.api.global.common.entity.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +37,9 @@ public class RecruitmentMobileController {
     @PostMapping
     public ResponseEntity<SuccessResponse<?>> createRecruitment(@SessionAttribute("userid") Long userId,
                                                                 @RequestPart(value = "file", required = false) MultipartFile file,
-                                                                @RequestPart final CreateRecruitmentRequestDto requestDto) {
-        recruitmentService.createRecruitment(userId, requestDto, file);
+                                                                @RequestPart final CreateRecruitmentRequestDto requestDto,
+                                                                HttpServletRequest request) {
+        recruitmentService.createRecruitment(userId, requestDto, file, request);
         return SuccessResponse.ok(null);
     }
 

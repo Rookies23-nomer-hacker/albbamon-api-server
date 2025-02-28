@@ -1,38 +1,38 @@
 package com.api.global.common.util;
 
+import com.api.global.common.FileType;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class FileUtil {
-    public String saveFile(MultipartFile file, String uploadDir) {
-        try {
-            // 파일 저장 경로 확인
-            String directory = uploadDir;
+    private final String UPLOAD_DIR = "/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/";
 
-            // 경로가 존재하지 않으면 디렉터리를 생성
-            Path path = Paths.get(directory);
-            if (Files.notExists(path)) {
-                Files.createDirectories(path); // 디렉터리 생성
+    public String saveFile(MultipartFile multipartFile, FileType fileType, HttpServletRequest request) {
+        try {
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+
+            String originalFileName = multipartFile.getOriginalFilename().substring(0, multipartFile.getOriginalFilename().lastIndexOf("."));
+            String extension = multipartFile.getOriginalFilename().substring(multipartFile.getOriginalFilename().lastIndexOf("."));
+            String fileName = originalFileName + "_" + timestamp + extension;
+
+            byte[] decodedBytes = multipartFile.getBytes();
+            String upload_dir = UPLOAD_DIR + fileType.getPath();
+
+            File file = new File(upload_dir + fileName);
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                fos.write(decodedBytes);
             }
 
-            // 파일명 설정 (현재 시간 + 원본 파일명)
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-
-            // 파일을 저장할 경로
-            Path filePath = Paths.get(directory + fileName);
-
-            // 파일 저장
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-            // 파일 경로 리턴 (DB에 저장할 때 사용)
-            return filePath.toString().replace("\\", "/");
+            String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
+            return serverUrl + "/upload/" + fileType.getPath() + fileName;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

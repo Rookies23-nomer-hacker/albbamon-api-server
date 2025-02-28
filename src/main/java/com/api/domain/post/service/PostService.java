@@ -4,7 +4,9 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.api.global.common.FileType;
 import com.api.global.common.util.FileUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +33,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 @Service
 public class PostService {
-    @Value("${upload.post.path:D:/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/post/}")
-    private String uploadDir;
     private final PostRepository postRepository;
     private final PostRepo postRepo;
     private final UserRepository userRepository;
@@ -55,10 +55,10 @@ public class PostService {
             .toList();
     }
 
-    public void createPost(Long userId, String title, String contents, MultipartFile file) {
+    public void createPost(Long userId, String title, String contents, MultipartFile file, HttpServletRequest request) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        String filePath = fileUtil.saveFile(file, uploadDir);
+        String filePath = fileUtil.saveFile(file, FileType.POST, request);
         Post post = Post.createPost(user, title, contents, filePath);
         postRepository.save(post);
     }

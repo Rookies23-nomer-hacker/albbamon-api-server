@@ -15,11 +15,13 @@ import com.api.domain.resume.entity.Resume;
 import com.api.domain.resume.repository.ResumeRepository;
 import com.api.domain.user.entity.User;
 import com.api.domain.user.repository.UserRepository;
+import com.api.global.common.FileType;
 import com.api.global.common.entity.SuccessResponse;
 import com.api.global.common.util.FileUtil;
 import com.api.global.error.exception.ConflictException;
 import com.api.global.error.exception.EntityNotFoundException;
 import com.api.global.error.exception.UnauthorizedException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -65,10 +67,10 @@ public class RecruitmentService {
         return recruitmentRepository.findRecruitmentDetailVoById(recruitmentId).orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
     }
 
-    public void createRecruitment(Long userId, CreateRecruitmentRequestDto requestDto, MultipartFile file) {
+    public void createRecruitment(Long userId, CreateRecruitmentRequestDto requestDto, MultipartFile file, HttpServletRequest request) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        String filePath = (file != null && !file.isEmpty()) ? fileUtil.saveFile(file, uploadDir) : null;
+        String filePath = (file != null && !file.isEmpty()) ? fileUtil.saveFile(file, FileType.RECRUITMENT, request) : null;
         Recruitment recruitment = Recruitment.createRecruitment(user, requestDto, filePath);
         recruitmentRepository.save(recruitment);
     }

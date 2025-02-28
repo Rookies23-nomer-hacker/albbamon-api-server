@@ -3,6 +3,7 @@ package com.api.domain.post.controller;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,8 +52,9 @@ public class PostController {
     public ResponseEntity<SuccessResponse<?>> createPost(@RequestParam(value = "file", required = false) MultipartFile file,
                                                          @RequestParam("userId") Long userId,
                                                          @RequestParam("title") String title,
-                                                         @RequestParam("contents") String contents) {
-        postService.createPost(userId, title, contents, file);
+                                                         @RequestParam("contents") String contents,
+                                                         HttpServletRequest request) {
+        postService.createPost(userId, title, contents, file, request);
         return SuccessResponse.ok(null);
     }
 
