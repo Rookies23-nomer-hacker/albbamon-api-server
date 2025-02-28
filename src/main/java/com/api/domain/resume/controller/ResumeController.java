@@ -230,7 +230,8 @@ public class ResumeController {
         // Base64 데이터 디코딩
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
         String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
-        String upload_dir = "/home/api_root/files/uploads/resume/portfolio/";
+        // String upload_dir = "/home/api_root/files/uploads/resume/portfolio/";
+        String upload_dir = "/uploads/resume/";
         // 파일 저장
         File file = new File(upload_dir + fileName);
         try (FileOutputStream fos = new FileOutputStream(file)) {
@@ -244,7 +245,8 @@ public class ResumeController {
         // Base64 데이터 디코딩
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
         String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
-        String upload_dir = "/home/api_root/files/uploads/resume/profile/";
+        // String upload_dir = "/home/api_root/files/uploads/resume/profile/";
+        String upload_dir = "/uploads/resume/";
         // 파일 저장
         File file = new File(upload_dir + fileName);
         try (FileOutputStream fos = new FileOutputStream(file)) {

@@ -30,17 +30,8 @@ public class ApplyService {
     public GetApplyListResponseDto getMyApplyList(Long userId) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         List<ApplyVo> applyVoList = applyRepository.findApplyVoByUserId(userId);
-        List<ApplyVo> applyList = applyVoList.stream()
-                .map(apply -> new ApplyVo(
-            		apply.applyId(),
-                    XorDecryptUtil.xorDecrypt(apply.recruitmentTitle(), encryptionKey),
-                    apply.recruitmentWage(),
-                    XorDecryptUtil.xorDecrypt(apply.company(), encryptionKey),
-                    apply.createDate(),
-                    apply.status()
-                ))
-                .toList();
-        return GetApplyListResponseDto.of(applyList);
+
+        return GetApplyListResponseDto.of(applyVoList);
     }
 
     public GetRecruitmentApplyListResponseDto getRecruitmentApplyList(@PathVariable("recruitmentId") Long recruitmentId) {
