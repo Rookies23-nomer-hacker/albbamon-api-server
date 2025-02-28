@@ -45,14 +45,14 @@ public class Recruitment extends BaseTimeEntity {
     @Builder.Default
     private List<Apply> applyList = new ArrayList<>();
 
-    public static Recruitment createRecruitment(User user, CreateRecruitmentRequestDto requestDto) {
+    public static Recruitment createRecruitment(User user, CreateRecruitmentRequestDto requestDto, String filePath) {
         return Recruitment.builder()
                 .title(requestDto.title())
                 .contents(requestDto.contents())
                 .dueDate(requestDto.dueDate())
                 .wage(requestDto.wage())
                 .user(user)
-                .file(requestDto.file())
+                .file(filePath)
                 .build();
     }
 

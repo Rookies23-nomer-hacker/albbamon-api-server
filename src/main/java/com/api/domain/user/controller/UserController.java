@@ -37,11 +37,11 @@ import java.util.List;
 @RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
-    
+
     // 키 값
-	@Value("${spring.datasource.encryption-key}")
-  	private String encryptionKey;
-	
+    @Value("${spring.datasource.encryption-key}")
+    private String encryptionKey;
+
     public static final String SESSION_NAME = "SESSIONID";
 
     @Operation(summary = "회원가입", responses = {
@@ -49,28 +49,28 @@ public class UserController {
     })
     @PostMapping
     public ResponseEntity<SuccessResponse<?>> createUser(@RequestBody @Valid final CreateUserRequestDto requestDto) {
-    	CreateUserRequestDto updateDto = new CreateUserRequestDto (
-    			XorEncryptUtil.xorEncrypt(requestDto.email(), encryptionKey),
-    			requestDto.password(),
-    			XorEncryptUtil.xorEncrypt(requestDto.name(), encryptionKey),
-    			XorEncryptUtil.xorEncrypt(requestDto.phone(), encryptionKey),
-    			requestDto.company(),
-    			requestDto.ceoNum()
-    			);
-    	userService.createUser(updateDto);
+        CreateUserRequestDto updateDto = new CreateUserRequestDto (
+                XorEncryptUtil.xorEncrypt(requestDto.email(), encryptionKey),
+                requestDto.password(),
+                XorEncryptUtil.xorEncrypt(requestDto.name(), encryptionKey),
+                XorEncryptUtil.xorEncrypt(requestDto.phone(), encryptionKey),
+                requestDto.company(),
+                requestDto.ceoNum()
+        );
+        userService.createUser(updateDto);
         return SuccessResponse.ok(null);
     }
 
     @Operation(summary = "로그인", responses = {
-        @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @PostMapping("/sign-in")
     public ResponseEntity<UserResponseDto> signIn(@RequestBody @Valid final SignInRequestDto requestDto,
-                                        HttpServletRequest request,
-                                        HttpServletResponse response) {
+                                                  HttpServletRequest request,
+                                                  HttpServletResponse response) {
         UserVo userVo = userService.signIn(requestDto);
         if (userVo == null) {
-        	return null;
+            return null;
         }
         if (userVo.id() == null) {
             HttpSession existingSession = request.getSession(false);
@@ -86,11 +86,11 @@ public class UserController {
     }
 
     @Operation(summary = "아이디 찾기", responses = {
-    		@ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/find-id")
     public ResponseEntity<List<UserFindResponseDto>> findUserId(@ModelAttribute UserFindRequestDto requestDto) {
-    	List<UserFindResponseDto> responseDto;
+        List<UserFindResponseDto> responseDto;
         if (requestDto.getPhone() != "") {
             responseDto = userService.findUserByNameAndPhone(requestDto.getName(), requestDto.getPhone());
         } else if (requestDto.getCeoNum() != "") {
@@ -101,7 +101,7 @@ public class UserController {
 
         return ResponseEntity.ok(responseDto);
     }
-    
+
     @Operation(summary = "비밀번호 변경", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })

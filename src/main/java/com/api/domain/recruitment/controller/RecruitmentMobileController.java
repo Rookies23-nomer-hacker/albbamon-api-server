@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
@@ -34,8 +35,9 @@ public class RecruitmentMobileController {
     })
     @PostMapping
     public ResponseEntity<SuccessResponse<?>> createRecruitment(@SessionAttribute("userid") Long userId,
-                                                                @RequestBody @Valid final CreateRecruitmentRequestDto requestDto) {
-        recruitmentService.createRecruitment(userId, requestDto);
+                                                                @RequestPart(value = "file", required = false) MultipartFile file,
+                                                                @RequestPart final CreateRecruitmentRequestDto requestDto) {
+        recruitmentService.createRecruitment(userId, requestDto, file);
         return SuccessResponse.ok(null);
     }
 
