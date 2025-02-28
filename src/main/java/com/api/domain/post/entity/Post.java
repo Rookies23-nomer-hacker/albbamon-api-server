@@ -46,18 +46,16 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    // 📌 Post 생성 메서드 (정적 팩토리 메서드)
-    public static Post createPost(User user, CreatePostRequestDto requestDto) {
+    public static Post createPost(User user, String title, String contents, String filePath) {
         return Post.builder()
-                .title(requestDto.title())
-                .contents(requestDto.contents())
-                .file(requestDto.file())
+                .title(title)
+                .contents(contents)
+                .file(filePath)
                 .createDate(LocalDateTime.now())
                 .user(user)
                 .build();
     }
 
-    // 📌 Post 수정 메서드
     public void updatePost(CreatePostRequestDto requestDto) {
         this.title = requestDto.title();
         this.contents = requestDto.contents();

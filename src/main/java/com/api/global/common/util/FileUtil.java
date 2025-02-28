@@ -1,6 +1,5 @@
 package com.api.global.common.util;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,10 +11,7 @@ import java.nio.file.StandardCopyOption;
 
 @Component
 public class FileUtil {
-    @Value("${upload.recruitment.path:C:/Users/r2com/git/albbamon-api-server/src/main/webapp/uploads/recruitment/}")
-    private String uploadDir;
-
-    public String saveFile(MultipartFile file) {
+    public String saveFile(MultipartFile file, String uploadDir) {
         try {
             // 파일 저장 경로 확인
             String directory = uploadDir;
