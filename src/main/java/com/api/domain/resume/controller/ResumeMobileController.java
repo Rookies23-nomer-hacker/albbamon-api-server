@@ -1,17 +1,5 @@
 package com.api.domain.resume.controller;
 
-import com.api.domain.resume.dto.request.CreateResumeRequestDto;
-import com.api.domain.resume.request.ResumeRequestDto;
-import com.api.domain.resume.service.ResumeService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,6 +7,25 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
+
+import com.api.domain.resume.dto.request.CreateResumeRequestDto;
+import com.api.domain.resume.request.ResumeRequestDto;
+import com.api.domain.resume.service.ResumeService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
@@ -35,6 +42,7 @@ public class ResumeMobileController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> selectResumeMobile(@SessionAttribute("userid") Long userId) {
         Map<String,Object> response = resumeRepository.getResumeUser_id(userId);
+        System.out.println(response);
         return ResponseEntity.ok(response);
     }
 
