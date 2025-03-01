@@ -38,6 +38,9 @@ public class ResumeMobileController {
 	private final ResumeService resumeService;
 	private final ResumeService resumeRepository;
 
+    @Value("${server.url}")
+    private String serverUrl;
+
     @Value("${spring.datasource.encryption-key}")
     private String encryptionKey;
 
@@ -96,17 +99,10 @@ public class ResumeMobileController {
                                                      HttpServletRequest request) {
         String portfolioName_org=resumerequestDto.portfolioName();
         String portfolioData=resumerequestDto.portfolioData();
-        String resume_img_name_org = resumerequestDto.resume_img_name();
-        String resume_img_data = resumerequestDto.resume_img_data();
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String portfolioName ="";
         String file_url ="";
-        String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
 
-
-        String img_name = resume_img_name_org.substring(0, resume_img_name_org.lastIndexOf("."));
-        String img_extension = resume_img_name_org.substring(resume_img_name_org.lastIndexOf("."));
-        String resume_img_name = img_name+"_"+timestamp+img_extension;
         if(portfolioName_org==(null)){
             portfolioName=null;
             file_url=null;
@@ -115,8 +111,25 @@ public class ResumeMobileController {
             String fileNameWithoutExt = portfolioName_org.substring(0, portfolioName_org.lastIndexOf("."));
             String extension = portfolioName_org.substring(portfolioName_org.lastIndexOf("."));
             portfolioName =  fileNameWithoutExt+"_"+timestamp +extension;
-            file_url=serverUrl+"/upload/resume/portfolio/";}
-        String img_url = serverUrl+"/upload/resume/profile/";
+            file_url=serverUrl+"/upload/resume/portfolio/";
+        }
+
+        String resume_img_name_org = resumerequestDto.resume_img_name();
+        String resume_img_data = resumerequestDto.resume_img_data();
+        String resume_img_name = "";
+        String img_url = "";
+
+        if(resume_img_name_org==(null)){
+            resume_img_name = null;
+            img_url = null;
+        }
+        else{
+            String img_name = resume_img_name_org.substring(0, resume_img_name_org.lastIndexOf("."));
+            String img_extension = resume_img_name_org.substring(resume_img_name_org.lastIndexOf("."));
+            resume_img_name = img_name+"_"+timestamp+img_extension;
+            img_url = serverUrl+"/upload/resume/profile/";
+        }
+
         try {
 
             // 파일 저장 로직 실행
