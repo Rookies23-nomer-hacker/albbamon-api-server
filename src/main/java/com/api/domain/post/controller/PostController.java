@@ -5,7 +5,6 @@ import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,7 +52,8 @@ public class PostController {
                                                          @RequestParam("title") String title,
                                                          @RequestParam("contents") String contents,
                                                          HttpServletRequest request) {
-        postService.createPost(userId, title, contents, file, request);
+        String serverUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        postService.createPost(userId, title, contents, file, serverUrl);
         return SuccessResponse.ok(null);
     }
 

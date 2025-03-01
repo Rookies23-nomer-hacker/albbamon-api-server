@@ -67,10 +67,10 @@ public class RecruitmentService {
         return recruitmentRepository.findRecruitmentDetailVoById(recruitmentId).orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
     }
 
-    public void createRecruitment(Long userId, CreateRecruitmentRequestDto requestDto, MultipartFile file, HttpServletRequest request) {
+    public void createRecruitment(Long userId, CreateRecruitmentRequestDto requestDto, MultipartFile file, String serverUrl) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        String filePath = (file != null && !file.isEmpty()) ? fileUtil.saveFile(file, FileType.RECRUITMENT, request) : null;
+        String filePath = (file != null && !file.isEmpty()) ? fileUtil.saveFile(file, FileType.RECRUITMENT, serverUrl) : null;
         Recruitment recruitment = Recruitment.createRecruitment(user, requestDto, filePath);
         recruitmentRepository.save(recruitment);
     }

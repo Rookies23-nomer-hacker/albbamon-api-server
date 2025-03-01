@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-//@CrossOrigin(origins = "http://localhost:60083", allowCredentials = "true")
 @RequiredArgsConstructor
 @RestController
 @Tag(name = "Post")
@@ -29,7 +28,8 @@ public class PostMobileController {
                                                          @RequestParam("title") String title,
                                                          @RequestParam("contents") String contents,
                                                          HttpServletRequest request) {
-        postService.createPost(userId, title, contents, file, request);
+        String serverUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        postService.createPost(userId, title, contents, file, serverUrl);
         return SuccessResponse.ok(null);
     }
 
@@ -53,21 +53,4 @@ public class PostMobileController {
         postService.deletePost(userId, postId);
         return SuccessResponse.ok(null);
     }
-
-    /*
-    *     private String saveFile(MultipartFile file) throws IOException {
-        String directory = uploadDir;
-        Path path = Paths.get(directory);
-        if (Files.notExists(path)) {
-            Files.createDirectories(path);
-        }
-
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get(directory + fileName);
-        Files.copy(file.getInputStream(), filePath);
-
-        return filePath.toString().replace("\\", "/");
-    }
-    *
-    * */
 }

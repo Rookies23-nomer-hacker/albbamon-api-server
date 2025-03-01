@@ -7,20 +7,22 @@ import com.api.global.common.entity.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
-//@CrossOrigin(origins = "http://localhost:60083")
 @Tag(name = "RecruitmentMobile")
 @RequestMapping("/api/mobile/recruitment")
 public class RecruitmentMobileController {
     private final RecruitmentService recruitmentService;
+
+    @Value("${server.url}")
+    private String serverUrl;
 
     @Operation(summary = "[모바일] 내가 작성한 채용 공고 목록 보기", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
@@ -37,9 +39,8 @@ public class RecruitmentMobileController {
     @PostMapping
     public ResponseEntity<SuccessResponse<?>> createRecruitment(@SessionAttribute("userid") Long userId,
                                                                 @RequestPart(value = "file", required = false) MultipartFile file,
-                                                                @RequestPart final CreateRecruitmentRequestDto requestDto,
-                                                                HttpServletRequest request) {
-        recruitmentService.createRecruitment(userId, requestDto, file, request);
+                                                                @RequestPart final CreateRecruitmentRequestDto requestDto) {
+        recruitmentService.createRecruitment(userId, requestDto, file, serverUrl);
         return SuccessResponse.ok(null);
     }
 

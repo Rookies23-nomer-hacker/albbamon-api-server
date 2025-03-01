@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 public class FileUtil {
     private final String UPLOAD_DIR = "/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/";
 
-    public String saveFile(MultipartFile multipartFile, FileType fileType, HttpServletRequest request) {
+    public String saveFile(MultipartFile multipartFile, FileType fileType, String serverUrl) {
         try {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
@@ -31,7 +31,6 @@ public class FileUtil {
                 fos.write(decodedBytes);
             }
 
-            String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
             return serverUrl + "/upload/" + fileType.getPath() + fileName;
         } catch (IOException e) {
             throw new RuntimeException(e);

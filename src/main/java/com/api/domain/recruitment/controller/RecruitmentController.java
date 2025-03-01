@@ -64,10 +64,8 @@ public class RecruitmentController {
     public ResponseEntity<SuccessResponse<?>> createRecruitment(@RequestPart(value = "file", required = false) MultipartFile file,
                                                                 @RequestPart(value = "requestDto") final CreateRecruitmentRequestDto requestDto,
                                                                 HttpServletRequest request) {
-        if (requestDto == null) {
-            throw new IllegalArgumentException("요청 데이터가 없습니다.");
-        }
-        recruitmentService.createRecruitment(requestDto.userId(), requestDto, file, request);
+        String serverUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        recruitmentService.createRecruitment(requestDto.userId(), requestDto, file, serverUrl);
         return SuccessResponse.created(null);
     }
 

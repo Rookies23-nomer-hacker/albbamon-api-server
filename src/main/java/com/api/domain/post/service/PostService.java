@@ -55,10 +55,10 @@ public class PostService {
             .toList();
     }
 
-    public void createPost(Long userId, String title, String contents, MultipartFile file, HttpServletRequest request) {
+    public void createPost(Long userId, String title, String contents, MultipartFile file, String serverUrl) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        String filePath = fileUtil.saveFile(file, FileType.POST, request);
+        String filePath = fileUtil.saveFile(file, FileType.POST, serverUrl);
         Post post = Post.createPost(user, title, contents, filePath);
         postRepository.save(post);
     }
