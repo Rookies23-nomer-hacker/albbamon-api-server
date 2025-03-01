@@ -55,13 +55,19 @@ public class PostService {
             .toList();
     }
 
-    public void createPost(Long userId, String title, String contents, MultipartFile file, String serverUrl) {
-        if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
-        User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        String filePath = fileUtil.saveFile(file, FileType.POST, serverUrl);
-        Post post = Post.createPost(user, title, contents, filePath);
-        postRepository.save(post);
+    public void createPost(Long userId, String title, String contents, MultipartFile file, HttpServletRequest request) {
+    if (userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
+    User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+    // 파일이 없을 경우 filePath를 null로 설정
+    String filePath = null;
+    if (file != null && !file.isEmpty()) {
+        filePath = fileUtil.saveFile(file, FileType.POST, request);
     }
+
+    Post post = Post.createPost(user, title, contents, filePath);
+    postRepository.save(post);
+}
 
     public void updatePost(Long userId, Long postId, CreatePostRequestDto requestDto) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
