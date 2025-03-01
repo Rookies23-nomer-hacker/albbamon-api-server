@@ -8,6 +8,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Map;
 
+import com.api.global.common.util.XorEncryptUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +37,9 @@ public class ResumeMobileController {
 
 	private final ResumeService resumeService;
 	private final ResumeService resumeRepository;
+
+    @Value("${spring.datasource.encryption-key}")
+    private String encryptionKey;
 
     @Operation(summary = "[모바일] 이력서 목록 조회", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
@@ -93,19 +98,25 @@ public class ResumeMobileController {
         String portfolioData=resumerequestDto.portfolioData();
         String resume_img_name_org = resumerequestDto.resume_img_name();
         String resume_img_data = resumerequestDto.resume_img_data();
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String portfolioName ="";
         String file_url ="";
         String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
-        String resume_img_name = resume_img_name_org+"_"+timestamp;
-        if(portfolioName_org==(null)){portfolioName=null;file_url=null;}
+
+
+        String img_name = resume_img_name_org.substring(0, resume_img_name_org.lastIndexOf("."));
+        String img_extension = resume_img_name_org.substring(resume_img_name_org.lastIndexOf("."));
+        String resume_img_name = img_name+"_"+timestamp+img_extension;
+        if(portfolioName_org==(null)){
+            portfolioName=null;
+            file_url=null;
+        }
         else{
             String fileNameWithoutExt = portfolioName_org.substring(0, portfolioName_org.lastIndexOf("."));
             String extension = portfolioName_org.substring(portfolioName_org.lastIndexOf("."));
             portfolioName =  fileNameWithoutExt+"_"+timestamp +extension;
-            file_url=serverUrl+"/upload/resume/portfolio/";
-        }
-        String img_url = serverUrl+"/uploads/resume/profile/";
+            file_url=serverUrl+"/upload/resume/portfolio/";}
+        String img_url = serverUrl+"/upload/resume/profile/";
         try {
 
             // 파일 저장 로직 실행
@@ -117,16 +128,16 @@ public class ResumeMobileController {
 
                 ResumeRequestDto updatedDto = new ResumeRequestDto(
                         userId,
-                        resumerequestDto.school(),
-                        resumerequestDto.status(),
-                        resumerequestDto.personal(),
-                        resumerequestDto.work_place_region(),
-                        resumerequestDto.work_place_city(),
-                        resumerequestDto.industry_occupation(),
-                        resumerequestDto.employmentType(),
-                        resumerequestDto.working_period(),
-                        resumerequestDto.working_day(),
-                        resumerequestDto.introduction(),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.school(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.status(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.personal(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.work_place_region(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.work_place_city(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.industry_occupation(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.employmentType(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.working_period(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.working_day(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.introduction(), encryptionKey),
                         resumerequestDto.portfolioData(),
                         file_url,
                         portfolioName,
@@ -136,7 +147,7 @@ public class ResumeMobileController {
                         LocalDateTime.now(),
                         LocalDateTime.now()
                 );
-                String duplicated = resumeService.duplicated(updatedDto);
+                String duplicated = resumeService.duplicated(userId);
 
                 if(duplicated=="중복아님") {
 
@@ -151,16 +162,16 @@ public class ResumeMobileController {
                 }
                 ResumeRequestDto updatedDto = new ResumeRequestDto(
                         userId,
-                        resumerequestDto.school(),
-                        resumerequestDto.status(),
-                        resumerequestDto.personal(),
-                        resumerequestDto.work_place_region(),
-                        resumerequestDto.work_place_city(),
-                        resumerequestDto.industry_occupation(),
-                        resumerequestDto.employmentType(),
-                        resumerequestDto.working_period(),
-                        resumerequestDto.working_day(),
-                        resumerequestDto.introduction(),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.school(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.status(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.personal(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.work_place_region(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.work_place_city(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.industry_occupation(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.employmentType(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.working_period(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.working_day(), encryptionKey),
+                        XorEncryptUtil.xorEncrypt(resumerequestDto.introduction(), encryptionKey),
                         resumerequestDto.portfolioData(),
                         file_url,
                         portfolioName,
@@ -170,7 +181,7 @@ public class ResumeMobileController {
                         LocalDateTime.now(),
                         LocalDateTime.now()
                 );
-                String duplicated = resumeService.duplicated(updatedDto);
+                String duplicated = resumeService.duplicated(userId);
                 if(duplicated=="중복아님") {
                     resumeService.createResume(updatedDto);
                 }else {

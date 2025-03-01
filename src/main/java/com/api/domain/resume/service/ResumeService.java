@@ -44,14 +44,13 @@ public class ResumeService {
     	resumeRepository.save(resume);
     }
     
-    public String duplicated(ResumeRequestDto resumerequestDto) {
-    	Resume resume = resumeRepository.findResumeByUserId(resumerequestDto.user_id()).orElse(null);
+    public String duplicated(Long userId) {
+    	Resume resume = resumeRepository.findResumeByUserId(userId).orElse(null);
     	if(resume==null) {
     		return "중복아님";
     	}else {
     		return "중복";
     	}
-    	
     }
     
     public Map<String, Object> getUserById(Long userId) {

@@ -121,7 +121,7 @@ public class ResumeController {
 
     @PostMapping("/api/resume/write")
     public ResponseEntity<String> createResume(@RequestBody @Valid final ResumeRequestDto resumerequestDto,
-    		HttpServletRequest request) {
+											   HttpServletRequest request) {
  
     	String portfolioName_org=resumerequestDto.portfolioName();
     	String portfolioData=resumerequestDto.portfolioData();
@@ -176,7 +176,7 @@ public class ResumeController {
                 	    resumerequestDto.create_date(),
                 	    resumerequestDto.last_modified_date()
                 );
-               String duplicated = resumeService.duplicated(updatedDto);
+               String duplicated = resumeService.duplicated(updatedDto.user_id());
        
                if(duplicated=="중복아님") {
             	
@@ -210,7 +210,7 @@ public class ResumeController {
                 	    resumerequestDto.create_date(),
                 	    resumerequestDto.last_modified_date()
                 );
-            	String duplicated = resumeService.duplicated(updatedDto);
+            	String duplicated = resumeService.duplicated(updatedDto.user_id());
             	if(duplicated=="중복아님") {
             		resumeService.createResume(updatedDto);
             	}else {
