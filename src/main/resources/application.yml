@@ -9,6 +9,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://58.127.241.84:63306/nomer_hacker_db?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Seoul
+    #url: jdbc:mysql://sinhyeoksu.duckdns.org:3306/nomer_hacker_db?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Seoul
     username: nomer_admin1
     password: 1234
     encryption-key: mySecretKey1234
