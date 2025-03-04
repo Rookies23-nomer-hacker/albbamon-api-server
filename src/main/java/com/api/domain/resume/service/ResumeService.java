@@ -69,7 +69,7 @@ public class ResumeService {
     }
     
     public Map<String, Object> getResumeUser_id(Long user_id) {
-    	Resume resume = resumeRepository.findByuser_id(user_id);
+    	Resume resume = resumeRepository.findUserByUser_id(user_id).orElse(null);
         Map<String,Object> json = new HashMap<>();
         if(resume!=null) {
         	json.put("resume_id", resume.getId());
@@ -112,7 +112,7 @@ public class ResumeService {
     }
 
 	public Map<String,Object> getResumeDetail(Long userId) {
-		Resume resume = resumeRepository.findResumeByUserId(userId).orElseThrow(() -> new EntityNotFoundException(RESUME_NOT_FOUND));
+		Resume resume = resumeRepository.findResumeByUserId(userId).orElse(null);
 		Map<String,Object> json = new HashMap<>();
 		if(resume!=null) {
 			json.put("user_id", resume.getUser().getId());
@@ -134,8 +134,7 @@ public class ResumeService {
 			json.put("resume_img_name", resume.getResume_imgname());
 			return json;
 		}else {
-
-			return null;
+			return json;
 		}
 	}
 
