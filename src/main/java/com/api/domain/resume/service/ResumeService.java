@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.api.global.common.util.XorDecryptUtil;
+import com.api.global.common.util.XorEncryptUtil;
 
 
 @RequiredArgsConstructor
@@ -146,24 +147,23 @@ public class ResumeService {
     public List<ResumeListDto> getAllResumes() {
         List<Resume> resumes = resumeRepository.findAll();
         
-        // Resume -> ResumeList DTO 변환
         return resumes.stream()
                 .map(resume -> new ResumeListDto(
                         resume.getId(),
-                        resume.getSchool(),
-                        resume.getStatus(),
-                        resume.getPersonal(),
-                        resume.getWork_place_region(),
-                        resume.getWork_place_city(),
-                        resume.getIndustry_occupation(),
-                        resume.getEmploymentType(),
-                        resume.getWorking_period(),
-                        resume.getWorking_day(),
-                        resume.getIntroduction(),
-                        resume.getPortfolioname(),
-                        resume.getPortfoliourl(),
-                        resume.getResume_imgurl(),
-                        resume.getResume_imgname()))
+                		XorEncryptUtil.xorEncrypt(resume.getSchool(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resume.getStatus(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resume.getPersonal(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resume.getWork_place_region(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resume.getWork_place_city(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resume.getIndustry_occupation(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resume.getEmploymentType(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resume.getWorking_period(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resume.getWorking_day(), encryptionKey),
+                		XorEncryptUtil.xorEncrypt(resume.getIntroduction(), encryptionKey),
+                		resume.getPortfolioname(),
+                		resume.getPortfoliourl(),
+                		resume.getResume_imgurl(),
+                		resume.getResume_imgname()))
                 .collect(Collectors.toList());
     }
 

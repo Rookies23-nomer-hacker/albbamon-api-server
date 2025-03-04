@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.api.domain.resume.request.ResumeListDto;
 import com.api.domain.resume.request.ResumeRequestDto;
 import com.api.domain.resume.request.Resume_profileRequestDto;
 import com.api.domain.resume.service.ResumeService;
@@ -26,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -263,5 +265,11 @@ public class ResumeController {
             return filename.substring(0, dotIndex) + filename.substring(dotIndex).split("_")[0];
         }
         return filename; // 확장자가 없으면 원본 유지
+    }
+    
+    // 이력서 전체 조회
+    @GetMapping("/api/resume/all")
+    public List<ResumeListDto> getAllResumes() {
+        return resumeService.getAllResumes();
     }
 }
