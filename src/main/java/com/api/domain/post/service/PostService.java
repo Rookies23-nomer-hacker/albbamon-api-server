@@ -82,6 +82,7 @@ public class PostService {
     }
 
     public void deletePost(Long userId, Long postId) {
+        System.out.println("userId : "+userId+", postId : "+postId);
         if (userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
         Post post = postRepository.findPostById(postId).orElseThrow(() -> new EntityNotFoundException(POST_NOT_FOUND));
         postRepository.deleteById(post.getId());

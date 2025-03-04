@@ -48,8 +48,9 @@ public class PostMobileController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @DeleteMapping("/delete/{postId}")
-    public ResponseEntity<SuccessResponse<?>> deletePostMobile(@SessionAttribute("userid") Long userId,
-                                                               @PathVariable final Long postId) {
+    public ResponseEntity<SuccessResponse<?>> deletePostMobile(@PathVariable final Long postId,
+                                                               @RequestParam final Long userId) {
+        System.out.println("userId : "+userId+", postId : "+postId);
         postService.deletePost(userId, postId);
         return SuccessResponse.ok(null);
     }
