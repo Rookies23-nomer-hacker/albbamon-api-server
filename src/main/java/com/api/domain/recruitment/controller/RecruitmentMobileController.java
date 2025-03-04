@@ -3,6 +3,7 @@ package com.api.domain.recruitment.controller;
 import com.api.domain.recruitment.dto.request.CreateRecruitmentRequestDto;
 import com.api.domain.recruitment.dto.response.GetRecruitmentResponseDto;
 import com.api.domain.recruitment.service.RecruitmentService;
+import com.api.domain.user.dto.request.UserRequestDto;
 import com.api.global.common.entity.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,6 +36,15 @@ public class RecruitmentMobileController {
                                                                    @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         GetRecruitmentResponseDto responseDto = recruitmentService.getMyRecruitmentList(userId, pageable);
         return SuccessResponse.ok(responseDto);
+    }
+
+    @Operation(summary = "[모바일] 내가 작성한 채용 공고 개수", responses = {
+            @ApiResponse(responseCode = "200")
+    })
+    @GetMapping("/count")
+    public ResponseEntity<SuccessResponse<?>> getMyApplyCount(@SessionAttribute("userid") Long userId) {
+        Long recruitmentCount = recruitmentService.getMyRecruitmentCount(userId);
+        return SuccessResponse.ok(recruitmentCount);
     }
 
     @Operation(summary = "[모바일] 채용 공고 작성", responses = {

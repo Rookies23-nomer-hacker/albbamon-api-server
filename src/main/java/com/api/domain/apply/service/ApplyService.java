@@ -2,10 +2,12 @@ package com.api.domain.apply.service;
 
 import com.api.domain.apply.dto.response.GetApplyListResponseDto;
 import com.api.domain.apply.repository.ApplyRepository;
-import com.api.domain.apply.type.ApplyStatus;
 import com.api.domain.apply.vo.ApplyVo;
 import com.api.domain.apply.vo.RecruitmentApplyVo;
 import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListResponseDto;
+import com.api.domain.resume.entity.Resume;
+import com.api.domain.resume.repository.ResumeRepository;
+import com.api.global.error.exception.EntityNotFoundException;
 import com.api.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 
@@ -13,16 +15,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import com.api.global.common.util.XorDecryptUtil;
+
+import static com.api.domain.resume.error.RecruitmentErrorCode.RESUME_NOT_FOUND;
 import static com.api.domain.user.error.UserErrorCode.SIGN_IN_REQUIRED;
 
 @RequiredArgsConstructor
 @Service
 public class ApplyService {
     private final ApplyRepository applyRepository;
+	private final ResumeRepository resumeRepository;
     
     @Value("${spring.datasource.encryption-key}")
   	private String encryptionKey;
@@ -32,7 +35,7 @@ public class ApplyService {
         List<ApplyVo> applyVoList = applyRepository.findApplyVoByUserId(userId);
 
         return GetApplyListResponseDto.of(applyVoList);
-    }//
+    }
 
     public GetRecruitmentApplyListResponseDto getRecruitmentApplyList(@PathVariable("recruitmentId") Long recruitmentId) {
         List<RecruitmentApplyVo> recruitmentApplyVoList = applyRepository.findRecruitmentApplyVoByRecruitmentId(recruitmentId);
@@ -59,6 +62,13 @@ public class ApplyService {
         		))
             .toList();
         return GetRecruitmentApplyListResponseDto.of(reApplyList);
+    }
+
+    public Long getMyApplyCount(Long userId) {
+		if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
+		Resume resume = resumeRepository.findResumeByUserId(userId).orElse(null);
+		if(resume == null) return 0L;
+		return applyRepository.countByResumeId(resume.getId());
     }
 }
 

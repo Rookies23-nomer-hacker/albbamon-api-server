@@ -33,4 +33,6 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> 
             "JOIN User u ON r.user = u " +
             "WHERE r.id = :recruitmentId")
     Optional<RecruitmentDetailVo> findRecruitmentDetailVoById(@Param("recruitmentId") Long recruitmentId);
+
+    Long countByUserId(Long userId);
 }

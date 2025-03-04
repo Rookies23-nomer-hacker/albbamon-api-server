@@ -107,4 +107,8 @@ public class RecruitmentService {
         Resume resume = resumeRepository.findResumeByUserId(userId).orElseThrow(() -> new EntityNotFoundException(RESUME_NOT_FOUND));
         return applyRepository.existsByResumeIdAndRecruitmentId(resume.getId(), recruitmentId);
     }
+
+    public Long getMyRecruitmentCount(Long userId) {
+        return recruitmentRepository.countByUserId(userId);
+    }
 }

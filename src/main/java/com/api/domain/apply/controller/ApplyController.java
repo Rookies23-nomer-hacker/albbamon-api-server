@@ -28,4 +28,13 @@ public class ApplyController {
         GetApplyListResponseDto responseDto = applyService.getMyApplyList(userRequestDto.userId());
         return SuccessResponse.ok(responseDto);
     }
+
+    @Operation(summary = "나의 지원서 개수", responses = {
+            @ApiResponse(responseCode = "200")
+    })
+    @GetMapping("/count")
+    public ResponseEntity<SuccessResponse<?>> getMyApplyCount(@RequestBody final UserRequestDto userRequestDto) {
+        Long applyCount = applyService.getMyApplyCount(userRequestDto.userId());
+        return SuccessResponse.ok(applyCount);
+    }
 }

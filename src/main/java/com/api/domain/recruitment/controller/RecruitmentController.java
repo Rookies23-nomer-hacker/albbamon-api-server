@@ -52,6 +52,15 @@ public class RecruitmentController {
         return SuccessResponse.ok(responseDto);
     }
 
+    @Operation(summary = "내가 작성한 채용 공고 개수", responses = {
+            @ApiResponse(responseCode = "200")
+    })
+    @GetMapping("/count")
+    public ResponseEntity<SuccessResponse<?>> getMyApplyCount(@RequestBody final UserRequestDto userRequestDto) {
+        Long recruitmentCount = recruitmentService.getMyRecruitmentCount(userRequestDto.userId());
+        return SuccessResponse.ok(recruitmentCount);
+    }
+
     @Operation(summary = "채용 공고 1개 상세 보기", responses = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RecruitmentDetailVo.class)))
     })

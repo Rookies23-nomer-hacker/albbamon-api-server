@@ -37,4 +37,6 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     void updateStatus(@Param("recruitmentId") Long recruitmentId, @Param("applyId") Long applyId, @Param("status") ApplyStatus status);
 
     Boolean existsByResumeIdAndRecruitmentId(@Param("resumeId")Long resumeId, @Param("recruitmentId") Long recruitmentId);
+
+    Long countByResumeId(Long resumeId);
 }

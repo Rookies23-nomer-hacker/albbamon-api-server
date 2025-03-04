@@ -27,4 +27,13 @@ public class ApplyMobileController {
         GetApplyListResponseDto responseDto = applyService.getMyApplyList(userId);
         return SuccessResponse.ok(responseDto);
     }
+
+    @Operation(summary = "[모바일] 나의 지원서 개수", responses = {
+            @ApiResponse(responseCode = "200")
+    })
+    @GetMapping("/count")
+    public ResponseEntity<SuccessResponse<?>> getMyApplyCount(@SessionAttribute("userid") Long userId) {
+        Long applyCount = applyService.getMyApplyCount(userId);
+        return SuccessResponse.ok(applyCount);
+    }
 }
