@@ -45,6 +45,13 @@ spring:
   main:
     web-application-type: servlet
 
+# health check
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
 #  http:
 #    encoding:
 #      charset: UTF-8

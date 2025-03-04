@@ -36,7 +36,7 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.1.0'
     
     // 보안 관련 의존성
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    //implementation 'org.springframework.boot:spring-boot-starter-security'
     
     // Validation 관련 의존성
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -50,6 +50,9 @@ dependencies {
 
     // JSP를 사용할 경우 톰캣과 관련된 의존성
     implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+    
+    // health check
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     
     // Jakarta Servlet API 의존성
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
