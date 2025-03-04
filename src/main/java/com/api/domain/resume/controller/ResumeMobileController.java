@@ -76,9 +76,9 @@ public class ResumeMobileController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/delete")
-    public ResponseEntity<String> deleteResumeMobile(@SessionAttribute("userid") Long userId){
-        String response = resumeService.deleteResumeByUserId(userId);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Void> deleteResumeMobile(@SessionAttribute("userid") Long userId){
+        resumeService.deleteResumeByUserId(userId);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "[모바일] 이력서 상세 보기", responses = {
