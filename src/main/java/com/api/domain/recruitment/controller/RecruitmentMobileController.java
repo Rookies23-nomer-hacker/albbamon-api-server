@@ -10,6 +10,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -44,7 +48,10 @@ public class RecruitmentMobileController {
     @GetMapping("/count")
     public ResponseEntity<SuccessResponse<?>> getMyApplyCount(@SessionAttribute("userid") Long userId) {
         Long recruitmentCount = recruitmentService.getMyRecruitmentCount(userId);
-        return SuccessResponse.ok(recruitmentCount);
+        Map<String, Object> data = new HashMap<>();
+        data.put("count", recruitmentCount);
+
+        return SuccessResponse.ok(data);
     }
 
     @Operation(summary = "[모바일] 채용 공고 작성", responses = {
