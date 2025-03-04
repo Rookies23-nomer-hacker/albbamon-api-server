@@ -4,12 +4,10 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.api.global.common.FileType;
-import com.api.global.common.util.FileUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.api.domain.post.dto.request.CreatePostRequestDto;
 import com.api.domain.post.entity.Post;
@@ -22,12 +20,13 @@ import com.api.domain.user.entity.User;
 import static com.api.domain.user.error.UserErrorCode.SIGN_IN_REQUIRED;
 import static com.api.domain.user.error.UserErrorCode.USER_NOT_FOUND;
 import com.api.domain.user.repository.UserRepository;
+import com.api.global.common.FileType;
+import com.api.global.common.util.FileUtil;
 import com.api.global.common.util.XorDecryptUtil;
 import com.api.global.error.exception.EntityNotFoundException;
 import com.api.global.error.exception.UnauthorizedException;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Transactional
@@ -55,14 +54,14 @@ public class PostService {
             .toList();
     }
 
-    public void createPost(Long userId, String title, String contents, MultipartFile file, HttpServletRequest request) {
+    public void createPost(Long userId, String title, String contents, MultipartFile file, String serverUrl) {
     if (userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
     User user = userRepository.findUserById(userId).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
 
     // 파일이 없을 경우 filePath를 null로 설정
     String filePath = null;
     if (file != null && !file.isEmpty()) {
-        filePath = fileUtil.saveFile(file, FileType.POST, request);
+        filePath = fileUtil.saveFile(file, FileType.POST, serverUrl);
     }
 
     Post post = Post.createPost(user, title, contents, filePath);
