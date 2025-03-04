@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Builder
 public record RecruitmentApplyVo(
         Long applyId,
+        Long resumeId,
         String userName,
         String school,
         String status,

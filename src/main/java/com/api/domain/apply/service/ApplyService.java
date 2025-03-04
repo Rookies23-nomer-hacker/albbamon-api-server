@@ -7,7 +7,6 @@ import com.api.domain.apply.vo.RecruitmentApplyVo;
 import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListResponseDto;
 import com.api.domain.resume.entity.Resume;
 import com.api.domain.resume.repository.ResumeRepository;
-import com.api.global.error.exception.EntityNotFoundException;
 import com.api.global.error.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 import com.api.global.common.util.XorDecryptUtil;
 
-import static com.api.domain.resume.error.RecruitmentErrorCode.RESUME_NOT_FOUND;
 import static com.api.domain.user.error.UserErrorCode.SIGN_IN_REQUIRED;
 
 @RequiredArgsConstructor
@@ -42,6 +40,7 @@ public class ApplyService {
         List<RecruitmentApplyVo> reApplyList = recruitmentApplyVoList.stream()
                 .map(apply -> new RecruitmentApplyVo(
             		apply.applyId(),
+					apply.resumeId(),
             		XorDecryptUtil.xorDecrypt(apply.userName(), encryptionKey),
             		XorDecryptUtil.xorDecrypt(apply.school(), encryptionKey),
             		XorDecryptUtil.xorDecrypt(apply.status(), encryptionKey),
