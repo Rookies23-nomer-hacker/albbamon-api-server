@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,8 +41,8 @@ public class PostController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/list")
-    public List<PostListVo> getAllPosts() {
-        return postService.getAllPosts();
+    public List<PostListVo> getAllPosts(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return postService.getAllPosts(pageable);
     }
 
 

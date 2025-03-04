@@ -8,6 +8,8 @@ import com.api.global.common.FileType;
 import com.api.global.common.util.FileUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,8 +44,8 @@ public class PostService {
     @Value("${spring.datasource.encryption-key}")
   	private String encryptionKey;
 
-    public List<PostListVo> getAllPosts() {
-    List<PostListVo> postlistvo = postRepository.findPostList();
+    public List<PostListVo> getAllPosts(Pageable pageable) {
+    Page<PostListVo> postlistvo = postRepository.findPostList(pageable);
         return postlistvo.stream()
             .map(post -> new PostListVo(
                 post.postId(),
