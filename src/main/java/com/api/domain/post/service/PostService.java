@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.api.domain.post.dto.response.GetPostListResponseDto;
+import com.api.global.common.entity.PageInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,17 +45,19 @@ public class PostService {
     @Value("${spring.datasource.encryption-key}")
   	private String encryptionKey;
 
-    public List<PostListVo> getAllPosts(Pageable pageable) {
-    Page<PostListVo> postlistvo = postRepository.findPostList(pageable);
-        return postlistvo.stream()
-            .map(post -> new PostListVo(
-                post.postId(),
-                post.title(),
-                post.contents(),
-                post.createDate(),
-                XorDecryptUtil.xorDecrypt(post.userName(), encryptionKey)
-            ))
-            .toList();
+    public GetPostListResponseDto getAllPosts(Pageable pageable) {
+        Page<PostListVo> postlistvos = postRepository.findPostList(pageable);
+        PageInfo pageInfo = PageInfo.of(postlistvos);
+        List<PostListVo> postListVoList = postlistvos.stream()
+                .map(post -> new PostListVo(
+                    post.postId(),
+                    post.title(),
+                    post.contents(),
+                    post.createDate(),
+                    XorDecryptUtil.xorDecrypt(post.userName(), encryptionKey)
+                ))
+                .toList();
+        return GetPostListResponseDto.of(postListVoList, pageInfo);
     }
 
     public void createPost(Long userId, String title, String contents, MultipartFile file, String serverUrl) {

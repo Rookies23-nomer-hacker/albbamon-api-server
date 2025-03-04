@@ -3,6 +3,7 @@ package com.api.domain.post.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.api.domain.post.dto.response.GetPostListResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -41,10 +42,10 @@ public class PostController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/list")
-    public List<PostListVo> getAllPosts(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return postService.getAllPosts(pageable);
+    public ResponseEntity<SuccessResponse<?>> getAllPosts(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        GetPostListResponseDto responseDto = postService.getAllPosts(pageable);
+        return SuccessResponse.ok(responseDto);
     }
-
 
     @Operation(summary = "게시글 작성", responses = {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
@@ -69,23 +70,21 @@ public class PostController {
         return SuccessResponse.ok(postVo);
     }
 
+    @Operation(summary = "게시글 1건 수정", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
    @PostMapping("/update/{postId}")
     public ResponseEntity<SuccessResponse<?>> updatePost(@PathVariable("postId") final Long postId,
-                                                         @RequestBody Map<String, Object> requestBody) {  // ✅ JSON 데이터를 받도록 설정
-        // ✅ 요청에서 userId, title, contents 추출
+                                                         @RequestBody Map<String, Object> requestBody) {
         Long userId = requestBody.get("userid") != null ? Long.parseLong(requestBody.get("userid").toString()) : null;
         String title = requestBody.get("title") != null ? requestBody.get("title").toString() : null;
         String contents = requestBody.get("contents") != null ? requestBody.get("contents").toString() : null;
 
         if (userId == null) {
-            System.out.println("🚨 userId가 null입니다! 로그인 세션 확인 필요.");
             return ResponseEntity.status(401).body(new SuccessResponse<>("로그인이 필요한 서비스입니다."));
         }
-
-        // ✅ 게시글 수정 요청 처리 (파일 수정 X)
         CreatePostRequestDto requestDto = new CreatePostRequestDto(userId, title, contents, null);
         postService.updatePost(userId, postId, requestDto);
-
         return SuccessResponse.ok(null);
     }
 
