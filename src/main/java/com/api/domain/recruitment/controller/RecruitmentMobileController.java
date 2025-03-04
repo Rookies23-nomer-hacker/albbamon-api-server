@@ -6,6 +6,8 @@ import com.api.domain.recruitment.service.RecruitmentService;
 import com.api.domain.user.dto.request.UserRequestDto;
 import com.api.global.common.entity.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -31,6 +33,15 @@ public class RecruitmentMobileController {
 
     @Value("${server.url}")
     private String serverUrl;
+
+    @Operation(summary = "[모바일] 채용 공고 목록 보기", responses = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetRecruitmentResponseDto.class)))
+    })
+    @GetMapping("/list")
+    public ResponseEntity<SuccessResponse<?>> getRecruitmentList() {
+        GetRecruitmentResponseDto responseDto = recruitmentService.getRecruitmentList(null);
+        return SuccessResponse.ok(responseDto);
+    }
 
     @Operation(summary = "[모바일] 내가 작성한 채용 공고 목록 보기", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)

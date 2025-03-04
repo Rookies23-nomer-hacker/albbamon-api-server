@@ -14,10 +14,7 @@ import lombok.RequiredArgsConstructor;
 import static com.api.domain.resume.error.RecruitmentErrorCode.RESUME_NOT_FOUND;
 import static com.api.domain.user.error.UserErrorCode.USER_NOT_FOUND;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -79,8 +76,7 @@ public class ResumeService {
         	json.put("last_modified_date", resume.getLastModifiedDate());
         	return json;
         }else {
-        	
-        	return null;
+        	return Collections.emptyMap();
         }
     }
     public Map<String, Object> getResume_id(Long resumeId) {
