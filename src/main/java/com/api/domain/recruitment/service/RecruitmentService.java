@@ -24,6 +24,8 @@ import com.api.global.error.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,14 +54,14 @@ public class RecruitmentService {
     private final RecruitmentMapper recruitmentMapper;
     private final FileUtil fileUtil;
 
-    public GetRecruitmentResponseDto getRecruitmentList() {
-        List<RecruitmentVo> recruitmentList = recruitmentRepository.findAllRecruitmentVos();
+    public GetRecruitmentResponseDto getRecruitmentList(Pageable pageable) {
+        Page<RecruitmentVo> recruitmentList = recruitmentRepository.findAllRecruitmentVos(pageable);
         return recruitmentMapper.toGetRecruitmentResponseDto(recruitmentList);
     }
 
-    public GetRecruitmentResponseDto getMyRecruitmentList(Long userId) {
+    public GetRecruitmentResponseDto getMyRecruitmentList(Long userId, Pageable pageable) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
-        List<RecruitmentVo> recruitmentList = recruitmentRepository.findAllRecruitmentVosByUserId(userId);
+        Page<RecruitmentVo> recruitmentList = recruitmentRepository.findAllRecruitmentVosByUserId(userId, pageable);
         return recruitmentMapper.toGetRecruitmentResponseDto(recruitmentList);
     }
 

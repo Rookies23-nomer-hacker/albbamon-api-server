@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,8 +43,8 @@ public class PostService {
     @Value("${spring.datasource.encryption-key}")
   	private String encryptionKey;
 
-    public List<PostListVo> getAllPosts() {
-    List<PostListVo> postlistvo = postRepository.findPostList();
+    public List<PostListVo> getAllPosts(Pageable pageable) {
+    Page<PostListVo> postlistvo = postRepository.findPostList(pageable);
         return postlistvo.stream()
             .map(post -> new PostListVo(
                 post.postId(),

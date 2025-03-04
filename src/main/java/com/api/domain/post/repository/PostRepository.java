@@ -3,6 +3,8 @@ package com.api.domain.post.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,7 +26,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     
         @Query("SELECT new com.api.domain.post.vo.PostListVo(p.id, p.title, p.contents, p.createDate, u.name) " +
        "FROM Post p LEFT JOIN p.user u ORDER BY p.createDate DESC")
-        List<PostListVo> findPostList();
+        Page<PostListVo> findPostList(Pageable pageable);
 
         @Query(value = "SELECT new com.api.domain.post.vo.PostVo(p.id, u.id, p.title, p.contents, p.file, p.createDate, u.name) " +
         "FROM Post p " +

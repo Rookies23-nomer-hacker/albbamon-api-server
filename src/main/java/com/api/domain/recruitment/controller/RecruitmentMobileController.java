@@ -10,6 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,8 +31,9 @@ public class RecruitmentMobileController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/list/my")
-    public ResponseEntity<SuccessResponse<?>> getMyRecruitmentList(@SessionAttribute("userid") Long userId) {
-        GetRecruitmentResponseDto responseDto = recruitmentService.getMyRecruitmentList(userId);
+    public ResponseEntity<SuccessResponse<?>> getMyRecruitmentList(@SessionAttribute("userid") Long userId,
+                                                                   @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        GetRecruitmentResponseDto responseDto = recruitmentService.getMyRecruitmentList(userId, pageable);
         return SuccessResponse.ok(responseDto);
     }
 

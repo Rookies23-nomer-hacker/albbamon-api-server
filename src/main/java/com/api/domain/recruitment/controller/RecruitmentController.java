@@ -17,6 +17,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,8 +37,8 @@ public class RecruitmentController {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetRecruitmentResponseDto.class)))
     })
     @GetMapping("/list")
-    public ResponseEntity<SuccessResponse<?>> getRecruitmentList() {
-        GetRecruitmentResponseDto responseDto = recruitmentService.getRecruitmentList();
+    public ResponseEntity<SuccessResponse<?>> getRecruitmentList(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        GetRecruitmentResponseDto responseDto = recruitmentService.getRecruitmentList(pageable);
         return SuccessResponse.ok(responseDto);
     }
 
@@ -43,8 +46,9 @@ public class RecruitmentController {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetRecruitmentResponseDto.class)))
     })
     @GetMapping("/list/my")
-    public ResponseEntity<SuccessResponse<?>> getMyRecruitmentList(@RequestBody @Valid final UserRequestDto userRequestDto) {
-        GetRecruitmentResponseDto responseDto = recruitmentService.getMyRecruitmentList(userRequestDto.userId());
+    public ResponseEntity<SuccessResponse<?>> getMyRecruitmentList(@RequestBody @Valid final UserRequestDto userRequestDto,
+                                                                   @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        GetRecruitmentResponseDto responseDto = recruitmentService.getMyRecruitmentList(userRequestDto.userId(), pageable);
         return SuccessResponse.ok(responseDto);
     }
 
