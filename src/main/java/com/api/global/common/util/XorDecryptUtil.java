@@ -2,6 +2,7 @@ package com.api.global.common.util;
 
 public class XorDecryptUtil {
     public static String xorDecrypt(String encryptedText, String key) {
+        encryptedText = Base64Util.decode(encryptedText);
         if (key.isEmpty()) {
             throw new IllegalArgumentException("Key cannot be empty.");
         }

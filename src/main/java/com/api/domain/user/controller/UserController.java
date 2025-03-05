@@ -38,11 +38,8 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    // 키 값
     @Value("${spring.datasource.encryption-key}")
     private String encryptionKey;
-
-    public static final String SESSION_NAME = "SESSIONID";
 
     @Operation(summary = "회원가입", responses = {
             @ApiResponse(responseCode = "201", useReturnTypeSchema = true)
@@ -108,8 +105,6 @@ public class UserController {
     @PostMapping("/change-pw")
     public ResponseEntity<UserChangePwResponseDto> changePassword(@RequestBody ChangePwRequestDto requestDto) {
         try {
-            System.out.println("📌 API 서버에서 받은 요청: " + requestDto);
-
             userService.changePassword(
                     requestDto.getUserId(),
                     requestDto.getPasswd(),
