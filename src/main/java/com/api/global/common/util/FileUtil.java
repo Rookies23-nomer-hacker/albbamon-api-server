@@ -1,7 +1,7 @@
 package com.api.global.common.util;
 
 import com.api.global.common.FileType;
-import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,7 +13,8 @@ import java.time.format.DateTimeFormatter;
 
 @Component
 public class FileUtil {
-    private final String UPLOAD_DIR = "/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/";
+    @Value("${file.dir}")
+    private String uploadDir;
 
     public String saveFile(MultipartFile multipartFile, FileType fileType, String serverUrl) {
         try {
@@ -24,7 +25,7 @@ public class FileUtil {
             String fileName = originalFileName + "_" + timestamp + extension;
 
             byte[] decodedBytes = multipartFile.getBytes();
-            String upload_dir = UPLOAD_DIR + fileType.getPath();
+            String upload_dir = uploadDir + fileType.getPath();
 
             File file = new File(upload_dir + fileName);
             try (FileOutputStream fos = new FileOutputStream(file)) {
