@@ -17,6 +17,6 @@ public class XorEncryptUtil {
             char encryptedChar = (char) (plaintext.charAt(i) ^ adjustedKey.charAt(i));
             encryptedText.append(encryptedChar);
         }
-        return encryptedText.toString();
+        return Base64Util.encode(encryptedText.toString());
     }
 }
