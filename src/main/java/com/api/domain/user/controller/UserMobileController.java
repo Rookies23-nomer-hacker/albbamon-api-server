@@ -41,12 +41,13 @@ public class UserMobileController {
     }
 
     @Operation(summary = "[모바일] 자동 로그인", responses = {
-        @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/autologin")
-    public ResponseEntity<?> checkCache(@RequestParam("email") String email, HttpServletRequest request, HttpServletResponse response){
-        
-        System.out.println("server recieved email : " + email); 
+    public ResponseEntity<?> checkCache(@RequestParam("email") String email, HttpServletRequest request,
+            HttpServletResponse response) {
+
+        System.out.println("server recieved email : " + email);
         UserVo userVo = userService.autosignIn(email);
         if (userVo.id() == null) {
             // ✅ 기존 세션이 있다면 삭제하여 불필요한 세션 유지 방지
@@ -57,9 +58,9 @@ public class UserMobileController {
         }
         // ✅ 2. 로그인 성공한 경우에만 세션 생성
         HttpSession session = request.getSession(false); // 기존 세션 확인
-            if (session == null) {
+        if (session == null) {
             session = request.getSession(true); // 로그인 성공 시에만 새 세션 생성
-            }
+        }
 
         session.setAttribute("userid", userVo.id()); // ✅ 세션에 사용자 ID 저장
 
@@ -74,20 +75,18 @@ public class UserMobileController {
         return ResponseEntity.ok(new UserResponseDto(userVo));
 
     }
-    
 
     @Operation(summary = "[모바일] 비밀번호 변경", responses = {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @PostMapping("/change-pw")
     public ResponseEntity<UserChangePwResponseDto> changePasswordMobile(@SessionAttribute("userid") Long userId,
-                                                                        @RequestBody ChangePwRequestDto requestDto) {
+            @RequestBody ChangePwRequestDto requestDto) {
         try {
             userService.changePassword(
                     userId,
                     requestDto.getPasswd(),
-                    requestDto.getNewpasswd()
-            );
+                    requestDto.getNewpasswd());
             return ResponseEntity.ok(new UserChangePwResponseDto("비밀번호 변경 성공"));
 
         } catch (EntityNotFoundException e) {
@@ -117,6 +116,17 @@ public class UserMobileController {
     @GetMapping
     public ResponseEntity<SuccessResponse<?>> getUserInfoMobile(@SessionAttribute("userid") Long userId) {
         GetUserInfoResponseDto responseDto = userService.getUserInfo(userId);
+        return SuccessResponse.ok(responseDto);
+    }
+
+    @Operation(summary = "[모바일] 지원자 회원 정보", responses = {
+        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetUserInfoResponseDto.class)))
+    })
+    @GetMapping("/info")
+    public ResponseEntity<SuccessResponse<?>> getUserApplyerInfo(@RequestParam("userId") Long userId) {
+        System.out.println("🔍 요청된 userId: " + userId); // 디버깅용 로그 추가
+        GetUserInfoResponseDto responseDto = userService.getUserInfo(userId);
+        System.out.println("✅ 반환될 GetUserInfoResponseDto: " + responseDto);
         return SuccessResponse.ok(responseDto);
     }
 }
