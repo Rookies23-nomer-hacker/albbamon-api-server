@@ -40,7 +40,8 @@ public class ResumeController {
 	@Value("${spring.datasource.encryption-key}")
   	private String encryptionKey;
 
-	
+	@Value("${file.dir}")
+	private String uploadDir;
 
 	@PostMapping("/api/resume")
 	public ResponseEntity<Map<String, Object>> selectResume(@RequestBody final Resume_profileRequestDto resume_profilerequestDto){
@@ -87,7 +88,7 @@ public class ResumeController {
 	@GetMapping("/api/resume/download")
     public void download(@RequestParam("fileName") String filename, HttpServletRequest request, HttpServletResponse response) {
         // 실제 파일 경로 지정
-        String filePath = "/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/resume/portfolio/"+ filename;
+        String filePath = uploadDir + "resume/portfolio/"+ filename;
         File downloadFile = new File(filePath);
 
         // 파일 존재 여부 확인
@@ -232,7 +233,7 @@ public class ResumeController {
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
         String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
 
-        String upload_dir = "/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/resume/portfolio/";
+        String upload_dir = uploadDir + "resume/portfolio/";
 
         // 파일 저장
         File file = new File(upload_dir + fileName);
@@ -248,7 +249,7 @@ public class ResumeController {
         byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
         String serverUrl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
 
-        String upload_dir = "/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/resume/profile/";
+        String upload_dir = uploadDir + "resume/profile/";
 
         // 파일 저장
         File file = new File(upload_dir + fileName);
