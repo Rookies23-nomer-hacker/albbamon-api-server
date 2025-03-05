@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Map;
+import java.util.HashMap;
 
 import com.api.global.common.util.XorEncryptUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.api.domain.resume.dto.request.CreateResumeRequestDto;
 import com.api.domain.resume.request.ResumeRequestDto;
+import com.api.domain.resume.dto.request.ResumeProfileImageRequestDto;
+
 import com.api.domain.resume.service.ResumeService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,8 +38,8 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/mobile/resume")
 public class ResumeMobileController {
 
-	private final ResumeService resumeService;
-	private final ResumeService resumeRepository;
+    private final ResumeService resumeService;
+    private final ResumeService resumeRepository;
 
     @Value("${server.url}")
     private String serverUrl;
@@ -49,7 +52,7 @@ public class ResumeMobileController {
     })
     @PostMapping
     public ResponseEntity<Map<String, Object>> selectResumeMobile(@SessionAttribute("userid") Long userId) {
-        Map<String,Object> response = resumeRepository.getResumeUser_id(userId);
+        Map<String, Object> response = resumeRepository.getResumeUser_id(userId);
         System.out.println(response);
         return ResponseEntity.ok(response);
     }
@@ -58,8 +61,8 @@ public class ResumeMobileController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @PostMapping("/profile")
-    public ResponseEntity<Map<String, Object>> selectProfileMobile(@SessionAttribute("userid") Long userId){
-        Map<String,Object> response = resumeService.getUserById(userId);
+    public ResponseEntity<Map<String, Object>> selectProfileMobile(@SessionAttribute("userid") Long userId) {
+        Map<String, Object> response = resumeService.getUserById(userId);
         return ResponseEntity.ok(response);
     }
 
@@ -76,7 +79,7 @@ public class ResumeMobileController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/delete")
-    public ResponseEntity<Void> deleteResumeMobile(@SessionAttribute("userid") Long userId){
+    public ResponseEntity<Void> deleteResumeMobile(@SessionAttribute("userid") Long userId) {
         resumeService.deleteResumeByUserId(userId);
         return ResponseEntity.ok().build();
     }
@@ -85,33 +88,32 @@ public class ResumeMobileController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/view")
-    public ResponseEntity<Map<String,Object>> viewResumeMobile(@SessionAttribute("userid") Long userId) {
-        Map<String,Object> responseDto = resumeRepository.getResumeDetail(userId);
+    public ResponseEntity<Map<String, Object>> viewResumeMobile(@SessionAttribute("userid") Long userId) {
+        Map<String, Object> responseDto = resumeRepository.getResumeDetail(userId);
         return ResponseEntity.ok(responseDto);
     }
 
     @Operation(summary = "[모바일] 이력서 생성", responses = {
-        @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @PostMapping("/write")
     public ResponseEntity<String> createResumeMobile(@SessionAttribute("userid") Long userId,
-                                                     @RequestBody @Valid final CreateResumeRequestDto resumerequestDto,
-                                                     HttpServletRequest request) {
-        String portfolioName_org=resumerequestDto.portfolioName();
-        String portfolioData=resumerequestDto.portfolioData();
+            @RequestBody @Valid final CreateResumeRequestDto resumerequestDto,
+            HttpServletRequest request) {
+        String portfolioName_org = resumerequestDto.portfolioName();
+        String portfolioData = resumerequestDto.portfolioData();
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        String portfolioName ="";
-        String file_url ="";
+        String portfolioName = "";
+        String file_url = "";
 
-        if(portfolioName_org==(null)){
-            portfolioName=null;
-            file_url=null;
-        }
-        else{
+        if (portfolioName_org == (null)) {
+            portfolioName = null;
+            file_url = null;
+        } else {
             String fileNameWithoutExt = portfolioName_org.substring(0, portfolioName_org.lastIndexOf("."));
             String extension = portfolioName_org.substring(portfolioName_org.lastIndexOf("."));
-            portfolioName =  fileNameWithoutExt+"_"+timestamp +extension;
-            file_url=serverUrl+"/upload/resume/portfolio/";
+            portfolioName = fileNameWithoutExt + "_" + timestamp + extension;
+            file_url = serverUrl + "/upload/resume/portfolio/";
         }
 
         String resume_img_name_org = resumerequestDto.resume_img_name();
@@ -119,24 +121,23 @@ public class ResumeMobileController {
         String resume_img_name = "";
         String img_url = "";
 
-        if(resume_img_name_org==(null)){
+        if (resume_img_name_org == (null)) {
             resume_img_name = null;
             img_url = null;
-        }
-        else{
+        } else {
             String img_name = resume_img_name_org.substring(0, resume_img_name_org.lastIndexOf("."));
             String img_extension = resume_img_name_org.substring(resume_img_name_org.lastIndexOf("."));
-            resume_img_name = img_name+"_"+timestamp+img_extension;
-            img_url = serverUrl+"/upload/resume/profile/";
+            resume_img_name = img_name + "_" + timestamp + img_extension;
+            img_url = serverUrl + "/upload/resume/profile/";
         }
 
         try {
 
             // 파일 저장 로직 실행
             if (portfolioData != null && portfolioName != null) {
-                saveBase64ToFile(portfolioData, portfolioName,request);
-                if(resume_img_data!=null) {
-                    saveImgFile(resume_img_data,resume_img_name,request);
+                saveBase64ToFile(portfolioData, portfolioName, request);
+                if (resume_img_data != null) {
+                    saveImgFile(resume_img_data, resume_img_name, request);
                 }
 
                 ResumeRequestDto updatedDto = new ResumeRequestDto(
@@ -158,20 +159,19 @@ public class ResumeMobileController {
                         resume_img_name,
                         resumerequestDto.resume_img_data(),
                         LocalDateTime.now(),
-                        LocalDateTime.now()
-                );
+                        LocalDateTime.now());
                 String duplicated = resumeService.duplicated(userId);
 
-                if(duplicated=="중복아님") {
+                if (duplicated == "중복아님") {
 
                     resumeService.createResume(updatedDto);
-                }else {
+                } else {
                     return ResponseEntity.ok("이미 이력서가 있습니다.");
                 }
             } else {
 
-                if(resume_img_data!=null) {
-                    saveImgFile(resume_img_data,resume_img_name,request);
+                if (resume_img_data != null) {
+                    saveImgFile(resume_img_data, resume_img_name, request);
                 }
                 ResumeRequestDto updatedDto = new ResumeRequestDto(
                         userId,
@@ -192,12 +192,11 @@ public class ResumeMobileController {
                         resume_img_name,
                         resumerequestDto.resume_img_data(),
                         LocalDateTime.now(),
-                        LocalDateTime.now()
-                );
+                        LocalDateTime.now());
                 String duplicated = resumeService.duplicated(userId);
-                if(duplicated=="중복아님") {
+                if (duplicated == "중복아님") {
                     resumeService.createResume(updatedDto);
-                }else {
+                } else {
                     return ResponseEntity.ok("이미 이력서가 있습니다.");
                 }
             }
@@ -205,7 +204,7 @@ public class ResumeMobileController {
             return ResponseEntity.ok("이력서 작성 완료!");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Error while processing resume data."+e.getMessage());
+            return ResponseEntity.internalServerError().body("Error while processing resume data." + e.getMessage());
         }
     }
 
@@ -234,4 +233,42 @@ public class ResumeMobileController {
 
         System.out.println("File saved successfully: " + file.getAbsolutePath());
     }
+
+    @Operation(summary = "[모바일] 프로필 이미지 업데이트", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @PostMapping("/profileImage")
+    public ResponseEntity<String> updateProfileImage(@SessionAttribute("userid") Long userId,
+            @RequestBody @Valid ResumeProfileImageRequestDto profileImageRequestDto,
+            HttpServletRequest request) {
+        try {
+            // 현재 로그인한 사용자의 이력서 존재 여부 확인
+            boolean exists = resumeService.checkResumeExists(userId);
+            if (!exists) {
+                return ResponseEntity.badRequest().body("이력서가 존재하지 않습니다.");
+            }
+
+            // 프로필 이미지 파일명 생성 (중복 방지)
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String resumeImgName = "profile_" + userId + "_" + timestamp + ".jpg";
+
+            // 이미지 저장 경로
+            String serverUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            String imgUrl = serverUrl + "/uploads/resume/profile/";
+
+            // 이미지 저장 (Base64 → 파일 변환 후 저장)
+            if (profileImageRequestDto.getResume_img_data() != null) {
+                saveImgFile(profileImageRequestDto.getResume_img_data(), resumeImgName, request);
+            }
+
+            // DB에 프로필 이미지 정보 업데이트
+            resumeService.updateProfileImage(userId, resumeImgName, imgUrl);
+
+            return ResponseEntity.ok("프로필 이미지 업데이트 완료!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error while updating profile image: " + e.getMessage());
+        }
+    }
+
 }

@@ -52,12 +52,11 @@ public class Resume extends BaseTimeEntity {
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Career> careerList = new ArrayList<>();
-    
-    
+
     public static Resume createResume(User user2, ResumeRequestDto resumerequestDto) {
-    	System.out.println("createResume : "+resumerequestDto);
+        System.out.println("createResume : " + resumerequestDto);
         return Resume.builder()
-        		.user(user2)
+                .user(user2)
                 .school(resumerequestDto.school())
                 .status(resumerequestDto.status())
                 .personal(resumerequestDto.personal())
@@ -76,11 +75,11 @@ public class Resume extends BaseTimeEntity {
                 .resume_imgname(resumerequestDto.resume_img_name())
                 .build();
     }
-    
+
     public static Resume duplicated(User user2, ResumeRequestDto resumerequestDto) {
-    	System.out.println("resumerequestDto : "+resumerequestDto);
+        System.out.println("resumerequestDto : " + resumerequestDto);
         return Resume.builder()
-        		.user(user2)
+                .user(user2)
                 .school(resumerequestDto.school())
                 .status(resumerequestDto.status())
                 .personal(resumerequestDto.personal())
@@ -97,5 +96,13 @@ public class Resume extends BaseTimeEntity {
                 .lastModifiedDate(resumerequestDto.last_modified_date())
                 .build();
     }
- 
+
+    public void setResumeImgName(String resumeImgName) {
+        this.resume_imgname = resumeImgName;
+    }
+    
+    public void setResumeImgUrl(String resumeImgUrl) {
+        this.resume_imgurl = resumeImgUrl;
+    }
+    
 }

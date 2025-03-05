@@ -8,6 +8,7 @@ import com.api.domain.resume.request.ResumeRequestDto;
 import com.api.domain.user.entity.User;
 import com.api.domain.user.repository.UserRepository;
 import com.api.global.error.exception.EntityNotFoundException;
+import com.api.domain.resume.error.RecruitmentErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,113 +24,114 @@ import org.springframework.stereotype.Service;
 import com.api.global.common.util.XorDecryptUtil;
 import com.api.global.common.util.XorEncryptUtil;
 
-
 @RequiredArgsConstructor
 @Service
 public class ResumeService {
-	
+
 	private final ResumeRepository resumeRepository;
 	private final Resume_userRepository resumeUserRepository;
 	private final UserRepository userRepository;
-	
-	@Value("${spring.datasource.encryption-key}")
-  	private String encryptionKey;
-	
-    public void createResume(ResumeRequestDto resumerequestDto) {
-    	
-    	User user = userRepository.findUserById(resumerequestDto.user_id()).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-    	Resume resume = Resume.createResume(user, resumerequestDto);
-    	resumeRepository.save(resume);
-    }
-    
-    public String duplicated(Long userId) {
-    	Resume resume = resumeRepository.findResumeByUserId(userId).orElse(null);
-    	if(resume==null) {
-    		return "중복아님";
-    	}else {
-    		return "중복";
-    	}
-    }
-    
-    public Map<String, Object> getUserById(Long userId) {
-    	User user = resumeUserRepository.findById(userId).orElse(null);
-        Map<String,Object> json = new HashMap<>();
-        json.put("email", XorDecryptUtil.xorDecrypt(user.getEmail(),encryptionKey));
-        json.put("name", XorDecryptUtil.xorDecrypt(user.getName(),encryptionKey));
-        json.put("phone", XorDecryptUtil.xorDecrypt(user.getPhone(),encryptionKey));
-        return json;
-    }
-    
-    public String delete(Long resumeId) {
-    	resumeRepository.deleteById(resumeId);
-    	return "삭제완료";
-    }
-    
-    public Map<String, Object> getResumeUser_id(Long user_id) {
-    	Resume resume = resumeRepository.findUserByUser_id(user_id).orElse(null);
-        Map<String,Object> json = new HashMap<>();
-        if(resume!=null) {
-        	json.put("resume_id", resume.getId());
-        	json.put("personal", XorDecryptUtil.xorDecrypt(resume.getPersonal(), encryptionKey));
-        	json.put("work_place_region", XorDecryptUtil.xorDecrypt(resume.getWork_place_region(),encryptionKey));
-        	json.put("industry_occupation", XorDecryptUtil.xorDecrypt(resume.getIndustry_occupation(),encryptionKey));
-        	json.put("last_modified_date", resume.getLastModifiedDate());
-        	return json;
-        }else {
-        	return Collections.emptyMap();
-        }
-    }
-    public Map<String, Object> getResume_id(Long resumeId) {
-    	Resume resume = resumeRepository.findByid(resumeId);
-        Map<String,Object> json = new HashMap<>();
-        if(resume!=null) {
-        	json.put("user_id", resume.getUser().getId());
-        	json.put("resume_id", resume.getId());
-        	json.put("school",XorDecryptUtil.xorDecrypt(resume.getSchool(),encryptionKey));
-        	json.put("status",XorDecryptUtil.xorDecrypt(resume.getStatus(),encryptionKey));
-        	json.put("personal",XorDecryptUtil.xorDecrypt(resume.getPersonal(),encryptionKey));
-        	json.put("work_place_region", XorDecryptUtil.xorDecrypt(resume.getWork_place_region(),encryptionKey));
-        	json.put("work_place_city", XorDecryptUtil.xorDecrypt(resume.getWork_place_city(),encryptionKey));
-        	json.put("industry_occupation", XorDecryptUtil.xorDecrypt(resume.getIndustry_occupation(),encryptionKey));
-        	json.put("employmentType", XorDecryptUtil.xorDecrypt(resume.getEmploymentType(),encryptionKey));
-        	json.put("working_period", XorDecryptUtil.xorDecrypt(resume.getWorking_period(),encryptionKey));
-        	json.put("working_day", XorDecryptUtil.xorDecrypt(resume.getWorking_day(),encryptionKey));
-        	json.put("introduction", XorDecryptUtil.xorDecrypt(resume.getIntroduction(),encryptionKey));
-        	json.put("portfoliourl", resume.getPortfoliourl());
-        	json.put("portfolioname", resume.getPortfolioname());
-        	json.put("last_modified_date", resume.getLastModifiedDate());
-        	json.put("resume_imgurl", resume.getResume_imgurl());
-        	json.put("resume_img_name", resume.getResume_imgname());
-        	return json;
-        }else {
-        	
-        	return null;
-        }
-    }
 
-	public Map<String,Object> getResumeDetail(Long userId) {
+	@Value("${spring.datasource.encryption-key}")
+	private String encryptionKey;
+
+	public void createResume(ResumeRequestDto resumerequestDto) {
+
+		User user = userRepository.findUserById(resumerequestDto.user_id())
+				.orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+		Resume resume = Resume.createResume(user, resumerequestDto);
+		resumeRepository.save(resume);
+	}
+
+	public String duplicated(Long userId) {
 		Resume resume = resumeRepository.findResumeByUserId(userId).orElse(null);
-		Map<String,Object> json = new HashMap<>();
-		if(resume!=null) {
+		if (resume == null) {
+			return "중복아님";
+		} else {
+			return "중복";
+		}
+	}
+
+	public Map<String, Object> getUserById(Long userId) {
+		User user = resumeUserRepository.findById(userId).orElse(null);
+		Map<String, Object> json = new HashMap<>();
+		json.put("email", XorDecryptUtil.xorDecrypt(user.getEmail(), encryptionKey));
+		json.put("name", XorDecryptUtil.xorDecrypt(user.getName(), encryptionKey));
+		json.put("phone", XorDecryptUtil.xorDecrypt(user.getPhone(), encryptionKey));
+		return json;
+	}
+
+	public String delete(Long resumeId) {
+		resumeRepository.deleteById(resumeId);
+		return "삭제완료";
+	}
+
+	public Map<String, Object> getResumeUser_id(Long user_id) {
+		Resume resume = resumeRepository.findUserByUser_id(user_id).orElse(null);
+		Map<String, Object> json = new HashMap<>();
+		if (resume != null) {
+			json.put("resume_id", resume.getId());
+			json.put("personal", XorDecryptUtil.xorDecrypt(resume.getPersonal(), encryptionKey));
+			json.put("work_place_region", XorDecryptUtil.xorDecrypt(resume.getWork_place_region(), encryptionKey));
+			json.put("industry_occupation", XorDecryptUtil.xorDecrypt(resume.getIndustry_occupation(), encryptionKey));
+			json.put("last_modified_date", resume.getLastModifiedDate());
+			return json;
+		} else {
+			return Collections.emptyMap();
+		}
+	}
+
+	public Map<String, Object> getResume_id(Long resumeId) {
+		Resume resume = resumeRepository.findByid(resumeId);
+		Map<String, Object> json = new HashMap<>();
+		if (resume != null) {
 			json.put("user_id", resume.getUser().getId());
 			json.put("resume_id", resume.getId());
-			json.put("school",XorDecryptUtil.xorDecrypt(resume.getSchool(),encryptionKey));
-			json.put("status",XorDecryptUtil.xorDecrypt(resume.getStatus(),encryptionKey));
-			json.put("personal",XorDecryptUtil.xorDecrypt(resume.getPersonal(),encryptionKey));
-			json.put("work_place_region", XorDecryptUtil.xorDecrypt(resume.getWork_place_region(),encryptionKey));
-			json.put("work_place_city", XorDecryptUtil.xorDecrypt(resume.getWork_place_city(),encryptionKey));
-			json.put("industry_occupation", XorDecryptUtil.xorDecrypt(resume.getIndustry_occupation(),encryptionKey));
-			json.put("employmentType", XorDecryptUtil.xorDecrypt(resume.getEmploymentType(),encryptionKey));
-			json.put("working_period", XorDecryptUtil.xorDecrypt(resume.getWorking_period(),encryptionKey));
-			json.put("working_day", XorDecryptUtil.xorDecrypt(resume.getWorking_day(),encryptionKey));
-			json.put("introduction", XorDecryptUtil.xorDecrypt(resume.getIntroduction(),encryptionKey));
+			json.put("school", XorDecryptUtil.xorDecrypt(resume.getSchool(), encryptionKey));
+			json.put("status", XorDecryptUtil.xorDecrypt(resume.getStatus(), encryptionKey));
+			json.put("personal", XorDecryptUtil.xorDecrypt(resume.getPersonal(), encryptionKey));
+			json.put("work_place_region", XorDecryptUtil.xorDecrypt(resume.getWork_place_region(), encryptionKey));
+			json.put("work_place_city", XorDecryptUtil.xorDecrypt(resume.getWork_place_city(), encryptionKey));
+			json.put("industry_occupation", XorDecryptUtil.xorDecrypt(resume.getIndustry_occupation(), encryptionKey));
+			json.put("employmentType", XorDecryptUtil.xorDecrypt(resume.getEmploymentType(), encryptionKey));
+			json.put("working_period", XorDecryptUtil.xorDecrypt(resume.getWorking_period(), encryptionKey));
+			json.put("working_day", XorDecryptUtil.xorDecrypt(resume.getWorking_day(), encryptionKey));
+			json.put("introduction", XorDecryptUtil.xorDecrypt(resume.getIntroduction(), encryptionKey));
 			json.put("portfoliourl", resume.getPortfoliourl());
 			json.put("portfolioname", resume.getPortfolioname());
 			json.put("last_modified_date", resume.getLastModifiedDate());
 			json.put("resume_imgurl", resume.getResume_imgurl());
 			json.put("resume_img_name", resume.getResume_imgname());
 			return json;
-		}else {
+		} else {
+
+			return null;
+		}
+	}
+
+	public Map<String, Object> getResumeDetail(Long userId) {
+		Resume resume = resumeRepository.findResumeByUserId(userId).orElse(null);
+		Map<String, Object> json = new HashMap<>();
+		if (resume != null) {
+			json.put("user_id", resume.getUser().getId());
+			json.put("resume_id", resume.getId());
+			json.put("school", XorDecryptUtil.xorDecrypt(resume.getSchool(), encryptionKey));
+			json.put("status", XorDecryptUtil.xorDecrypt(resume.getStatus(), encryptionKey));
+			json.put("personal", XorDecryptUtil.xorDecrypt(resume.getPersonal(), encryptionKey));
+			json.put("work_place_region", XorDecryptUtil.xorDecrypt(resume.getWork_place_region(), encryptionKey));
+			json.put("work_place_city", XorDecryptUtil.xorDecrypt(resume.getWork_place_city(), encryptionKey));
+			json.put("industry_occupation", XorDecryptUtil.xorDecrypt(resume.getIndustry_occupation(), encryptionKey));
+			json.put("employmentType", XorDecryptUtil.xorDecrypt(resume.getEmploymentType(), encryptionKey));
+			json.put("working_period", XorDecryptUtil.xorDecrypt(resume.getWorking_period(), encryptionKey));
+			json.put("working_day", XorDecryptUtil.xorDecrypt(resume.getWorking_day(), encryptionKey));
+			json.put("introduction", XorDecryptUtil.xorDecrypt(resume.getIntroduction(), encryptionKey));
+			json.put("portfoliourl", resume.getPortfoliourl());
+			json.put("portfolioname", resume.getPortfolioname());
+			json.put("last_modified_date", resume.getLastModifiedDate());
+			json.put("resume_imgurl", resume.getResume_imgurl());
+			json.put("resume_img_name", resume.getResume_imgname());
+			return json;
+		} else {
 			return json;
 		}
 	}
@@ -137,37 +139,47 @@ public class ResumeService {
 	public Boolean checkResumeExists(Long userId) {
 		return resumeRepository.existsByUserId(userId);
 	}
-	
-    // 이력서 전체 조회
-    public List<ResumeListDto> getAllResumes() {
-        List<Resume> resumes = resumeRepository.findAll();
-        
-        return resumes.stream()
-                .map(resume -> new ResumeListDto(
-                        resume.getId(),
-                		XorEncryptUtil.xorEncrypt(resume.getSchool(), encryptionKey),
-                		XorEncryptUtil.xorEncrypt(resume.getStatus(), encryptionKey),
-                		XorEncryptUtil.xorEncrypt(resume.getPersonal(), encryptionKey),
-                		XorEncryptUtil.xorEncrypt(resume.getWork_place_region(), encryptionKey),
-                		XorEncryptUtil.xorEncrypt(resume.getWork_place_city(), encryptionKey),
-                		XorEncryptUtil.xorEncrypt(resume.getIndustry_occupation(), encryptionKey),
-                		XorEncryptUtil.xorEncrypt(resume.getEmploymentType(), encryptionKey),
-                		XorEncryptUtil.xorEncrypt(resume.getWorking_period(), encryptionKey),
-                		XorEncryptUtil.xorEncrypt(resume.getWorking_day(), encryptionKey),
-                		XorEncryptUtil.xorEncrypt(resume.getIntroduction(), encryptionKey),
-                		resume.getPortfolioname(),
-                		resume.getPortfoliourl(),
-                		resume.getResume_imgurl(),
-                		resume.getResume_imgname()))
-                .collect(Collectors.toList());
-    }
+
+	// 이력서 전체 조회
+	public List<ResumeListDto> getAllResumes() {
+		List<Resume> resumes = resumeRepository.findAll();
+
+		return resumes.stream()
+				.map(resume -> new ResumeListDto(
+						resume.getId(),
+						XorEncryptUtil.xorEncrypt(resume.getSchool(), encryptionKey),
+						XorEncryptUtil.xorEncrypt(resume.getStatus(), encryptionKey),
+						XorEncryptUtil.xorEncrypt(resume.getPersonal(), encryptionKey),
+						XorEncryptUtil.xorEncrypt(resume.getWork_place_region(), encryptionKey),
+						XorEncryptUtil.xorEncrypt(resume.getWork_place_city(), encryptionKey),
+						XorEncryptUtil.xorEncrypt(resume.getIndustry_occupation(), encryptionKey),
+						XorEncryptUtil.xorEncrypt(resume.getEmploymentType(), encryptionKey),
+						XorEncryptUtil.xorEncrypt(resume.getWorking_period(), encryptionKey),
+						XorEncryptUtil.xorEncrypt(resume.getWorking_day(), encryptionKey),
+						XorEncryptUtil.xorEncrypt(resume.getIntroduction(), encryptionKey),
+						resume.getPortfolioname(),
+						resume.getPortfoliourl(),
+						resume.getResume_imgurl(),
+						resume.getResume_imgname()))
+				.collect(Collectors.toList());
+	}
 
 	public String deleteResumeByUserId(Long userId) {
 		Resume resume = resumeRepository.findResumeByUserId(userId).orElse(null);
-		if(!Objects.isNull(resume)) {
+		if (!Objects.isNull(resume)) {
 			resumeRepository.delete(resume);
 			return "삭제완료";
 		}
 		return "이력서가 없습니다";
+	}
+
+	public void updateProfileImage(Long userId, String resumeImgName, String imgUrl) {
+		Resume resume = resumeRepository.findResumeByUserId(userId)
+				.orElseThrow(() -> new EntityNotFoundException(RecruitmentErrorCode.RESUME_NOT_FOUND));
+
+		// ✅ 프로필 이미지 정보 업데이트
+		resume.setResumeImgName(resumeImgName);
+		resume.setResumeImgUrl(imgUrl + resumeImgName);
+		resumeRepository.save(resume);
 	}
 }
