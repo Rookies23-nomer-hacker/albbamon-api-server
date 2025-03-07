@@ -3,20 +3,19 @@ package com.api.domain.recruitment.controller;
 import com.api.domain.recruitment.dto.request.CreateRecruitmentRequestDto;
 import com.api.domain.recruitment.dto.response.GetRecruitmentResponseDto;
 import com.api.domain.recruitment.service.RecruitmentService;
-import com.api.domain.user.dto.request.UserRequestDto;
 import com.api.global.common.entity.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -30,9 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/mobile/recruitment")
 public class RecruitmentMobileController {
     private final RecruitmentService recruitmentService;
-
-    @Value("${server.url}")
-    private String serverUrl;
 
     @Operation(summary = "[모바일] 채용 공고 목록 보기", responses = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetRecruitmentResponseDto.class)))
@@ -71,7 +67,9 @@ public class RecruitmentMobileController {
     @PostMapping
     public ResponseEntity<SuccessResponse<?>> createRecruitment(@SessionAttribute("userid") Long userId,
                                                                 @RequestPart(value = "file", required = false) MultipartFile file,
-                                                                @RequestPart final CreateRecruitmentRequestDto requestDto) {
+                                                                @RequestPart final CreateRecruitmentRequestDto requestDto,
+                                                                HttpServletRequest request) {
+        String serverUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
         recruitmentService.createRecruitment(userId, requestDto, file, serverUrl);
         return SuccessResponse.ok(null);
     }
