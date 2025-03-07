@@ -42,7 +42,7 @@ public class PaymentController {
             }
 
             // 결제 처리 후 user의 item 상태를 업데이트
-            paymentService.updateUserPayStatus(userId);
+            paymentService.updateUserPayStatus(userId, paymentRequest.getItem());
 
             Map<String, String> response = new HashMap<>();
             response.put("message", "결제 정보가 성공적으로 저장되었습니다.");

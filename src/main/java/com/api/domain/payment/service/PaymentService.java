@@ -19,11 +19,11 @@ public class PaymentService {
 
     private final UserRepository userRepository;
 
-    public void updateUserPayStatus(Long userId) {
+    public void updateUserPayStatus(Long userId, String item) {
     	
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        userRepository.updateItemStatus(userId, "Y");
+        userRepository.updateItemStatus(userId, item);
     }
 }
