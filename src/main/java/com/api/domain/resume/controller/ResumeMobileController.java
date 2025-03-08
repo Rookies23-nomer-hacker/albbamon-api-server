@@ -41,9 +41,6 @@ public class ResumeMobileController {
     private final ResumeService resumeService;
     private final ResumeService resumeRepository;
 
-    @Value("${server.url}")
-    private String serverUrl;
-
     @Value("${spring.datasource.encryption-key}")
     private String encryptionKey;
 
@@ -100,6 +97,7 @@ public class ResumeMobileController {
     public ResponseEntity<String> createResumeMobile(@SessionAttribute("userid") Long userId,
             @RequestBody @Valid final CreateResumeRequestDto resumerequestDto,
             HttpServletRequest request) {
+        String serverUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
         String portfolioName_org = resumerequestDto.portfolioName();
         String portfolioData = resumerequestDto.portfolioData();
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));

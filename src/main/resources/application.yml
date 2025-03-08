@@ -1,6 +1,5 @@
 server:
   port: 60085
-  url: http://58.127.241.84:60085
   tomcat:
     accesslog:
      enabled: true              # 액세스 로그 활성화
