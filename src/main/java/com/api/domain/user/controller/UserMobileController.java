@@ -115,6 +115,7 @@ public class UserMobileController {
     })
     @GetMapping
     public ResponseEntity<SuccessResponse<?>> getUserInfoMobile(@SessionAttribute("userid") Long userId) {
+    	System.out.println("모바일 회원정보 : " + userId);
         GetUserInfoResponseDto responseDto = userService.getUserInfo(userId);
         return SuccessResponse.ok(responseDto);
     }
