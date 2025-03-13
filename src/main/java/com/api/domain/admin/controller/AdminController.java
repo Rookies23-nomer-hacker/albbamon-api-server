@@ -28,13 +28,4 @@ public class AdminController {
         AdminSignInResponseDto responseDto = adminService.signIn(requestDto);
         return ResponseEntity.ok(responseDto);
     }
-
-    @Operation(summary = "관리자 로그아웃", responses = {
-            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
-    })
-    @PostMapping("/sign-out")
-    public ResponseEntity<AdminSignInResponseDto> signOut(@RequestBody final AdminSignInRequestDto requestDto) {
-        AdminSignInResponseDto responseDto = adminService.signIn(requestDto);
-        return ResponseEntity.ok(responseDto);
-    }
 }
