@@ -1,10 +1,12 @@
 package com.api.domain.notice.service;
 
 import com.api.domain.notice.dto.request.UpdateNoticeRequestDto;
+import com.api.domain.notice.dto.response.NoticeListResponseDto;
 import com.api.domain.notice.entity.Notice;
 import com.api.domain.notice.repository.NoticeRepository;
 import com.api.global.error.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,4 +24,7 @@ public class NoticeService {
         noticeRepository.save(notice);
     }
 
+    public NoticeListResponseDto getNoticeList() {
+        return NoticeListResponseDto.of(noticeRepository.findAll(Sort.by(Sort.Direction.DESC, "id")));
+    }
 }
