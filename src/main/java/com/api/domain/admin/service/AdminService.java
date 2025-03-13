@@ -1,7 +1,6 @@
 package com.api.domain.admin.service;
 
 import com.api.domain.admin.dto.request.AdminSignInRequestDto;
-import com.api.domain.admin.dto.request.AdminSignUpRequestDto;
 import com.api.domain.admin.dto.response.AdminSignInResponseDto;
 import com.api.domain.admin.entity.Admin;
 import com.api.domain.admin.repository.AdminRepository;
@@ -24,14 +23,8 @@ public class AdminService {
     @Value("${spring.datasource.encryption-key}")
     private String encryptionKey;
 
-    public void signUp(AdminSignUpRequestDto requestDto) {
-        String encodedPassword = encoderUtil.encrypt(requestDto.password());
-        System.out.println("******************************************* " + encodedPassword);
-        System.out.println("------------------------------------------- " + xorEncrypt(requestDto.identity(), encryptionKey));
-    }
-
     public AdminSignInResponseDto signIn(AdminSignInRequestDto requestDto) {
-        Admin admin = adminRepository.findByIdentity(xorDecrypt(requestDto.identity(), encryptionKey)).orElse(null);
+        Admin admin = adminRepository.findByIdentity(xorEncrypt(requestDto.identity(), encryptionKey)).orElse(null);
         if(Objects.isNull(admin)) {
             return AdminSignInResponseDto.of("관리자가 아닙니다");
         } else if(!validatePassword(admin.getPassword(), requestDto.password())) {
