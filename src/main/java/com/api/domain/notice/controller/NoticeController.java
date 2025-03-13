@@ -2,6 +2,7 @@ package com.api.domain.notice.controller;
 
 import com.api.domain.notice.dto.request.UpdateNoticeRequestDto;
 import com.api.domain.notice.dto.response.NoticeListResponseDto;
+import com.api.domain.notice.dto.response.NoticeResponseDto;
 import com.api.domain.notice.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,6 +24,15 @@ public class NoticeController {
     @GetMapping
     public ResponseEntity<?> getNoticeList() {
         NoticeListResponseDto responseDto = noticeService.getNoticeList();
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @Operation(summary = "공지사항 1개 상세 보기", responses = {
+            @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
+    })
+    @GetMapping("/{noticeId}")
+    public ResponseEntity<?> getNotice(@PathVariable final Long noticeId) {
+        NoticeResponseDto responseDto = noticeService.getNotice(noticeId);
         return ResponseEntity.ok(responseDto);
     }
 

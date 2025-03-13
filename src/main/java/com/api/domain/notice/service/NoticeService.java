@@ -2,6 +2,7 @@ package com.api.domain.notice.service;
 
 import com.api.domain.notice.dto.request.UpdateNoticeRequestDto;
 import com.api.domain.notice.dto.response.NoticeListResponseDto;
+import com.api.domain.notice.dto.response.NoticeResponseDto;
 import com.api.domain.notice.entity.Notice;
 import com.api.domain.notice.repository.NoticeRepository;
 import com.api.global.error.exception.EntityNotFoundException;
@@ -26,5 +27,10 @@ public class NoticeService {
 
     public NoticeListResponseDto getNoticeList() {
         return NoticeListResponseDto.of(noticeRepository.findAll(Sort.by(Sort.Direction.DESC, "id")));
+    }
+
+    public NoticeResponseDto getNotice(Long noticeId) {
+        Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new EntityNotFoundException(NOTICE_NOT_FOUND));
+        return NoticeResponseDto.of(notice);
     }
 }
