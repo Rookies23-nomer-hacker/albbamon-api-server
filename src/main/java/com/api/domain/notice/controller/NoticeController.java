@@ -31,7 +31,7 @@ public class NoticeController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @GetMapping("/{noticeId}")
-    public ResponseEntity<?> getNotice(@PathVariable final Long noticeId) {
+    public ResponseEntity<?> getNotice(@PathVariable("noticeId") final Long noticeId) {
         NoticeResponseDto responseDto = noticeService.getNotice(noticeId);
         return ResponseEntity.ok(responseDto);
     }
@@ -40,7 +40,7 @@ public class NoticeController {
             @ApiResponse(responseCode = "200", useReturnTypeSchema = true)
     })
     @PostMapping("/{noticeId}")
-    public ResponseEntity<?> updateNotice(@PathVariable final Long noticeId,
+    public ResponseEntity<?> updateNotice(@PathVariable("noticeId") final Long noticeId,
                                           @RequestBody final UpdateNoticeRequestDto requestDto) {
         noticeService.updateNotice(noticeId, requestDto);
         return ResponseEntity.ok(null);
