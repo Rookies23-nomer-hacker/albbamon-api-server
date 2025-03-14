@@ -1,6 +1,6 @@
 server:
   port: 60085
-#  forward-headers-strategy: framework
+  forward-headers-strategy: framework
   tomcat:
     accesslog:
      enabled: true              # 액세스 로그 활성화
