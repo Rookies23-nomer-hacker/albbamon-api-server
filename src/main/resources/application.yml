@@ -46,7 +46,7 @@ spring:
     web-application-type: servlet
 
 file:
-  dir: /home/ubuntu/download/apache-tomcat-10.1.39/webapps/ROOT/upload/
+  dir: /home/albbamon/download/apache-tomcat-10.1.39/webapps/ROOT/upload/
 
 # health check
 management:
