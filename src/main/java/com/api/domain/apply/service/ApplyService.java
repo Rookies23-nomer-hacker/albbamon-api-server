@@ -3,7 +3,9 @@ package com.api.domain.apply.service;
 import com.api.domain.apply.dto.response.GetApplyListResponseDto;
 import com.api.domain.apply.repository.ApplyRepository;
 import com.api.domain.apply.vo.ApplyVo;
+import com.api.domain.apply.vo.RecruitmentApplyMobileVo;
 import com.api.domain.apply.vo.RecruitmentApplyVo;
+import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListMobileResponseDto;
 import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListResponseDto;
 import com.api.domain.resume.entity.Resume;
 import com.api.domain.resume.repository.ResumeRepository;
@@ -62,6 +64,37 @@ public class ApplyService {
             .toList();
         return GetRecruitmentApplyListResponseDto.of(reApplyList);
     }
+
+	public GetRecruitmentApplyListMobileResponseDto getRecruitmentApplyListMobile(@PathVariable("recruitmentId") Long recruitmentId) {
+		List<RecruitmentApplyMobileVo> recruitmentApplyVoList = applyRepository.findRecruitmentApplyMobileVoByRecruitmentId(recruitmentId);
+		List<RecruitmentApplyMobileVo> reApplyList = recruitmentApplyVoList.stream()
+				.map(apply -> new RecruitmentApplyMobileVo(
+						apply.applyId(),
+						apply.resumeId(),
+						XorDecryptUtil.xorDecrypt(apply.userName(), encryptionKey),
+						XorDecryptUtil.xorDecrypt(apply.userEmail(), encryptionKey),
+						XorDecryptUtil.xorDecrypt(apply.userPhone(), encryptionKey),
+						XorDecryptUtil.xorDecrypt(apply.school(), encryptionKey),
+						XorDecryptUtil.xorDecrypt(apply.status(), encryptionKey),
+						XorDecryptUtil.xorDecrypt(apply.personal(), encryptionKey),
+						XorDecryptUtil.xorDecrypt(apply.workPlaceRegion(), encryptionKey),
+						XorDecryptUtil.xorDecrypt(apply.workPlaceCity(), encryptionKey),
+						XorDecryptUtil.xorDecrypt(apply.industryOccupation(), encryptionKey),
+						XorDecryptUtil.xorDecrypt(apply.employmentType(), encryptionKey),
+						XorDecryptUtil.xorDecrypt(apply.workingPeriod(), encryptionKey),
+						XorDecryptUtil.xorDecrypt(apply.workingDay(), encryptionKey),
+						XorDecryptUtil.xorDecrypt(apply.introduction(), encryptionKey),
+						apply.portfoliourl(),
+						apply.portfolioname(),
+						apply.resume_imgurl(),
+						apply.resume_imgname(),
+						apply.createDate(),
+						apply.applyStatus()
+				))
+				.toList();
+		return GetRecruitmentApplyListMobileResponseDto.of(reApplyList);
+	}
+
 
     public Long getMyApplyCount(Long userId) {
 		if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);

@@ -1,6 +1,9 @@
 package com.api.domain.recruitment.controller;
 
+import com.api.domain.apply.service.ApplyService;
 import com.api.domain.recruitment.dto.request.CreateRecruitmentRequestDto;
+import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListMobileResponseDto;
+import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListResponseDto;
 import com.api.domain.recruitment.dto.response.GetRecruitmentResponseDto;
 import com.api.domain.recruitment.service.RecruitmentService;
 import com.api.global.common.entity.SuccessResponse;
@@ -29,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/mobile/recruitment")
 public class RecruitmentMobileController {
     private final RecruitmentService recruitmentService;
+    private final ApplyService applyService;
 
     @Operation(summary = "[모바일] 채용 공고 목록 보기", responses = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetRecruitmentResponseDto.class)))
@@ -83,6 +87,15 @@ public class RecruitmentMobileController {
                                                                 @RequestBody @Valid final CreateRecruitmentRequestDto requestDto) {
         recruitmentService.updateRecruitment(userId, recruitmentId, requestDto);
         return SuccessResponse.ok(null);
+    }
+
+    @Operation(summary = "[모바일] 채용 공고 1건의 지원서 목록 조회", responses = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetRecruitmentApplyListResponseDto.class)))
+    })
+    @GetMapping("/{recruitmentId}/apply")
+    public ResponseEntity<GetRecruitmentApplyListMobileResponseDto> getRecruitmentApplyList(@PathVariable("recruitmentId") final Long recruitmentId) {
+        GetRecruitmentApplyListMobileResponseDto responseDto = applyService.getRecruitmentApplyListMobile(recruitmentId);
+        return ResponseEntity.ok(responseDto);
     }
 
     @Operation(summary = "[모바일] 채용 공고 1건의 지원 이력 유무 확인", responses = {
