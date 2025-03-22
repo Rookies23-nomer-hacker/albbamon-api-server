@@ -14,6 +14,8 @@ public record RecruitmentVo(
         String file,
         String company,
         String userName,
+        String userEmail,
+        String userCeoNum,
         String item
 ) {
 }

@@ -4,7 +4,6 @@ import com.api.domain.apply.entity.Apply;
 import com.api.domain.apply.repository.ApplyRepository;
 import com.api.domain.apply.type.ApplyStatus;
 import com.api.domain.recruitment.dto.request.CreateRecruitmentRequestDto;
-import com.api.domain.recruitment.dto.request.UpdateApplyStatusRequestDto;
 import com.api.domain.recruitment.dto.response.GetRecruitmentResponseDto;
 import com.api.domain.recruitment.entity.Recruitment;
 import com.api.domain.recruitment.mapper.RecruitmentMapper;
@@ -16,24 +15,23 @@ import com.api.domain.resume.repository.ResumeRepository;
 import com.api.domain.user.entity.User;
 import com.api.domain.user.repository.UserRepository;
 import com.api.global.common.FileType;
-import com.api.global.common.entity.SuccessResponse;
+import com.api.global.common.entity.PageInfo;
 import com.api.global.common.util.FileUtil;
+import com.api.global.common.util.XorDecryptUtil;
 import com.api.global.error.exception.ConflictException;
 import com.api.global.error.exception.EntityNotFoundException;
 import com.api.global.error.exception.UnauthorizedException;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.api.domain.apply.error.ApplyErrorCode.APPLY_ALREADY_EXISTS;
 import static com.api.domain.recruitment.error.RecruitmentErrorCode.RECRUITMENT_NOT_FOUND;
@@ -45,8 +43,8 @@ import static com.api.domain.user.error.UserErrorCode.USER_NOT_FOUND;
 @Transactional
 @Service
 public class RecruitmentService {
-    @Value("${upload.post.path:D:/home/api_root/download/apache-tomcat-10.1.36/webapps/ROOT/upload/recruitment/}")
-    private String uploadDir;
+    @Value("${spring.datasource.encryption-key}")
+    private String encryptionKey;
     private final RecruitmentRepository recruitmentRepository;
     private final UserRepository userRepository;
     private final ResumeRepository resumeRepository;
@@ -55,14 +53,44 @@ public class RecruitmentService {
     private final FileUtil fileUtil;
 
     public GetRecruitmentResponseDto getRecruitmentList(Pageable pageable) {
-        Page<RecruitmentVo> recruitmentList = recruitmentRepository.findAllRecruitmentVos(pageable);
-        return recruitmentMapper.toGetRecruitmentResponseDto(recruitmentList);
+        Page<RecruitmentVo> recruitmentVos = recruitmentRepository.findAllRecruitmentVos(pageable);
+        List<RecruitmentVo> recruitmentList = recruitmentVos.stream()
+                .map(recruitmentVo -> new RecruitmentVo(
+                        recruitmentVo.id(),
+                        recruitmentVo.title(),
+                        recruitmentVo.dueDate(),
+                        recruitmentVo.createDate(),
+                        recruitmentVo.wage(),
+                        recruitmentVo.file(),
+                        recruitmentVo.company(),
+                        XorDecryptUtil.xorDecrypt(recruitmentVo.userName(), encryptionKey),
+                        XorDecryptUtil.xorDecrypt(recruitmentVo.userEmail(), encryptionKey),
+                        recruitmentVo.userCeoNum(),
+                        recruitmentVo.item()
+                ))
+                .collect(Collectors.toList());
+        return recruitmentMapper.toGetRecruitmentResponseDto(recruitmentList, PageInfo.of(recruitmentVos));
     }
 
     public GetRecruitmentResponseDto getMyRecruitmentList(Long userId, Pageable pageable) {
         if(userId == null) throw new UnauthorizedException(SIGN_IN_REQUIRED);
-        Page<RecruitmentVo> recruitmentList = recruitmentRepository.findAllRecruitmentVosByUserId(userId, pageable);
-        return recruitmentMapper.toGetRecruitmentResponseDto(recruitmentList);
+        Page<RecruitmentVo> recruitmentVos = recruitmentRepository.findAllRecruitmentVosByUserId(userId, pageable);
+        List<RecruitmentVo> recruitmentList = recruitmentVos.stream()
+                .map(recruitmentVo -> new RecruitmentVo(
+                        recruitmentVo.id(),
+                        recruitmentVo.title(),
+                        recruitmentVo.dueDate(),
+                        recruitmentVo.createDate(),
+                        recruitmentVo.wage(),
+                        recruitmentVo.file(),
+                        recruitmentVo.company(),
+                        XorDecryptUtil.xorDecrypt(recruitmentVo.userName(), encryptionKey),
+                        XorDecryptUtil.xorDecrypt(recruitmentVo.userEmail(), encryptionKey),
+                        recruitmentVo.userCeoNum(),
+                        recruitmentVo.item()
+                ))
+                .collect(Collectors.toList());
+        return recruitmentMapper.toGetRecruitmentResponseDto(recruitmentList, PageInfo.of(recruitmentVos));
     }
 
     public RecruitmentDetailVo getRecruitment(Long recruitmentId) {
