@@ -2,6 +2,7 @@ package com.api.domain.recruitment.controller;
 
 import com.api.domain.apply.service.ApplyService;
 import com.api.domain.recruitment.dto.request.CreateRecruitmentRequestDto;
+import com.api.domain.recruitment.dto.request.GetRecruitmentApplyListMobileRequestDto;
 import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListMobileResponseDto;
 import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListResponseDto;
 import com.api.domain.recruitment.dto.response.GetRecruitmentResponseDto;
@@ -92,9 +93,9 @@ public class RecruitmentMobileController {
     @Operation(summary = "[모바일] 채용 공고 1건의 지원서 목록 조회", responses = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetRecruitmentApplyListResponseDto.class)))
     })
-    @GetMapping("/{recruitmentId}/apply")
-    public ResponseEntity<GetRecruitmentApplyListMobileResponseDto> getRecruitmentApplyList(@PathVariable("recruitmentId") final Long recruitmentId) {
-        GetRecruitmentApplyListMobileResponseDto responseDto = applyService.getRecruitmentApplyListMobile(recruitmentId);
+    @PostMapping("/apply")
+    public ResponseEntity<GetRecruitmentApplyListMobileResponseDto> getRecruitmentApplyList(@RequestBody final GetRecruitmentApplyListMobileRequestDto requestDto) {
+        GetRecruitmentApplyListMobileResponseDto responseDto = applyService.getRecruitmentApplyListMobile(requestDto.recruitmentId());
         return ResponseEntity.ok(responseDto);
     }
 
