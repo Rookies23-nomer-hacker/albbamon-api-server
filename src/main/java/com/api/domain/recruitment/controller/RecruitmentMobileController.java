@@ -8,6 +8,8 @@ import com.api.domain.recruitment.dto.response.GetRecruitmentApplyListResponseDt
 import com.api.domain.recruitment.dto.response.GetRecruitmentResponseDto;
 import com.api.domain.recruitment.service.RecruitmentService;
 import com.api.global.common.entity.SuccessResponse;
+import com.api.global.common.util.AesUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,14 +36,16 @@ import org.springframework.web.multipart.MultipartFile;
 public class RecruitmentMobileController {
     private final RecruitmentService recruitmentService;
     private final ApplyService applyService;
+    private final AesUtil aesUtil;
+    private final ObjectMapper objectMapper;
 
     @Operation(summary = "[모바일] 채용 공고 목록 보기", responses = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetRecruitmentResponseDto.class)))
     })
     @GetMapping("/list")
-    public ResponseEntity<SuccessResponse<?>> getRecruitmentList() {
+    public ResponseEntity<SuccessResponse<?>> getRecruitmentList() throws Exception {
         GetRecruitmentResponseDto responseDto = recruitmentService.getRecruitmentList(null);
-        return SuccessResponse.ok(responseDto);
+        return SuccessResponse.ok(aesUtil.encrypt(objectMapper.writeValueAsString(responseDto)));
     }
 
     @Operation(summary = "[모바일] 내가 작성한 채용 공고 목록 보기", responses = {
@@ -49,9 +53,9 @@ public class RecruitmentMobileController {
     })
     @GetMapping("/list/my")
     public ResponseEntity<SuccessResponse<?>> getMyRecruitmentList(@SessionAttribute("userid") Long userId,
-                                                                   @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                                                                   @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) throws Exception {
         GetRecruitmentResponseDto responseDto = recruitmentService.getMyRecruitmentList(userId, pageable);
-        return SuccessResponse.ok(responseDto);
+        return SuccessResponse.ok(aesUtil.encrypt(objectMapper.writeValueAsString(responseDto)));
     }
 
     @Operation(summary = "[모바일] 내가 작성한 채용 공고 개수", responses = {
@@ -94,9 +98,10 @@ public class RecruitmentMobileController {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = GetRecruitmentApplyListResponseDto.class)))
     })
     @PostMapping("/apply")
-    public ResponseEntity<GetRecruitmentApplyListMobileResponseDto> getRecruitmentApplyList(@RequestBody final GetRecruitmentApplyListMobileRequestDto requestDto) {
+    public ResponseEntity<String> getRecruitmentApplyList(@RequestBody final String encryptedRequestDto) throws Exception {
+        GetRecruitmentApplyListMobileRequestDto requestDto = objectMapper.readValue(aesUtil.decrypt(encryptedRequestDto), GetRecruitmentApplyListMobileRequestDto.class);
         GetRecruitmentApplyListMobileResponseDto responseDto = applyService.getRecruitmentApplyListMobile(requestDto.recruitmentId());
-        return ResponseEntity.ok(responseDto);
+        return ResponseEntity.ok(aesUtil.encrypt(objectMapper.writeValueAsString(responseDto)));
     }
 
     @Operation(summary = "[모바일] 채용 공고 1건의 지원 이력 유무 확인", responses = {
